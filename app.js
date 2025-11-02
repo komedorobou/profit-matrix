@@ -84,6 +84,18 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 console.error('❌ userEmail要素が見つかりません')
             }
 
+            // 外注先管理ボタンの表示制御（オーナー専用機能）
+            const partnersBtn = document.getElementById('partnersBtn')
+            if (partnersBtn) {
+                if (session.user.email && session.user.email.includes('komedorobouinuzini')) {
+                    partnersBtn.style.display = 'inline-block'
+                    console.log('✅ 外注先管理ボタンを表示（オーナーモード）')
+                } else {
+                    partnersBtn.style.display = 'none'
+                    console.log('🔒 外注先管理ボタンを非表示（一般ユーザー）')
+                }
+            }
+
             // APIキー確認
             yahooApiKey = localStorage.getItem('yahooApiKey')
             if (!yahooApiKey) {
