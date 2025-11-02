@@ -216,7 +216,7 @@ window.handleSignup = async function() {
         email,
         password,
         options: {
-            emailRedirectTo: 'https://profit-matrix.vercel.app/'
+            emailRedirectTo: 'https://profit-matrix.jp/'
         }
     })
 
@@ -265,7 +265,7 @@ window.handlePasswordReset = async function() {
     btn.disabled = true
 
     const { error } = await supabaseAuth.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://profit-matrix.vercel.app/'
+        redirectTo: 'https://profit-matrix.jp/'
     })
 
     if (error) {

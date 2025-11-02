@@ -174,7 +174,7 @@ Deuxieme Classe,ウールアンゴラリバーコート,,49000
 
 ### オンライン版（推奨）
 
-本番環境URL: `https://your-profit-matrix.vercel.app`
+本番環境URL: `https://profit-matrix.jp`
 
 1. URLにアクセス
 2. Yahoo Shopping APIキーを入力
