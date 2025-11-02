@@ -492,19 +492,28 @@ async function startBatchSearch() {
             throw new Error('CSVデータが空です');
         }
 
-        // プラン別の検索行数制限を適用
-        const limits = {
-            starter: 100,
-            standard: 300,
-            premium: 999999
-        };
-        const maxSearchRows = limits[currentPlan] || 100;
-        const limitedData = csvData.slice(0, maxSearchRows);
+        // オーナーアカウントは制限なし
+        const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
 
-        // 制限がかかっている場合は通知
-        if (csvData.length > maxSearchRows) {
-            console.log(`⚠️ プラン制限: ${csvData.length}行中、${maxSearchRows}行のみ検索します`);
-            alert(`📊 プラン制限\n\nCSVファイルは${csvData.length}行ありますが、\n${currentPlan}プランでは最大${maxSearchRows}行まで検索できます。\n\n先頭${maxSearchRows}行のみ検索を実行します。`);
+        let limitedData;
+        if (isOwner) {
+            console.log('✅ オーナーアカウント: 行数制限なし');
+            limitedData = csvData;
+        } else {
+            // プラン別の検索行数制限を適用
+            const limits = {
+                starter: 100,
+                standard: 300,
+                premium: 999999
+            };
+            const maxSearchRows = limits[currentPlan] || 100;
+            limitedData = csvData.slice(0, maxSearchRows);
+
+            // 制限がかかっている場合は通知
+            if (csvData.length > maxSearchRows) {
+                console.log(`⚠️ プラン制限: ${csvData.length}行中、${maxSearchRows}行のみ検索します`);
+                alert(`📊 プラン制限\n\nCSVファイルは${csvData.length}行ありますが、\n${currentPlan}プランでは最大${maxSearchRows}行まで検索できます。\n\n先頭${maxSearchRows}行のみ検索を実行します。`);
+            }
         }
 
         // 検索実行
