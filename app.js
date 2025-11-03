@@ -21,10 +21,11 @@ let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPI�
 
 // 認証状態監視
 supabaseAuth.auth.onAuthStateChange(async (event, session) => {
-    console.log('🔐 Auth event:', event)
+    console.log('🔐 Auth event:', event, 'Session:', session ? 'あり' : 'なし')
 
     try {
-        if (event === 'SIGNED_IN' && session) {
+        // SIGNED_INまたはINITIAL_SESSION（初回ロード時）の両方を処理
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
             console.log('✅ ログイン成功:', session.user.email)
             currentUser = session.user
 
@@ -60,6 +61,14 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             // UI更新
             console.log('🎨 UI更新開始...')
 
+            // ログインボタンをリセット
+            const loginBtn = document.getElementById('loginBtn')
+            if (loginBtn) {
+                loginBtn.textContent = 'ログイン'
+                loginBtn.disabled = false
+                console.log('✅ ログインボタンをリセット')
+            }
+
             const authModal = document.getElementById('authModal')
             const userMenu = document.getElementById('userMenu')
             const userEmail = document.getElementById('userEmail')
@@ -94,12 +103,26 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
                 loadOwnerSettings()
 
-                // オーナーの場合、まずオーナー設定モーダルを表示
-                console.log('⚙️ オーナー設定モーダルを表示（ログイン時）')
-                const ownerSettingsModal = document.getElementById('ownerSettingsModal')
-                if (ownerSettingsModal) {
-                    ownerSettingsModal.style.display = 'flex'
-                    shouldCheckApiKeyAfterOwnerSettings = true // オーナー設定後にAPIキーチェック
+                // SIGNED_INイベント（実際のログイン操作）の場合のみオーナー設定モーダルを表示
+                // INITIAL_SESSION（ページリロード時）の場合はスキップ
+                if (event === 'SIGNED_IN') {
+                    console.log('⚙️ オーナー設定モーダルを表示（ログイン時）')
+                    const ownerSettingsModal = document.getElementById('ownerSettingsModal')
+                    if (ownerSettingsModal) {
+                        ownerSettingsModal.style.display = 'flex'
+                        shouldCheckApiKeyAfterOwnerSettings = true // オーナー設定後にAPIキーチェック
+                    }
+                } else {
+                    console.log('📋 INITIAL_SESSION: オーナー設定モーダルをスキップ')
+                    // ページリロード時はAPIキー確認のみ
+                    yahooApiKey = localStorage.getItem('yahooApiKey')
+                    if (!yahooApiKey) {
+                        console.log('⚙️ APIキーモーダルを表示')
+                        const apiKeyModal = document.getElementById('apiKeyModal')
+                        if (apiKeyModal) {
+                            apiKeyModal.style.display = 'flex'
+                        }
+                    }
                 }
             } else {
                 console.log('🔒 一般ユーザーモード')
@@ -141,6 +164,18 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             // プラン情報のみクリア（APIキーとオーナー設定は保持）
             localStorage.removeItem('profitMatrixPlan')
 
+            // ログインフォームをリセット
+            const loginEmail = document.getElementById('loginEmail')
+            const loginPassword = document.getElementById('loginPassword')
+            const loginBtn = document.getElementById('loginBtn')
+
+            if (loginEmail) loginEmail.value = ''
+            if (loginPassword) loginPassword.value = ''
+            if (loginBtn) {
+                loginBtn.textContent = 'ログイン'
+                loginBtn.disabled = false
+            }
+
             // すべてのモーダルを閉じる
             const authModal = document.getElementById('authModal')
             const userMenu = document.getElementById('userMenu')
@@ -152,7 +187,7 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             if (ownerSettingsModal) ownerSettingsModal.style.display = 'none'
             if (apiKeyModal) apiKeyModal.style.display = 'none'
 
-            console.log('✅ ログアウト処理完了')
+            console.log('✅ ログアウト処理完了、フォームリセット完了')
         }
     } catch (error) {
         console.error('❌ 認証処理でエラー発生:', error)
