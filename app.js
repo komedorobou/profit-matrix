@@ -137,7 +137,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             shouldCheckApiKeyAfterOwnerSettings = false
             currentUser = null
             currentPlan = 'starter'
-            localStorage.clear()
+
+            // プラン情報のみクリア（APIキーとオーナー設定は保持）
+            localStorage.removeItem('profitMatrixPlan')
 
             // すべてのモーダルを閉じる
             const authModal = document.getElementById('authModal')
