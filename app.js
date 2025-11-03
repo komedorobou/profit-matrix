@@ -97,14 +97,7 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     console.log('✅ オーナー設定ボタンを表示')
                 }
 
-                // 選択UI（選択数・送信ボタン）を表示
-                const selectionUI = document.getElementById('selectionUI')
-                if (selectionUI) {
-                    selectionUI.style.display = 'flex'
-                    console.log('✅ 選択UIを表示（オーナー専用）')
-                }
-
-                // オーナー設定を読み込んで適用
+                // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
                 loadOwnerSettings()
             } else {
                 console.log('🔒 一般ユーザーモード')
@@ -757,9 +750,10 @@ function appendResultCard(container, item, index) {
     // 商品データをカードに保存
     card.dataset.productData = JSON.stringify(item);
 
-    // オーナーのみチェックボックスを表示
+    // オーナー設定に基づいてチェックボックスを表示
     const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
-    const checkboxHTML = isOwner ? `
+    const showSelectionUI = localStorage.getItem('ownerSettings_showSelectionUI') !== 'false';
+    const checkboxHTML = (isOwner && showSelectionUI) ? `
         <div class="card-checkbox-container">
             <input type="checkbox" class="card-checkbox" id="checkbox-${index}" onchange="toggleProductSelect(this, ${index})">
             <label for="checkbox-${index}" class="checkbox-label"></label>
@@ -2085,7 +2079,8 @@ function exportFusionResults() {
 function loadOwnerSettings() {
     const settings = {
         showPartnersBtn: localStorage.getItem('ownerSettings_showPartnersBtn') !== 'false',
-        showUserEmail: localStorage.getItem('ownerSettings_showUserEmail') !== 'false'
+        showUserEmail: localStorage.getItem('ownerSettings_showUserEmail') !== 'false',
+        showSelectionUI: localStorage.getItem('ownerSettings_showSelectionUI') !== 'false'
     };
 
     // 設定を適用
@@ -2094,12 +2089,16 @@ function loadOwnerSettings() {
     // トグルの状態を更新
     const togglePartnersBtn = document.getElementById('togglePartnersBtn');
     const toggleUserEmail = document.getElementById('toggleUserEmail');
+    const toggleSelectionUI = document.getElementById('toggleSelectionUI');
 
     if (togglePartnersBtn) {
         togglePartnersBtn.checked = settings.showPartnersBtn;
     }
     if (toggleUserEmail) {
         toggleUserEmail.checked = settings.showUserEmail;
+    }
+    if (toggleSelectionUI) {
+        toggleSelectionUI.checked = settings.showSelectionUI;
     }
 
     console.log('📋 オーナー設定を読み込みました:', settings);
@@ -2115,6 +2114,7 @@ function applyOwnerSettings(settings) {
 
     const partnersBtn = document.getElementById('partnersBtn');
     const userEmail = document.getElementById('userEmail');
+    const selectionUI = document.getElementById('selectionUI');
 
     // 外注先管理ボタンの表示制御
     if (partnersBtn) {
@@ -2126,6 +2126,12 @@ function applyOwnerSettings(settings) {
     if (userEmail) {
         userEmail.style.display = settings.showUserEmail ? 'inline' : 'none';
         console.log(`📧 メールアドレス: ${settings.showUserEmail ? '表示' : '非表示'}`);
+    }
+
+    // 商品選択UIの表示制御
+    if (selectionUI) {
+        selectionUI.style.display = settings.showSelectionUI ? 'flex' : 'none';
+        console.log(`☑️ 商品選択UI: ${settings.showSelectionUI ? '表示' : '非表示'}`);
     }
 }
 
@@ -2150,18 +2156,21 @@ function closeOwnerSettings() {
 function updateOwnerSettings() {
     const showPartnersBtn = document.getElementById('togglePartnersBtn').checked;
     const showUserEmail = document.getElementById('toggleUserEmail').checked;
+    const showSelectionUI = document.getElementById('toggleSelectionUI').checked;
 
     // LocalStorageに保存
     localStorage.setItem('ownerSettings_showPartnersBtn', showPartnersBtn);
     localStorage.setItem('ownerSettings_showUserEmail', showUserEmail);
+    localStorage.setItem('ownerSettings_showSelectionUI', showSelectionUI);
 
     // 設定を即座に適用
     applyOwnerSettings({
         showPartnersBtn,
-        showUserEmail
+        showUserEmail,
+        showSelectionUI
     });
 
-    console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail });
+    console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail, showSelectionUI });
 }
 
 // グローバルに関数を公開

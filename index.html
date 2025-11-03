@@ -285,6 +285,18 @@
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+
+                <!-- 商品選択機能の表示切替 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">☑️ 商品選択機能</div>
+                        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.7);">チェックボックスと外注先送信機能を表示</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleSelectionUI" onchange="updateOwnerSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
             </div>
 
             <div style="margin-top: 30px; text-align: center;">
