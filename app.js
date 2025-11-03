@@ -84,15 +84,28 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 console.error('❌ userEmail要素が見つかりません')
             }
 
-            // 外注先管理ボタンの表示制御（オーナー専用機能）
-            const partnersBtn = document.getElementById('partnersBtn')
-            if (partnersBtn) {
-                if (session.user.email && session.user.email.includes('komedorobouinuzini')) {
-                    partnersBtn.style.display = 'inline-block'
-                    console.log('✅ 外注先管理ボタンを表示（オーナーモード）')
-                } else {
+            // オーナー専用機能の制御
+            const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
+
+            if (isOwner) {
+                console.log('✅ オーナーモード: 専用機能を有効化')
+
+                // オーナー設定ボタンを表示
+                const ownerSettingsBtn = document.getElementById('ownerSettingsBtn')
+                if (ownerSettingsBtn) {
+                    ownerSettingsBtn.style.display = 'inline-block'
+                    console.log('✅ オーナー設定ボタンを表示')
+                }
+
+                // オーナー設定を読み込んで適用
+                loadOwnerSettings()
+            } else {
+                console.log('🔒 一般ユーザーモード')
+
+                // 外注先管理ボタンを非表示
+                const partnersBtn = document.getElementById('partnersBtn')
+                if (partnersBtn) {
                     partnersBtn.style.display = 'none'
-                    console.log('🔒 外注先管理ボタンを非表示（一般ユーザー）')
                 }
             }
 
@@ -2045,3 +2058,93 @@ function exportFusionResults() {
 
     alert('統合結果をエクスポートしました');
 }
+
+// === オーナー設定機能 ===
+
+// オーナー設定を読み込んで適用
+function loadOwnerSettings() {
+    const settings = {
+        showPartnersBtn: localStorage.getItem('ownerSettings_showPartnersBtn') !== 'false',
+        showUserEmail: localStorage.getItem('ownerSettings_showUserEmail') !== 'false'
+    };
+
+    // 設定を適用
+    applyOwnerSettings(settings);
+
+    // トグルの状態を更新
+    const togglePartnersBtn = document.getElementById('togglePartnersBtn');
+    const toggleUserEmail = document.getElementById('toggleUserEmail');
+
+    if (togglePartnersBtn) {
+        togglePartnersBtn.checked = settings.showPartnersBtn;
+    }
+    if (toggleUserEmail) {
+        toggleUserEmail.checked = settings.showUserEmail;
+    }
+
+    console.log('📋 オーナー設定を読み込みました:', settings);
+}
+
+// オーナー設定を適用
+function applyOwnerSettings(settings) {
+    const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
+
+    if (!isOwner) {
+        return; // オーナーでなければ何もしない
+    }
+
+    const partnersBtn = document.getElementById('partnersBtn');
+    const userEmail = document.getElementById('userEmail');
+
+    // 外注先管理ボタンの表示制御
+    if (partnersBtn) {
+        partnersBtn.style.display = settings.showPartnersBtn ? 'inline-block' : 'none';
+        console.log(`👥 外注先管理ボタン: ${settings.showPartnersBtn ? '表示' : '非表示'}`);
+    }
+
+    // メールアドレスの表示制御
+    if (userEmail) {
+        userEmail.style.display = settings.showUserEmail ? 'inline' : 'none';
+        console.log(`📧 メールアドレス: ${settings.showUserEmail ? '表示' : '非表示'}`);
+    }
+}
+
+// オーナー設定モーダルを開く
+function openOwnerSettings() {
+    const modal = document.getElementById('ownerSettingsModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        loadOwnerSettings(); // 現在の設定を反映
+    }
+}
+
+// オーナー設定モーダルを閉じる
+function closeOwnerSettings() {
+    const modal = document.getElementById('ownerSettingsModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// オーナー設定を更新
+function updateOwnerSettings() {
+    const showPartnersBtn = document.getElementById('togglePartnersBtn').checked;
+    const showUserEmail = document.getElementById('toggleUserEmail').checked;
+
+    // LocalStorageに保存
+    localStorage.setItem('ownerSettings_showPartnersBtn', showPartnersBtn);
+    localStorage.setItem('ownerSettings_showUserEmail', showUserEmail);
+
+    // 設定を即座に適用
+    applyOwnerSettings({
+        showPartnersBtn,
+        showUserEmail
+    });
+
+    console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail });
+}
+
+// グローバルに関数を公開
+window.openOwnerSettings = openOwnerSettings;
+window.closeOwnerSettings = closeOwnerSettings;
+window.updateOwnerSettings = updateOwnerSettings;

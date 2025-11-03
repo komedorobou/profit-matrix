@@ -247,8 +247,59 @@
         </div>
     </div>
 
+    <!-- オーナー設定モーダル -->
+    <div id="ownerSettingsModal" class="api-modal" style="display: none;">
+        <div class="api-modal-content" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="margin: 0;">⚙️ オーナー設定</h2>
+                <button onclick="closeOwnerSettings()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="background: rgba(0, 255, 163, 0.05); border: 1px solid rgba(0, 255, 163, 0.2); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <p style="margin: 0; color: rgba(148, 163, 184, 0.9); font-size: 14px;">
+                    💡 デモや動画撮影時に、オーナー専用機能やメールアドレスを非表示にできます
+                </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- 外注先管理ボタンの表示切替 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">👥 外注先管理ボタン</div>
+                        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.7);">ヘッダーの外注先管理ボタンを表示</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="togglePartnersBtn" onchange="updateOwnerSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <!-- メールアドレスの表示切替 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">📧 メールアドレス表示</div>
+                        <div style="font-size: 12px; color: rgba(148, 163, 184, 0.7);">右上のメールアドレスを表示</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleUserEmail" onchange="updateOwnerSettings()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="closeOwnerSettings()" style="padding: 12px 30px; background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer;">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ユーザーメニュー（ログアウトボタン） -->
     <div style="position: fixed; top: 20px; right: 20px; z-index: 1000; display: none;" id="userMenu">
+        <button id="ownerSettingsBtn" onclick="openOwnerSettings()" style="padding: 8px 16px; background: rgba(0, 255, 163, 0.2); border: 1px solid rgba(0, 255, 163, 0.4); border-radius: 5px; color: white; cursor: pointer; margin-right: 10px; display: none;">
+            ⚙️ オーナー設定
+        </button>
         <span id="userEmail" style="color: white; margin-right: 15px; font-size: 14px;"></span>
         <button onclick="handleLogout()"
                 style="padding: 8px 16px; background: rgba(255, 107, 157, 0.2); border: 1px solid rgba(255, 107, 157, 0.4); border-radius: 5px; color: white; cursor: pointer;">
