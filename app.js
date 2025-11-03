@@ -97,6 +97,13 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     console.log('✅ オーナー設定ボタンを表示')
                 }
 
+                // 選択UI（選択数・送信ボタン）を表示
+                const selectionUI = document.getElementById('selectionUI')
+                if (selectionUI) {
+                    selectionUI.style.display = 'flex'
+                    console.log('✅ 選択UIを表示（オーナー専用）')
+                }
+
                 // オーナー設定を読み込んで適用
                 loadOwnerSettings()
             } else {
@@ -106,6 +113,13 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 const partnersBtn = document.getElementById('partnersBtn')
                 if (partnersBtn) {
                     partnersBtn.style.display = 'none'
+                }
+
+                // 選択UIを非表示
+                const selectionUI = document.getElementById('selectionUI')
+                if (selectionUI) {
+                    selectionUI.style.display = 'none'
+                    console.log('🔒 選択UIを非表示（一般ユーザー）')
                 }
             }
 
@@ -743,11 +757,17 @@ function appendResultCard(container, item, index) {
     // 商品データをカードに保存
     card.dataset.productData = JSON.stringify(item);
 
-    card.innerHTML = `
+    // オーナーのみチェックボックスを表示
+    const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
+    const checkboxHTML = isOwner ? `
         <div class="card-checkbox-container">
             <input type="checkbox" class="card-checkbox" id="checkbox-${index}" onchange="toggleProductSelect(this, ${index})">
             <label for="checkbox-${index}" class="checkbox-label"></label>
         </div>
+    ` : '';
+
+    card.innerHTML = `
+        ${checkboxHTML}
         <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjMDBGRkEzIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'}" alt="${item.productName}" class="result-image">
         <div class="result-content">
             <div class="result-title">${item.productName}</div>

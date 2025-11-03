@@ -405,14 +405,17 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
                 <h2 class="results-header" style="margin: 0;">High Profit Discoveries</h2>
                 <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <!-- 選択数カウント -->
-                    <div style="padding: 10px 20px; background: rgba(0, 255, 163, 0.1); border: 1px solid rgba(0, 255, 163, 0.3); border-radius: 8px; color: white; font-weight: 600;">
-                        選択: <span id="selectedCount" style="color: #00FFA3; font-size: 1.2em;">0</span>件
+                    <!-- 選択数カウント・送信ボタン（オーナー専用） -->
+                    <div id="selectionUI" style="display: none; align-items: center; gap: 15px;">
+                        <!-- 選択数カウント -->
+                        <div style="padding: 10px 20px; background: rgba(0, 255, 163, 0.1); border: 1px solid rgba(0, 255, 163, 0.3); border-radius: 8px; color: white; font-weight: 600;">
+                            選択: <span id="selectedCount" style="color: #00FFA3; font-size: 1.2em;">0</span>件
+                        </div>
+                        <!-- 送信ボタン -->
+                        <button id="sendSelectedBtn" onclick="openSendModal()" style="padding: 10px 30px; background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; transition: all 0.3s ease; opacity: 0.5; pointer-events: none;">
+                            📤 選択商品を送信
+                        </button>
                     </div>
-                    <!-- 送信ボタン -->
-                    <button id="sendSelectedBtn" onclick="openSendModal()" style="padding: 10px 30px; background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; transition: all 0.3s ease; opacity: 0.5; pointer-events: none;">
-                        📤 選択商品を送信
-                    </button>
                     <!-- 並び替え -->
                     <label style="color: rgba(148, 163, 184, 0.9); font-size: 14px; font-weight: 500;">並び替え:</label>
                     <select id="sortSelect" onchange="sortResults()" style="padding: 10px 20px; background: rgba(0, 255, 163, 0.1); border: 1px solid rgba(0, 255, 163, 0.3); border-radius: 8px; color: white; font-weight: 600; cursor: pointer; outline: none;">
