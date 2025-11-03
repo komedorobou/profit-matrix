@@ -91,13 +91,6 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             if (isOwner) {
                 console.log('✅ オーナーモード: 専用機能を有効化')
 
-                // オーナー設定ボタンを表示
-                const ownerSettingsBtn = document.getElementById('ownerSettingsBtn')
-                if (ownerSettingsBtn) {
-                    ownerSettingsBtn.style.display = 'inline-block'
-                    console.log('✅ オーナー設定ボタンを表示')
-                }
-
                 // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
                 loadOwnerSettings()
 
