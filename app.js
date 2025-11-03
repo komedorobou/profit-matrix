@@ -132,15 +132,25 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
 
         } else if (event === 'SIGNED_OUT') {
             console.log('🚪 ログアウト')
+
+            // フラグとグローバル変数をリセット
+            shouldCheckApiKeyAfterOwnerSettings = false
             currentUser = null
             currentPlan = 'starter'
             localStorage.clear()
 
+            // すべてのモーダルを閉じる
             const authModal = document.getElementById('authModal')
             const userMenu = document.getElementById('userMenu')
+            const ownerSettingsModal = document.getElementById('ownerSettingsModal')
+            const apiKeyModal = document.getElementById('apiKeyModal')
 
             if (authModal) authModal.style.display = 'flex'
             if (userMenu) userMenu.style.display = 'none'
+            if (ownerSettingsModal) ownerSettingsModal.style.display = 'none'
+            if (apiKeyModal) apiKeyModal.style.display = 'none'
+
+            console.log('✅ ログアウト処理完了')
         }
     } catch (error) {
         console.error('❌ 認証処理でエラー発生:', error)
