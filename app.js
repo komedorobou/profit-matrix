@@ -17,6 +17,7 @@ let partners = []; // 外注先リスト
 let currentPartnerTab = 'approved'; // 現在表示中のタブ
 let currentUser = null
 let currentPlan = 'starter'
+let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPIキーチェックフラグ
 
 // 認証状態監視
 supabaseAuth.auth.onAuthStateChange(async (event, session) => {
@@ -99,6 +100,14 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
 
                 // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
                 loadOwnerSettings()
+
+                // オーナーの場合、まずオーナー設定モーダルを表示
+                console.log('⚙️ オーナー設定モーダルを表示（ログイン時）')
+                const ownerSettingsModal = document.getElementById('ownerSettingsModal')
+                if (ownerSettingsModal) {
+                    ownerSettingsModal.style.display = 'flex'
+                    shouldCheckApiKeyAfterOwnerSettings = true // オーナー設定後にAPIキーチェック
+                }
             } else {
                 console.log('🔒 一般ユーザーモード')
 
@@ -114,15 +123,15 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     selectionUI.style.display = 'none'
                     console.log('🔒 選択UIを非表示（一般ユーザー）')
                 }
-            }
 
-            // APIキー確認
-            yahooApiKey = localStorage.getItem('yahooApiKey')
-            if (!yahooApiKey) {
-                console.log('⚙️ APIキーモーダルを表示')
-                const apiKeyModal = document.getElementById('apiKeyModal')
-                if (apiKeyModal) {
-                    apiKeyModal.style.display = 'flex'
+                // 一般ユーザーの場合は通常通りAPIキー確認
+                yahooApiKey = localStorage.getItem('yahooApiKey')
+                if (!yahooApiKey) {
+                    console.log('⚙️ APIキーモーダルを表示')
+                    const apiKeyModal = document.getElementById('apiKeyModal')
+                    if (apiKeyModal) {
+                        apiKeyModal.style.display = 'flex'
+                    }
                 }
             }
 
@@ -2149,6 +2158,22 @@ function closeOwnerSettings() {
     const modal = document.getElementById('ownerSettingsModal');
     if (modal) {
         modal.style.display = 'none';
+    }
+
+    // ログイン後のフローの場合、APIキーチェックを実行
+    if (shouldCheckApiKeyAfterOwnerSettings) {
+        shouldCheckApiKeyAfterOwnerSettings = false; // フラグをリセット
+
+        yahooApiKey = localStorage.getItem('yahooApiKey')
+        if (!yahooApiKey) {
+            console.log('⚙️ APIキーモーダルを表示（オーナー設定後）')
+            const apiKeyModal = document.getElementById('apiKeyModal')
+            if (apiKeyModal) {
+                apiKeyModal.style.display = 'flex'
+            }
+        } else {
+            console.log('✅ APIキーが設定済みのため、モーダルをスキップ')
+        }
     }
 }
 
