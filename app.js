@@ -1874,6 +1874,41 @@ function sleep(ms) {
 document.getElementById('batchSearchBtn').addEventListener('click', startBatchSearch);
 
 // ========================================
+// 在庫フィルター機能
+// ========================================
+
+// 在庫フィルター切替
+function filterResultsByStock() {
+    const includeUnknown = document.getElementById('includeUnknownStock').checked;
+    const allCards = document.querySelectorAll('.result-card');
+
+    allCards.forEach(card => {
+        try {
+            const productData = JSON.parse(card.dataset.productData);
+            const stockStatus = productData.stock;
+
+            // トグルOFFで在庫不明のカードを非表示
+            if (!includeUnknown && stockStatus === '在庫状況不明') {
+                card.style.display = 'none';
+            } else {
+                card.style.display = '';
+            }
+        } catch (e) {
+            console.error('カードデータの解析エラー:', e);
+        }
+    });
+
+    // 統計を再計算
+    recalculateStats();
+}
+
+// 在庫トグルのイベントリスナー
+const stockToggle = document.getElementById('includeUnknownStock');
+if (stockToggle) {
+    stockToggle.addEventListener('change', filterResultsByStock);
+}
+
+// ========================================
 // モード切替機能
 // ========================================
 
