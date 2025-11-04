@@ -886,20 +886,92 @@ function appendResultCard(container, item, index) {
         </div>
     `;
     container.appendChild(card);
+
+    // 見送り済みかチェックして、状態を復元
+    if (isProductSkipped(item.url)) {
+        card.classList.add('skipped');
+        const skipBtn = card.querySelector('.skip-btn');
+        if (skipBtn) {
+            skipBtn.textContent = '見送り済み';
+            skipBtn.style.background = 'rgba(148, 163, 184, 0.3)';
+        }
+    }
+}
+
+// 見送り済み商品を取得
+function getSkippedProducts() {
+    try {
+        const skipped = localStorage.getItem('skippedProducts');
+        return skipped ? JSON.parse(skipped) : [];
+    } catch (e) {
+        console.error('見送りデータの読み込みエラー:', e);
+        return [];
+    }
+}
+
+// 見送り済み商品を保存
+function saveSkippedProducts(skippedList) {
+    try {
+        localStorage.setItem('skippedProducts', JSON.stringify(skippedList));
+    } catch (e) {
+        console.error('見送りデータの保存エラー:', e);
+    }
+}
+
+// 見送り済みかチェック
+function isProductSkipped(url) {
+    const skippedList = getSkippedProducts();
+    return skippedList.includes(url);
+}
+
+// 見送り済みリストをクリア
+window.clearSkippedProducts = function() {
+    if (confirm('見送り済みリストを全てクリアしますか？')) {
+        localStorage.removeItem('skippedProducts');
+
+        // 現在表示中のカードの見送り状態を解除
+        const skippedCards = document.querySelectorAll('.result-card.skipped');
+        skippedCards.forEach(card => {
+            card.classList.remove('skipped');
+            const skipBtn = card.querySelector('.skip-btn');
+            if (skipBtn) {
+                skipBtn.textContent = '見送り';
+                skipBtn.style.background = '';
+            }
+        });
+
+        // 統計を再計算
+        recalculateStats();
+
+        alert('✅ 見送り済みリストをクリアしました');
+    }
 }
 
 // 見送りトグル
 window.toggleSkip = function(button) {
     const card = button.closest('.result-card');
+    const productData = JSON.parse(card.dataset.productData);
+    const productUrl = productData.url;
     const isSkipped = card.classList.toggle('skipped');
 
+    // localStorageを更新
+    let skippedList = getSkippedProducts();
+
     if (isSkipped) {
+        // 見送りに追加
+        if (!skippedList.includes(productUrl)) {
+            skippedList.push(productUrl);
+        }
         button.textContent = '見送り済み';
         button.style.background = 'rgba(148, 163, 184, 0.3)';
     } else {
+        // 見送りから削除
+        skippedList = skippedList.filter(url => url !== productUrl);
         button.textContent = '見送り';
         button.style.background = '';
     }
+
+    saveSkippedProducts(skippedList);
 
     // 統計を再計算
     recalculateStats();
