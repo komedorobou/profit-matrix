@@ -508,32 +508,29 @@ document.getElementById('csvFile').addEventListener('change', function() {
 });
 
 // Yahoo検索モードのドラッグ&ドロップ機能
-const uploadContainer = document.querySelector('#yahooMode .upload-container');
+const yahooUploadArea = document.getElementById('yahooUploadArea');
 const csvFileInput = document.getElementById('csvFile');
 
-if (uploadContainer && csvFileInput) {
+if (yahooUploadArea && csvFileInput) {
     // ドラッグオーバー時
-    uploadContainer.addEventListener('dragover', (e) => {
+    yahooUploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadContainer.style.borderColor = '#00FFA3';
-        uploadContainer.style.background = 'rgba(0, 255, 163, 0.1)';
+        yahooUploadArea.classList.add('dragover');
     });
 
     // ドラッグ離脱時
-    uploadContainer.addEventListener('dragleave', (e) => {
+    yahooUploadArea.addEventListener('dragleave', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadContainer.style.borderColor = 'rgba(0, 255, 163, 0.3)';
-        uploadContainer.style.background = 'rgba(0, 255, 163, 0.05)';
+        yahooUploadArea.classList.remove('dragover');
     });
 
     // ドロップ時
-    uploadContainer.addEventListener('drop', (e) => {
+    yahooUploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        uploadContainer.style.borderColor = 'rgba(0, 255, 163, 0.3)';
-        uploadContainer.style.background = 'rgba(0, 255, 163, 0.05)';
+        yahooUploadArea.classList.remove('dragover');
 
         const files = e.dataTransfer.files;
         if (files.length > 0) {
