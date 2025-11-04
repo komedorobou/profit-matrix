@@ -1908,6 +1908,16 @@ window.switchMode = function(mode) {
         console.log('fusion-mode class removed');
     }
 
+    // ストックボタンの表示/非表示を切り替え
+    const stockToggleBtn = document.getElementById('stockToggleBtn');
+    if (stockToggleBtn) {
+        if (mode === 'fusion') {
+            stockToggleBtn.style.display = 'flex';
+        } else {
+            stockToggleBtn.style.display = 'none';
+        }
+    }
+
     console.log('body classes:', document.body.className);
 }
 

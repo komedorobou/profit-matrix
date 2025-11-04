@@ -108,6 +108,12 @@ function addStockPanelToDOM() {
     // ボディに追加
     document.body.insertAdjacentHTML('beforeend', stockPanelHTML);
 
+    // 初期状態でストックボタンを非表示（Yahoo検索モードがデフォルト）
+    const stockToggleBtn = document.getElementById('stockToggleBtn');
+    if (stockToggleBtn) {
+        stockToggleBtn.style.display = 'none';
+    }
+
     // スタイルを追加
     addStockStyles();
 }
