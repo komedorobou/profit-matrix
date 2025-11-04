@@ -165,7 +165,7 @@
 
         /* CSVアップロードセクション */
         .upload-section {
-            padding: 40px 60px;
+            padding: 0 60px 40px 60px;
         }
 
         .upload-container {
@@ -1209,7 +1209,11 @@
                 gap: 20px;
             }
 
-            .upload-section, .results-section {
+            .upload-section {
+                padding: 0 40px 30px 40px;
+            }
+
+            .results-section {
                 padding: 30px 40px;
             }
         }
@@ -1244,7 +1248,11 @@
                 font-size: 0.95em;
             }
 
-            .upload-section, .results-section {
+            .upload-section {
+                padding: 0 20px 20px 20px;
+            }
+
+            .results-section {
                 padding: 20px;
             }
 
