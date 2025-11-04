@@ -516,21 +516,27 @@ if (yahooUploadArea && csvFileInput) {
     yahooUploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        yahooUploadArea.classList.add('dragover');
+        yahooUploadArea.style.borderColor = '#00FFA3';
+        yahooUploadArea.style.background = 'rgba(0, 255, 163, 0.1)';
+        yahooUploadArea.style.transform = 'scale(1.02)';
     });
 
     // ドラッグ離脱時
     yahooUploadArea.addEventListener('dragleave', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        yahooUploadArea.classList.remove('dragover');
+        yahooUploadArea.style.borderColor = 'rgba(0, 255, 163, 0.3)';
+        yahooUploadArea.style.background = 'rgba(0, 255, 163, 0.05)';
+        yahooUploadArea.style.transform = 'scale(1)';
     });
 
     // ドロップ時
     yahooUploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        yahooUploadArea.classList.remove('dragover');
+        yahooUploadArea.style.borderColor = 'rgba(0, 255, 163, 0.3)';
+        yahooUploadArea.style.background = 'rgba(0, 255, 163, 0.05)';
+        yahooUploadArea.style.transform = 'scale(1)';
 
         const files = e.dataTransfer.files;
         if (files.length > 0) {
