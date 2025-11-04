@@ -540,8 +540,10 @@ if (yahooUploadArea && csvFileInput) {
 
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            csvFileInput.files = files;
-            handleFileSelect(csvFileInput);
+            // csvFileを直接設定
+            csvFile = files[0];
+            document.getElementById('fileName').textContent = `✅ ${csvFile.name}`;
+            document.getElementById('batchSearchBtn').disabled = false;
 
             // ファイル選択後、結果セクションまでスムーズスクロール
             setTimeout(() => {
