@@ -36,7 +36,7 @@ let isGrouped = false;
 let PRODUCT_NAME_COL = 1; // 商品名の列インデックス（初期値：B列=1、グループ化後：C列=2）
 
 // プレビュー数変更時の処理
-function updatePreviewCount() {
+window.updatePreviewCount = function() {
     if (groupedData && groupedData.length > 0) {
         const groupsList = document.getElementById('groupsList');
         const previewCount = document.getElementById('previewCount').value;
@@ -57,7 +57,7 @@ function updatePreviewCount() {
             </div>
         `).join('');
     }
-}
+};
 
 function reloadFilesWithEncoding(encoding) {
     csvFiles = [];
@@ -377,11 +377,11 @@ function updateFileList() {
     document.getElementById('actionButtons').style.display = 'flex';
 }
 
-function removeFile(index) {
+window.removeFile = function(index) {
     csvFiles.splice(index, 1);
     originalFiles.splice(index, 1);
     updateFileList();
-}
+};
 
 window.clearAll = function() {
     csvFiles = [];

@@ -889,7 +889,7 @@ function appendResultCard(container, item, index) {
 }
 
 // 見送りトグル
-function toggleSkip(button) {
+window.toggleSkip = function(button) {
     const card = button.closest('.result-card');
     const isSkipped = card.classList.toggle('skipped');
 
@@ -939,7 +939,7 @@ function recalculateStats() {
 }
 
 // ソート機能
-function sortResults() {
+window.sortResults = function() {
     const sortValue = document.getElementById('sortSelect').value;
     const container = document.querySelector('.results-container');
     if (!container) return;
@@ -980,7 +980,7 @@ function sortResults() {
 
     // カードを再配置
     cards.forEach(card => container.appendChild(card));
-}
+};
 
 // 統計更新
 function updateStats(completed, total) {
@@ -1001,7 +1001,7 @@ function updateStats(completed, total) {
 }
 
 // 商品選択トグル
-function toggleProductSelect(checkbox, index) {
+window.toggleProductSelect = function(checkbox, index) {
     const card = checkbox.closest('.result-card');
     const productData = JSON.parse(card.dataset.productData);
 
@@ -1018,7 +1018,7 @@ function toggleProductSelect(checkbox, index) {
 
     // 選択数カウントを更新
     updateSelectedCount();
-}
+};
 
 // 選択数カウント更新
 function updateSelectedCount() {
@@ -1118,7 +1118,7 @@ function displayPartnerSelectList() {
 }
 
 // 送信先を選択
-function selectPartner(index) {
+window.selectPartner = function(index) {
     // 以前の選択を解除
     document.querySelectorAll('#partnerSelectList > div').forEach(div => {
         div.style.borderColor = 'rgba(0, 255, 163, 0.2)';
@@ -1136,7 +1136,7 @@ function selectPartner(index) {
     if (icon) icon.style.display = 'flex';
 
     selectedPartnerId = index;
-}
+};
 
 // 送信確認
 window.confirmSend = async function() {
@@ -1390,15 +1390,15 @@ function displayPartnersList() {
 }
 
 // 招待リンクをコピー
-function copyInviteLink(partnerId) {
+window.copyInviteLink = function(partnerId) {
     const input = document.getElementById(`inviteLink_${partnerId}`);
     input.select();
     document.execCommand('copy');
     alert('招待リンクをコピーしました！\n外注先に送ってください。');
-}
+};
 
 // 送信方法による入力フィールド切り替え
-function toggleSendMethodFields() {
+window.toggleSendMethodFields = function() {
     const emailField = document.getElementById('emailField');
     const lineField = document.getElementById('lineField');
     const methodEmail = document.getElementById('methodEmail');
@@ -1410,7 +1410,7 @@ function toggleSendMethodFields() {
         emailField.style.display = 'none';
         lineField.style.display = 'block';
     }
-}
+};
 
 // 追加フォームを表示
 window.showAddPartnerForm = function() {
@@ -1523,7 +1523,7 @@ window.savePartner = async function() {
 }
 
 // 外注先を編集
-function editPartner(index) {
+window.editPartner = function(index) {
     const partner = partners[index];
     const form = document.getElementById('partnerForm');
     const formTitle = document.getElementById('formTitle');
@@ -1544,10 +1544,10 @@ function editPartner(index) {
     toggleSendMethodFields();
 
     form.style.display = 'block';
-}
+};
 
 // 外注先を削除
-async function deletePartner(index) {
+window.deletePartner = async function(index) {
     const partner = partners[index];
 
     if (!confirm(`${partner.name} を削除してもよろしいですか？`)) {
@@ -1576,7 +1576,7 @@ async function deletePartner(index) {
         console.error('削除エラー:', error);
         alert('❌ 削除に失敗しました: ' + error.message);
     }
-}
+};
 
 // ========================================
 // 承認待ちパートナー管理
@@ -1704,7 +1704,7 @@ function displayPendingPartnersList(pendingPartners) {
 }
 
 // パートナーを承認（pending_partners → partners）
-async function approvePartner(pendingId, lineId, displayName) {
+window.approvePartner = async function(pendingId, lineId, displayName) {
     if (!confirm(`${displayName} を外注先として承認しますか？`)) {
         return;
     }
@@ -1760,10 +1760,10 @@ async function approvePartner(pendingId, lineId, displayName) {
         console.error('承認エラー:', error);
         alert('❌ 承認に失敗しました: ' + error.message);
     }
-}
+};
 
 // パートナーを却下
-async function rejectPartner(pendingId) {
+window.rejectPartner = async function(pendingId) {
     if (!confirm('この登録を却下しますか？')) {
         return;
     }
@@ -1791,7 +1791,7 @@ async function rejectPartner(pendingId) {
         console.error('却下エラー:', error);
         alert('❌ 却下に失敗しました: ' + error.message);
     }
-}
+};
 
 // ユーティリティ
 function sleep(ms) {
@@ -2093,9 +2093,9 @@ function displayFusionResults(results) {
 }
 
 // ストック追加
-function addFusionItemToStock(index) {
+window.addFusionItemToStock = function(index) {
     const item = fusionResults[index];
-    
+
     if (typeof addToStock === 'function') {
         addToStock({
             brandName: item.brand,
@@ -2108,7 +2108,7 @@ function addFusionItemToStock(index) {
     } else {
         alert('ストック機能が利用できません');
     }
-}
+};
 
 // 全てストック追加
 function addAllToStock() {
@@ -2241,7 +2241,7 @@ function openOwnerSettings() {
 }
 
 // オーナー設定モーダルを閉じる
-function closeOwnerSettings() {
+window.closeOwnerSettings = function() {
     const modal = document.getElementById('ownerSettingsModal');
     if (modal) {
         modal.style.display = 'none';
@@ -2262,10 +2262,10 @@ function closeOwnerSettings() {
             console.log('✅ APIキーが設定済みのため、モーダルをスキップ')
         }
     }
-}
+};
 
 // オーナー設定を更新
-function updateOwnerSettings() {
+window.updateOwnerSettings = function() {
     const showPartnersBtn = document.getElementById('togglePartnersBtn').checked;
     const showUserEmail = document.getElementById('toggleUserEmail').checked;
     const showSelectionUI = document.getElementById('toggleSelectionUI').checked;
@@ -2283,9 +2283,4 @@ function updateOwnerSettings() {
     });
 
     console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail, showSelectionUI });
-}
-
-// グローバルに関数を公開
-window.openOwnerSettings = openOwnerSettings;
-window.closeOwnerSettings = closeOwnerSettings;
-window.updateOwnerSettings = updateOwnerSettings;
+};
