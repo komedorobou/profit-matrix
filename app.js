@@ -507,6 +507,50 @@ document.getElementById('csvFile').addEventListener('change', function() {
     }, 300);
 });
 
+// Yahoo検索モードのドラッグ&ドロップ機能
+const uploadContainer = document.querySelector('#yahooMode .upload-container');
+const csvFileInput = document.getElementById('csvFile');
+
+if (uploadContainer && csvFileInput) {
+    // ドラッグオーバー時
+    uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadContainer.style.borderColor = '#00FFA3';
+        uploadContainer.style.background = 'rgba(0, 255, 163, 0.1)';
+    });
+
+    // ドラッグ離脱時
+    uploadContainer.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadContainer.style.borderColor = 'rgba(0, 255, 163, 0.3)';
+        uploadContainer.style.background = 'rgba(0, 255, 163, 0.05)';
+    });
+
+    // ドロップ時
+    uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadContainer.style.borderColor = 'rgba(0, 255, 163, 0.3)';
+        uploadContainer.style.background = 'rgba(0, 255, 163, 0.05)';
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            csvFileInput.files = files;
+            handleFileSelect(csvFileInput);
+
+            // ファイル選択後、結果セクションまでスムーズスクロール
+            setTimeout(() => {
+                document.getElementById('searchResults').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 300);
+        }
+    });
+}
+
 // 検索開始
 async function startBatchSearch() {
     if (!yahooApiKey) {
