@@ -525,37 +525,37 @@ window.selectPlan = async function(plan) {
     // ローディング表示
     const btn = event.target
     const originalText = btn.textContent
-    btn.textContent = '処理中...'
+    btn.textContent = 'Stripeへ移動中...'
     btn.disabled = true
 
     try {
-        // TODO: Stripe Checkoutへリダイレクト
-        // 現在は仮実装として、プランをSupabaseに保存
-        const { error } = await supabaseAuth
-            .from('profiles')
-            .update({
+        // Stripe Checkout Sessionを作成
+        const response = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 plan: plan,
-                subscription_status: 'active'
+                userId: currentUser.id,
+                customerEmail: currentUser.email
             })
-            .eq('id', currentUser.id)
+        })
 
-        if (error) {
-            throw error
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Checkout Session作成に失敗しました')
         }
 
-        // プラン情報を更新
-        currentPlan = plan
-        subscriptionStatus = 'active'
+        console.log('✅ Checkout Session作成成功:', data.sessionId)
 
-        alert(`✅ ${plan}プランを選択しました！\n\n※本番環境では、Stripe決済ページにリダイレクトされます。`)
-        closePlanModal()
-
-        // ページをリロードしてプラン情報を反映
-        location.reload()
+        // StripeのCheckoutページにリダイレクト
+        window.location.href = data.url
 
     } catch (error) {
         console.error('❌ プラン選択エラー:', error)
-        alert('プラン選択エラー: ' + error.message)
+        alert('プラン選択エラー:\n' + error.message)
         btn.textContent = originalText
         btn.disabled = false
     }
@@ -616,6 +616,28 @@ function canUseSearch(rowCount) {
 // 初期化処理を更新
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 アプリ初期化開始')
+
+    // URLパラメータをチェック（Stripe決済結果）
+    const urlParams = new URLSearchParams(window.location.search)
+    const paymentSuccess = urlParams.get('success')
+    const paymentCanceled = urlParams.get('canceled')
+
+    if (paymentSuccess === 'true') {
+        console.log('✅ Stripe決済成功')
+        alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
+        // URLをクリーンに
+        window.history.replaceState(null, '', window.location.pathname)
+        // ページをリロードしてプラン情報を更新
+        window.location.reload()
+        return
+    }
+
+    if (paymentCanceled === 'true') {
+        console.log('⚠️ Stripe決済キャンセル')
+        alert('⚠️ お支払いがキャンセルされました。\n\n再度プランを選択してください。')
+        // URLをクリーンに
+        window.history.replaceState(null, '', window.location.pathname)
+    }
 
     // URLハッシュをチェック
     const hash = window.location.hash

@@ -18,7 +18,8 @@
   "author": "Claude Code + Human",
   "license": "MIT",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "stripe": "^14.0.0"
   },
   "devDependencies": {
     "vercel": "^33.0.0"
