@@ -16,7 +16,9 @@ let selectedProducts = []; // 選択された商品を保持
 let partners = []; // 外注先リスト
 let currentPartnerTab = 'approved'; // 現在表示中のタブ
 let currentUser = null
-let currentPlan = 'starter'
+let currentPlan = 'trial'  // trial, starter, standard, premium
+let planExpiresAt = null  // トライアル期限
+let subscriptionStatus = 'trial'  // trial, active, canceled, past_due
 let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPIキーチェックフラグ
 
 // 認証状態監視
@@ -29,34 +31,39 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             console.log('✅ ログイン成功:', session.user.email)
             currentUser = session.user
 
-            // プラン情報取得（エラーハンドリング付き）
-            console.log('📊 プロフィール取得スキップ（暫定対応）')
-            console.log('デフォルトプラン(starter)を使用します')
-            currentPlan = 'starter'
+            // プラン情報取得
+            console.log('📊 プロフィール情報を取得中...')
+            try {
+                const { data: profile, error: profileError } = await supabaseAuth
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single()
 
-            // 後でプロフィール取得を試みる（バックグラウンドで）
-            setTimeout(async () => {
-                try {
-                    console.log('🔄 バックグラウンドでプロフィール取得を試行...')
-                    const { data: profile, error: profileError } = await supabaseAuth
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', session.user.id)
-                        .single()
+                if (profileError) {
+                    console.warn('⚠️ プロフィール取得エラー:', profileError.message)
+                    // エラー時はトライアルとして扱う
+                    currentPlan = 'trial'
+                    subscriptionStatus = 'trial'
+                    planExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7日後
+                } else if (profile) {
+                    console.log('✅ プロフィール取得成功:', profile)
+                    currentPlan = profile.plan || 'trial'
+                    subscriptionStatus = profile.subscription_status || 'trial'
+                    planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
 
-                    if (profileError) {
-                        console.warn('⚠️ プロフィール取得エラー:', profileError.message)
-                    } else if (profile) {
-                        console.log('✅ プロフィール取得成功:', profile)
-                        currentPlan = profile.plan || 'starter'
-                        localStorage.setItem('profitMatrixPlan', profile.plan)
-                    } else {
-                        console.warn('⚠️ プロフィールが見つかりません')
-                    }
-                } catch (error) {
-                    console.warn('⚠️ プロフィール取得失敗（継続して使用可能）:', error.message)
+                    // プランステータスをチェック
+                    checkPlanStatus()
+                } else {
+                    console.warn('⚠️ プロフィールが見つかりません')
+                    currentPlan = 'trial'
+                    subscriptionStatus = 'trial'
                 }
-            }, 1000)
+            } catch (error) {
+                console.error('❌ プロフィール取得エラー:', error)
+                currentPlan = 'trial'
+                subscriptionStatus = 'trial'
+            }
 
             // UI更新
             console.log('🎨 UI更新開始...')
@@ -159,10 +166,16 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             // フラグとグローバル変数をリセット
             shouldCheckApiKeyAfterOwnerSettings = false
             currentUser = null
-            currentPlan = 'starter'
+            currentPlan = 'trial'
+            planExpiresAt = null
+            subscriptionStatus = 'trial'
 
             // プラン情報のみクリア（APIキーとオーナー設定は保持）
             localStorage.removeItem('profitMatrixPlan')
+
+            // トライアルバナーを削除
+            const trialBanner = document.getElementById('trialBanner')
+            if (trialBanner) trialBanner.remove()
 
             // ログインフォームをリセット
             const loginEmail = document.getElementById('loginEmail')
@@ -412,6 +425,193 @@ window.handlePasswordUpdate = async function() {
     }
 }
 
+// ========================================
+// プラン管理機能
+// ========================================
+
+// プランステータスをチェック
+function checkPlanStatus() {
+    console.log('📊 プランステータスチェック:', {
+        plan: currentPlan,
+        status: subscriptionStatus,
+        expiresAt: planExpiresAt
+    })
+
+    // オーナーアカウントはチェック不要
+    if (currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini')) {
+        console.log('✅ オーナーアカウント: 無制限')
+        return
+    }
+
+    // トライアル期限切れチェック
+    if (subscriptionStatus === 'trial' && planExpiresAt) {
+        const now = new Date()
+        if (now > planExpiresAt) {
+            console.log('⚠️ トライアル期限切れ')
+            showPlanExpiredModal()
+            return
+        }
+
+        // 残り日数を表示
+        const daysLeft = Math.ceil((planExpiresAt - now) / (1000 * 60 * 60 * 24))
+        console.log(`🎉 トライアル残り ${daysLeft} 日`)
+        showTrialBanner(daysLeft)
+    }
+
+    // 支払い期限切れチェック
+    if (subscriptionStatus === 'past_due') {
+        console.log('⚠️ 支払い期限切れ')
+        showPaymentOverdueModal()
+    }
+}
+
+// トライアル残日数バナーを表示
+function showTrialBanner(daysLeft) {
+    const banner = document.createElement('div')
+    banner.id = 'trialBanner'
+    banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+        text-align: center;
+        padding: 12px;
+        font-weight: 600;
+        z-index: 9999;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    `
+    banner.innerHTML = `
+        🎉 無料トライアル残り ${daysLeft} 日 |
+        <span style="cursor: pointer; text-decoration: underline; margin-left: 10px;" onclick="openPlanModal()">
+            今すぐプランを選択
+        </span>
+    `
+
+    // 既存のバナーを削除
+    const existingBanner = document.getElementById('trialBanner')
+    if (existingBanner) existingBanner.remove()
+
+    document.body.prepend(banner)
+}
+
+// トライアル期限切れモーダルを表示
+function showPlanExpiredModal() {
+    alert('⚠️ 無料トライアル期間が終了しました\n\n検索機能を使用するには、有料プランへのアップグレードが必要です。')
+    openPlanModal()
+}
+
+// 支払い期限切れモーダルを表示
+function showPaymentOverdueModal() {
+    alert('⚠️ お支払いが確認できていません\n\nサービスの利用を継続するには、お支払い情報を更新してください。')
+    openPlanModal()
+}
+
+// プラン選択モーダルを開く
+window.openPlanModal = function() {
+    document.getElementById('planModal').style.display = 'flex'
+}
+
+// プラン選択モーダルを閉じる
+window.closePlanModal = function() {
+    document.getElementById('planModal').style.display = 'none'
+}
+
+// プランを選択
+window.selectPlan = async function(plan) {
+    console.log('💳 プラン選択:', plan)
+
+    // ローディング表示
+    const btn = event.target
+    const originalText = btn.textContent
+    btn.textContent = '処理中...'
+    btn.disabled = true
+
+    try {
+        // TODO: Stripe Checkoutへリダイレクト
+        // 現在は仮実装として、プランをSupabaseに保存
+        const { error } = await supabaseAuth
+            .from('profiles')
+            .update({
+                plan: plan,
+                subscription_status: 'active'
+            })
+            .eq('id', currentUser.id)
+
+        if (error) {
+            throw error
+        }
+
+        // プラン情報を更新
+        currentPlan = plan
+        subscriptionStatus = 'active'
+
+        alert(`✅ ${plan}プランを選択しました！\n\n※本番環境では、Stripe決済ページにリダイレクトされます。`)
+        closePlanModal()
+
+        // ページをリロードしてプラン情報を反映
+        location.reload()
+
+    } catch (error) {
+        console.error('❌ プラン選択エラー:', error)
+        alert('プラン選択エラー: ' + error.message)
+        btn.textContent = originalText
+        btn.disabled = false
+    }
+}
+
+// 検索前のプランチェック
+function canUseSearch(rowCount) {
+    // オーナーアカウントは無制限
+    if (currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini')) {
+        return { allowed: true }
+    }
+
+    // トライアル期限切れチェック
+    if (subscriptionStatus === 'trial' && planExpiresAt) {
+        const now = new Date()
+        if (now > planExpiresAt) {
+            return {
+                allowed: false,
+                reason: 'トライアル期限切れ',
+                message: '無料トライアル期間が終了しました。\n有料プランにアップグレードしてください。'
+            }
+        }
+    }
+
+    // サブスクリプション状態チェック
+    if (subscriptionStatus !== 'trial' && subscriptionStatus !== 'active') {
+        return {
+            allowed: false,
+            reason: 'サブスクリプション無効',
+            message: 'サブスクリプションが有効ではありません。\nお支払い情報を更新してください。'
+        }
+    }
+
+    // プラン別の行数制限チェック
+    const limits = {
+        trial: 300,    // トライアル: Standardと同等
+        starter: 100,
+        standard: 300,
+        premium: 999999  // 無制限
+    }
+
+    const maxRows = limits[currentPlan] || 100
+
+    if (rowCount > maxRows) {
+        return {
+            allowed: false,
+            reason: 'プラン制限',
+            message: `${currentPlan}プランでは最大${maxRows}行まで検索できます。\n\nCSVファイルは${rowCount}行あります。\n上位プランへのアップグレードをご検討ください。`,
+            currentLimit: maxRows,
+            requestedRows: rowCount
+        }
+    }
+
+    return { allowed: true, limit: maxRows }
+}
+
 
 // 初期化処理を更新
 document.addEventListener('DOMContentLoaded', async () => {
@@ -610,27 +810,42 @@ async function startBatchSearch() {
             throw new Error('CSVデータが空です');
         }
 
-        // オーナーアカウントは制限なし
-        const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
+        // プランチェック
+        const planCheck = canUseSearch(csvData.length);
 
-        let limitedData;
-        if (isOwner) {
-            console.log('✅ オーナーアカウント: 行数制限なし');
-            limitedData = csvData;
-        } else {
-            // プラン別の検索行数制限を適用
-            const limits = {
-                starter: 100,
-                standard: 300,
-                premium: 999999
-            };
-            const maxSearchRows = limits[currentPlan] || 100;
-            limitedData = csvData.slice(0, maxSearchRows);
+        if (!planCheck.allowed) {
+            // プラン制限に引っかかった
+            console.log('⚠️ プラン制限:', planCheck.reason);
+            alert(`⚠️ ${planCheck.reason}\n\n${planCheck.message}`);
 
-            // 制限がかかっている場合は通知
-            if (csvData.length > maxSearchRows) {
-                console.log(`⚠️ プラン制限: ${csvData.length}行中、${maxSearchRows}行のみ検索します`);
-                alert(`📊 プラン制限\n\nCSVファイルは${csvData.length}行ありますが、\n${currentPlan}プランでは最大${maxSearchRows}行まで検索できます。\n\n先頭${maxSearchRows}行のみ検索を実行します。`);
+            // プラン選択モーダルを表示
+            openPlanModal();
+
+            // ローディングを解除
+            resultsDiv.innerHTML = '<div class="message">プランのアップグレードが必要です</div>';
+            return;
+        }
+
+        // 行数制限を適用
+        const limitedData = csvData.slice(0, planCheck.limit);
+
+        // 制限がかかっている場合は通知
+        if (csvData.length > planCheck.limit) {
+            console.log(`⚠️ プラン制限: ${csvData.length}行中、${planCheck.limit}行のみ検索します`);
+
+            // アップグレード提案
+            const shouldUpgrade = confirm(
+                `📊 プラン制限\n\n` +
+                `CSVファイルは${csvData.length}行ありますが、\n` +
+                `${currentPlan}プランでは最大${planCheck.limit}行まで検索できます。\n\n` +
+                `先頭${planCheck.limit}行のみ検索を実行します。\n\n` +
+                `上位プランにアップグレードしますか？`
+            );
+
+            if (shouldUpgrade) {
+                openPlanModal();
+                resultsDiv.innerHTML = '';
+                return;
             }
         }
 

@@ -1799,3 +1799,145 @@
             border-color: #8B5CF6;
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
+
+/* ========================================
+   プラン選択モーダル
+   ======================================== */
+
+.plan-card {
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(26, 31, 46, 0.9) 100%);
+    border: 1px solid rgba(0, 255, 163, 0.2);
+    border-radius: 16px;
+    padding: 30px;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.plan-card:hover {
+    border-color: #00FFA3;
+    box-shadow: 0 10px 40px rgba(0, 255, 163, 0.2);
+    transform: translateY(-5px);
+}
+
+.plan-card.recommended {
+    border-color: #FFD700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.plan-card.recommended:hover {
+    box-shadow: 0 10px 50px rgba(255, 215, 0, 0.4);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.plan-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #00FFA3;
+}
+
+.plan-card.recommended .plan-name {
+    color: #FFD700;
+}
+
+.plan-icon {
+    font-size: 32px;
+}
+
+.plan-price {
+    margin-bottom: 15px;
+}
+
+.price-amount {
+    font-size: 42px;
+    font-weight: 800;
+    color: white;
+}
+
+.price-period {
+    font-size: 18px;
+    color: #94A3B8;
+    margin-left: 5px;
+}
+
+.plan-description {
+    color: #94A3B8;
+    font-size: 14px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.plan-features {
+    margin-bottom: 25px;
+}
+
+.feature-item {
+    padding: 10px 0;
+    color: #CBD5E1;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.plan-select-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.plan-select-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 255, 163, 0.4);
+}
+
+.plan-card.recommended .plan-select-btn {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.plan-card.recommended .plan-select-btn:hover {
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    #planCards {
+        grid-template-columns: 1fr !important;
+    }
+
+    .plan-card {
+        padding: 25px;
+    }
+
+    .price-amount {
+        font-size: 36px;
+    }
+}

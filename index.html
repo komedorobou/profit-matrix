@@ -801,6 +801,89 @@
         </div>
     </div>
 
+    <!-- プラン選択モーダル -->
+    <div id="planModal" class="api-modal" style="display: none;">
+        <div class="api-modal-content" style="max-width: 900px; background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);">
+            <h2 style="text-align: center; margin-bottom: 10px; font-size: 32px;">💎 プラン選択</h2>
+            <p style="text-align: center; color: #94A3B8; margin-bottom: 40px;">あなたに最適なプランを選んで、利益発見を加速しましょう</p>
+
+            <div id="planCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 30px;">
+                <!-- スタータープラン -->
+                <div class="plan-card" data-plan="starter">
+                    <div class="plan-header">
+                        <div class="plan-name">スタータープラン</div>
+                        <div class="plan-icon">🌱</div>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount">¥4,980</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <div class="plan-description">初心者せどらー向け</div>
+                    <div class="plan-features">
+                        <div class="feature-item">✅ 100行/回まで検索</div>
+                        <div class="feature-item">✅ 検索回数無制限</div>
+                        <div class="feature-item">✅ CSV統合モード</div>
+                        <div class="feature-item">✅ 300+ブランド対応</div>
+                        <div class="feature-item">✅ メールサポート</div>
+                    </div>
+                    <button class="plan-select-btn" onclick="selectPlan('starter')">選択する</button>
+                </div>
+
+                <!-- スタンダードプラン（おすすめ） -->
+                <div class="plan-card recommended" data-plan="standard">
+                    <div class="recommended-badge">おすすめ</div>
+                    <div class="plan-header">
+                        <div class="plan-name">スタンダードプラン</div>
+                        <div class="plan-icon">⭐</div>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount">¥9,800</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <div class="plan-description">副業せどらー向け</div>
+                    <div class="plan-features">
+                        <div class="feature-item">✅ 300行/回まで検索</div>
+                        <div class="feature-item">✅ 検索回数無制限</div>
+                        <div class="feature-item">✅ CSV統合モード</div>
+                        <div class="feature-item">✅ 300+ブランド対応</div>
+                        <div class="feature-item">✅ 優先メールサポート</div>
+                    </div>
+                    <button class="plan-select-btn" onclick="selectPlan('standard')">選択する</button>
+                </div>
+
+                <!-- プレミアムプラン -->
+                <div class="plan-card" data-plan="premium">
+                    <div class="plan-header">
+                        <div class="plan-name">プレミアムプラン</div>
+                        <div class="plan-icon">👑</div>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-amount">¥19,800</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                    <div class="plan-description">専業せどらー向け</div>
+                    <div class="plan-features">
+                        <div class="feature-item">✅ 無制限検索</div>
+                        <div class="feature-item">✅ 検索回数無制限</div>
+                        <div class="feature-item">✅ CSV統合モード</div>
+                        <div class="feature-item">✅ 300+ブランド対応</div>
+                        <div class="feature-item">✅ 24時間サポート</div>
+                    </div>
+                    <button class="plan-select-btn" onclick="selectPlan('premium')">選択する</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: rgba(0, 255, 163, 0.1); border-radius: 12px; margin-bottom: 20px;">
+                <p style="color: #00FFA3; font-weight: 600; margin-bottom: 5px;">🎉 7日間無料トライアル実施中！</p>
+                <p style="color: #94A3B8; font-size: 14px;">新規登録で7日間、スタンダードプラン相当（300行）を無料でお試しいただけます</p>
+            </div>
+
+            <button onclick="closePlanModal()" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                後で決める
+            </button>
+        </div>
+    </div>
+
     <!-- SheetJS for Excel support -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
