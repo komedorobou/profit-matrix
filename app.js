@@ -21,9 +21,12 @@ let planExpiresAt = null  // トライアル期限
 let subscriptionStatus = 'trial'  // trial, active, canceled, past_due
 let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPIキーチェックフラグ
 
+// UI更新済みフラグ（2重実行防止）
+let uiInitialized = false
+
 // 認証状態監視
 supabaseAuth.auth.onAuthStateChange(async (event, session) => {
-    console.log('🔐 Auth event:', event, 'Session:', session ? 'あり' : 'なし')
+    console.log('🔐 Auth event:', event, 'Session:', session ? 'あり' : 'なし', 'uiInitialized:', uiInitialized)
 
     // SIGNED_INまたはINITIAL_SESSION（初回ロード時）の両方を処理
     if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
@@ -178,6 +181,7 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         console.log('🚪 ログアウト')
 
         // フラグとグローバル変数をリセット
+        uiInitialized = false  // UI初期化フラグをリセット
         shouldCheckApiKeyAfterOwnerSettings = false
         currentUser = null
         currentPlan = 'trial'
@@ -215,6 +219,14 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         if (apiKeyModal) apiKeyModal.style.display = 'none'
 
         console.log('✅ ログアウト処理完了、フォームリセット完了')
+
+    } else if (event === 'INITIAL_SESSION' && !session) {
+        // 初期ロード時にセッションがない場合、authModalを表示
+        console.log('❌ 初期セッションなし: authModalを表示')
+        const authModal = document.getElementById('authModal')
+        if (authModal) {
+            authModal.style.display = 'flex'
+        }
     }
 })
 
@@ -726,7 +738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // URLをクリーンにしてからアラート表示
         window.history.replaceState(null, '', window.location.pathname)
         alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
-        // onAuthStateChangeでプラン情報が更新されるので、リロード不要
+        // onAuthStateChangeでプラン情報が更新される
         return
     }
 
@@ -743,7 +755,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // パスワードリセット処理
     if (hash && hash.includes('type=recovery')) {
         console.log('🔑 パスワードリセットリンクを検出')
-        // パスワードリセットモーダルを表示（authModalの制御はonAuthStateChangeに任せる）
         document.getElementById('resetPasswordModal').style.display = 'flex'
         return
     }
@@ -751,26 +762,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // メール確認後のリダイレクト処理
     if (hash && hash.includes('access_token')) {
         console.log('🔗 メール確認リダイレクトを検出')
-        // ハッシュをクリア（URLをきれいに）
         window.history.replaceState(null, '', window.location.pathname)
     }
 
     // ===================================
-    // 初期セッションチェック（UIのちらつき防止）
+    // 重要：authModal/userMenuの制御は一切しない
+    // 全てonAuthStateChangeに任せる
     // ===================================
-
-    const { data: { session } } = await supabaseAuth.auth.getSession()
-
-    if (session) {
-        // ログイン済み → authModalを即座に非表示
-        console.log('✅ 初期セッションあり: authModal非表示')
-        document.getElementById('authModal').style.display = 'none'
-        document.getElementById('userMenu').style.display = 'block'
-        // 詳細な処理はonAuthStateChangeのINITIAL_SESSIONで行われる
-    } else {
-        // 未ログイン → authModalを表示（既に表示されている）
-        console.log('❌ 初期セッションなし: authModal表示')
-    }
+    console.log('✅ DOMContentLoaded完了: UI制御はonAuthStateChangeに完全委譲')
 
     // 外注先リストを読み込み
     loadPartnersFromStorage();
