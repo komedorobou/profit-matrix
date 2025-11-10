@@ -723,11 +723,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (paymentSuccess === 'true') {
         console.log('✅ Stripe決済成功')
-        alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
-        // URLをクリーンに
+        // URLをクリーンにしてからアラート表示
         window.history.replaceState(null, '', window.location.pathname)
-        // ページをリロードしてプラン情報を更新
-        window.location.reload()
+        alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
+        // onAuthStateChangeでプラン情報が更新されるので、リロード不要
         return
     }
 
@@ -744,9 +743,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // パスワードリセット処理
     if (hash && hash.includes('type=recovery')) {
         console.log('🔑 パスワードリセットリンクを検出')
-        // 認証モーダルを非表示
-        document.getElementById('authModal').style.display = 'none'
-        // パスワードリセットモーダルを表示
+        // パスワードリセットモーダルを表示（authModalの制御はonAuthStateChangeに任せる）
         document.getElementById('resetPasswordModal').style.display = 'flex'
         return
     }
@@ -756,29 +753,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🔗 メール確認リダイレクトを検出')
         // ハッシュをクリア（URLをきれいに）
         window.history.replaceState(null, '', window.location.pathname)
-        // Supabaseが自動的に処理してくれるので待機
-        await new Promise(resolve => setTimeout(resolve, 1000))
     }
 
-    // セッションチェック
-    const { data: { session } } = await supabaseAuth.auth.getSession()
+    // ===================================
+    // 重要：authModalの制御はonAuthStateChangeに完全に任せる
+    // DOMContentLoadedでは一切触らない
+    // ===================================
 
-    if (!session) {
-        // 未ログイン → 認証モーダル表示（既にHTMLで表示されている）
-        console.log('未ログイン: 認証モーダル表示')
-        return
-    }
-
-    // ログイン済み → 認証モーダルを非表示
-    console.log('ログイン済み: 認証モーダル非表示')
-    document.getElementById('authModal').style.display = 'none'
-
-    // 既存の初期化処理
-    yahooApiKey = localStorage.getItem('yahooApiKey');
-
-    if (!yahooApiKey) {
-        document.getElementById('apiKeyModal').style.display = 'flex';
-    }
+    console.log('✅ DOMContentLoaded: onAuthStateChangeに制御を委譲')
 
     // 外注先リストを読み込み
     loadPartnersFromStorage();
