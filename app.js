@@ -366,41 +366,54 @@ window.handleLogout = async function() {
     if (confirm('ログアウトしますか？')) {
         console.log('✅ ログアウト確認OK')
 
-        // 即座にローカルストレージをクリア（signOutを待たない）
-        console.log('🧹 ローカルストレージをクリア中...')
-        const keysToRemove = []
+        // 1. ローカルストレージを完全にクリア
+        console.log('🧹 ローカルストレージを完全クリア中...')
+        const allKeys = []
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i)
-            if (key && key.includes('supabase')) {
-                keysToRemove.push(key)
+            if (key && (key.includes('supabase') || key.includes('sb-'))) {
+                allKeys.push(key)
             }
         }
-        keysToRemove.forEach(key => localStorage.removeItem(key))
-        console.log('✅ ローカルストレージクリア完了:', keysToRemove.length, '個のキーを削除')
+        allKeys.forEach(key => {
+            console.log('  削除:', key)
+            localStorage.removeItem(key)
+        })
+        console.log('✅ ローカルストレージクリア完了:', allKeys.length, '個のキーを削除')
 
-        // グローバル変数をリセット
+        // 2. セッションストレージもクリア
+        console.log('🧹 セッションストレージをクリア中...')
+        const sessionKeys = []
+        for (let i = 0; i < sessionStorage.length; i++) {
+            const key = sessionStorage.key(i)
+            if (key && (key.includes('supabase') || key.includes('sb-'))) {
+                sessionKeys.push(key)
+            }
+        }
+        sessionKeys.forEach(key => {
+            console.log('  削除:', key)
+            sessionStorage.removeItem(key)
+        })
+        console.log('✅ セッションストレージクリア完了:', sessionKeys.length, '個のキーを削除')
+
+        // 3. グローバル変数をリセット
         currentUser = null
         currentPlan = 'trial'
         planExpiresAt = null
         subscriptionStatus = 'trial'
 
-        // UI を強制的に更新
-        console.log('🎨 UIを強制更新中...')
-        const authModal = document.getElementById('authModal')
-        const userMenu = document.getElementById('userMenu')
+        // 4. Supabaseクライアントを完全にログアウト（同期的に待つ）
+        console.log('📡 Supabaseを完全にログアウト中...')
+        try {
+            await supabaseAuth.auth.signOut({ scope: 'global' })
+            console.log('✅ Supabaseログアウト成功')
+        } catch (err) {
+            console.warn('⚠️ Supabaseログアウトエラー:', err)
+        }
 
-        if (authModal) authModal.style.display = 'flex'
-        if (userMenu) userMenu.style.display = 'none'
-
-        // Supabaseにログアウトリクエスト（バックグラウンドで実行、結果を待たない）
-        console.log('📡 Supabaseにログアウトリクエスト送信（非同期）...')
-        supabaseAuth.auth.signOut().catch(err => {
-            console.warn('⚠️ Supabaseログアウトエラー（無視）:', err)
-        })
-
-        // 即座にページをリロードして完全にクリア
-        console.log('🔄 ページをリロードしてクリーンアップ...')
-        window.location.reload()
+        // 5. 完全に新しいページとして読み込み（location.replaceで履歴を残さない）
+        console.log('🔄 ページを完全リセット...')
+        window.location.replace(window.location.pathname)
     } else {
         console.log('❌ ログアウトがキャンセルされました')
     }
