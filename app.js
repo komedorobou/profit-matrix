@@ -364,56 +364,43 @@ window.handleLogout = async function() {
     console.log('🚪 ログアウト処理開始')
 
     if (confirm('ログアウトしますか？')) {
-        try {
-            console.log('📡 Supabaseにログアウトリクエスト送信中...')
+        console.log('✅ ログアウト確認OK')
 
-            // Supabaseからログアウト
-            const { error } = await supabaseAuth.auth.signOut()
-
-            if (error) {
-                console.error('❌ ログアウトエラー:', error)
-                alert('ログアウトに失敗しました: ' + error.message)
-                return
+        // 即座にローカルストレージをクリア（signOutを待たない）
+        console.log('🧹 ローカルストレージをクリア中...')
+        const keysToRemove = []
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key && key.includes('supabase')) {
+                keysToRemove.push(key)
             }
-
-            console.log('✅ Supabaseログアウト成功')
-
-            // 強制的にローカルストレージをクリア
-            console.log('🧹 ローカルストレージをクリア中...')
-            const keysToRemove = []
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i)
-                if (key && key.includes('supabase')) {
-                    keysToRemove.push(key)
-                }
-            }
-            keysToRemove.forEach(key => localStorage.removeItem(key))
-            console.log('✅ ローカルストレージクリア完了:', keysToRemove)
-
-            // グローバル変数をリセット
-            currentUser = null
-            currentPlan = 'trial'
-            planExpiresAt = null
-            subscriptionStatus = 'trial'
-
-            // UI を強制的に更新
-            console.log('🎨 UIを強制更新中...')
-            const authModal = document.getElementById('authModal')
-            const userMenu = document.getElementById('userMenu')
-
-            if (authModal) authModal.style.display = 'flex'
-            if (userMenu) userMenu.style.display = 'none'
-
-            // ページをリロードして完全にクリア
-            console.log('🔄 ページをリロードしてクリーンアップ...')
-            setTimeout(() => {
-                window.location.reload()
-            }, 500)
-
-        } catch (error) {
-            console.error('❌ ログアウト処理で例外発生:', error)
-            alert('ログアウトエラー: ' + error.message)
         }
+        keysToRemove.forEach(key => localStorage.removeItem(key))
+        console.log('✅ ローカルストレージクリア完了:', keysToRemove.length, '個のキーを削除')
+
+        // グローバル変数をリセット
+        currentUser = null
+        currentPlan = 'trial'
+        planExpiresAt = null
+        subscriptionStatus = 'trial'
+
+        // UI を強制的に更新
+        console.log('🎨 UIを強制更新中...')
+        const authModal = document.getElementById('authModal')
+        const userMenu = document.getElementById('userMenu')
+
+        if (authModal) authModal.style.display = 'flex'
+        if (userMenu) userMenu.style.display = 'none'
+
+        // Supabaseにログアウトリクエスト（バックグラウンドで実行、結果を待たない）
+        console.log('📡 Supabaseにログアウトリクエスト送信（非同期）...')
+        supabaseAuth.auth.signOut().catch(err => {
+            console.warn('⚠️ Supabaseログアウトエラー（無視）:', err)
+        })
+
+        // 即座にページをリロードして完全にクリア
+        console.log('🔄 ページをリロードしてクリーンアップ...')
+        window.location.reload()
     } else {
         console.log('❌ ログアウトがキャンセルされました')
     }
