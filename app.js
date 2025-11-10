@@ -271,13 +271,30 @@ window.handleLogin = async function() {
             btn.textContent = 'ログイン'
             btn.disabled = false
         } else {
-            console.log('✅ ログインリクエスト成功。認証イベント待機中...')
-            // 成功時はonAuthStateChangeで自動処理される
-            // 念のため3秒後にボタンをリセット
-            setTimeout(() => {
-                btn.textContent = 'ログイン'
-                btn.disabled = false
-            }, 3000)
+            console.log('✅ ログイン成功！')
+
+            // モーダルを即座に閉じる
+            const authModal = document.getElementById('authModal')
+            if (authModal) {
+                authModal.style.display = 'none'
+                console.log('✅ 認証モーダルを非表示')
+            }
+
+            // ユーザーメニューを表示
+            const userMenu = document.getElementById('userMenu')
+            if (userMenu) {
+                userMenu.style.display = 'block'
+            }
+
+            // メールアドレスを表示
+            const userEmail = document.getElementById('userEmail')
+            if (userEmail) {
+                userEmail.textContent = email
+            }
+
+            // ボタンをリセット
+            btn.textContent = 'ログイン'
+            btn.disabled = false
         }
     } catch (error) {
         console.error('❌ ログイン処理で例外発生:', error)
