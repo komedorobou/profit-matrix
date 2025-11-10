@@ -756,11 +756,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ===================================
-    // 重要：authModalの制御はonAuthStateChangeに完全に任せる
-    // DOMContentLoadedでは一切触らない
+    // 初期セッションチェック（UIのちらつき防止）
     // ===================================
 
-    console.log('✅ DOMContentLoaded: onAuthStateChangeに制御を委譲')
+    const { data: { session } } = await supabaseAuth.auth.getSession()
+
+    if (session) {
+        // ログイン済み → authModalを即座に非表示
+        console.log('✅ 初期セッションあり: authModal非表示')
+        document.getElementById('authModal').style.display = 'none'
+        document.getElementById('userMenu').style.display = 'block'
+        // 詳細な処理はonAuthStateChangeのINITIAL_SESSIONで行われる
+    } else {
+        // 未ログイン → authModalを表示（既に表示されている）
+        console.log('❌ 初期セッションなし: authModal表示')
+    }
 
     // 外注先リストを読み込み
     loadPartnersFromStorage();
