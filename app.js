@@ -310,40 +310,21 @@ window.handleSignup = async function() {
     btn.disabled = true
 
     try {
-        // サーバーサイドAPIを使用してサインアップ
-        const response = await fetch('/api/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
+        // Supabaseで直接サインアップ（トリガーが自動的にprofilesを作成）
+        const { data, error } = await supabaseAuth.auth.signUp({
+            email: email,
+            password: password
         })
 
-        console.log('Response status:', response.status)
-        console.log('Response headers:', response.headers)
-
-        // レスポンスのテキストを取得
-        const responseText = await response.text()
-        console.log('Response text:', responseText)
-
-        // JSONとしてパース
-        let data
-        try {
-            data = JSON.parse(responseText)
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError)
-            throw new Error('サーバーエラー: ' + responseText.substring(0, 100))
+        if (error) {
+            console.error('サインアップエラー:', error)
+            throw new Error(error.message)
         }
 
-        if (!response.ok) {
-            throw new Error(data.error || 'サインアップに失敗しました')
-        }
+        console.log('✅ サインアップ成功:', data)
 
         // 登録成功
-        alert('✅ ' + data.message + '\n今すぐログインできます。')
+        alert('✅ 登録完了！7日間の無料トライアルを開始しました。\n今すぐログインできます。')
 
         // ログインフォームに切り替え
         switchAuthTab('login')
@@ -352,7 +333,7 @@ window.handleSignup = async function() {
         document.getElementById('loginEmail').value = email
 
     } catch (error) {
-        console.error('サインアップエラー:', error)
+        console.error('登録エラー:', error)
         alert('登録エラー: ' + error.message)
     } finally {
         btn.textContent = '登録する（7日間無料）'
