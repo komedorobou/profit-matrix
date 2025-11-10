@@ -349,8 +349,25 @@ window.handleSignup = async function() {
 
 // ログアウト処理
 window.handleLogout = async function() {
+    console.log('🚪 ログアウト処理開始')
+
     if (confirm('ログアウトしますか？')) {
-        await supabaseAuth.auth.signOut()
+        try {
+            console.log('📡 Supabaseにログアウトリクエスト送信中...')
+            const { error } = await supabaseAuth.auth.signOut()
+
+            if (error) {
+                console.error('❌ ログアウトエラー:', error)
+                alert('ログアウトに失敗しました: ' + error.message)
+            } else {
+                console.log('✅ ログアウト成功')
+            }
+        } catch (error) {
+            console.error('❌ ログアウト処理で例外発生:', error)
+            alert('ログアウトエラー: ' + error.message)
+        }
+    } else {
+        console.log('❌ ログアウトがキャンセルされました')
     }
 }
 
