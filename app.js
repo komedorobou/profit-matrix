@@ -309,58 +309,38 @@ window.handleSignup = async function() {
     btn.textContent = '登録中...'
     btn.disabled = true
 
-    const { data, error } = await supabaseAuth.auth.signUp({
-        email,
-        password,
-        options: {
-            emailRedirectTo: 'https://profit-matrix.jp/'
+    try {
+        // サーバーサイドAPIを使用してサインアップ
+        const response = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.error || 'サインアップに失敗しました')
         }
-    })
 
-    if (error) {
-        alert('登録エラー: ' + error.message)
-        btn.textContent = '登録する（7日間無料）'
-        btn.disabled = false
-        return
-    }
+        // 登録成功
+        alert('✅ ' + data.message + '\n今すぐログインできます。')
 
-    // ユーザー作成成功後、プロフィールを手動で作成
-    if (data.user) {
-        try {
-            const trialExpiresAt = new Date()
-            trialExpiresAt.setDate(trialExpiresAt.getDate() + 7) // 7日後
-
-            const { error: profileError } = await supabaseAuth
-                .from('profiles')
-                .insert({
-                    id: data.user.id,
-                    email: email,
-                    plan: 'trial',
-                    plan_expires_at: trialExpiresAt.toISOString(),
-                    subscription_status: 'trial'
-                })
-
-            if (profileError) {
-                console.error('プロフィール作成エラー:', profileError)
-                alert('登録エラー: Database error saving new user')
-                btn.textContent = '登録する（7日間無料）'
-                btn.disabled = false
-                return
-            }
-
-            alert('✅ 登録完了！7日間の無料トライアルを開始しました。\n今すぐログインできます。')
-            switchAuthTab('login')
-            btn.textContent = '登録する（7日間無料）'
-            btn.disabled = false
-        } catch (err) {
-            console.error('プロフィール作成エラー:', err)
-            alert('登録エラー: Database error saving new user')
-            btn.textContent = '登録する（7日間無料）'
-            btn.disabled = false
-        }
-    } else {
-        alert('✅ 登録完了！今すぐログインできます。')
+        // ログインフォームに切り替え
         switchAuthTab('login')
+
+        // メールアドレスを自動入力
+        document.getElementById('loginEmail').value = email
+
+    } catch (error) {
+        console.error('サインアップエラー:', error)
+        alert('登録エラー: ' + error.message)
+    } finally {
         btn.textContent = '登録する（7日間無料）'
         btn.disabled = false
     }
