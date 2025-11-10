@@ -321,8 +321,45 @@ window.handleSignup = async function() {
         alert('登録エラー: ' + error.message)
         btn.textContent = '登録する（7日間無料）'
         btn.disabled = false
+        return
+    }
+
+    // ユーザー作成成功後、プロフィールを手動で作成
+    if (data.user) {
+        try {
+            const trialExpiresAt = new Date()
+            trialExpiresAt.setDate(trialExpiresAt.getDate() + 7) // 7日後
+
+            const { error: profileError } = await supabaseAuth
+                .from('profiles')
+                .insert({
+                    id: data.user.id,
+                    email: email,
+                    plan: 'trial',
+                    plan_expires_at: trialExpiresAt.toISOString(),
+                    subscription_status: 'trial'
+                })
+
+            if (profileError) {
+                console.error('プロフィール作成エラー:', profileError)
+                alert('登録エラー: Database error saving new user')
+                btn.textContent = '登録する（7日間無料）'
+                btn.disabled = false
+                return
+            }
+
+            alert('✅ 登録完了！7日間の無料トライアルを開始しました。\n今すぐログインできます。')
+            switchAuthTab('login')
+            btn.textContent = '登録する（7日間無料）'
+            btn.disabled = false
+        } catch (err) {
+            console.error('プロフィール作成エラー:', err)
+            alert('登録エラー: Database error saving new user')
+            btn.textContent = '登録する（7日間無料）'
+            btn.disabled = false
+        }
     } else {
-        alert('✅ 確認メールを送信しました！\nメールのリンクをクリックして登録を完了してください。')
+        alert('✅ 登録完了！今すぐログインできます。')
         switchAuthTab('login')
         btn.textContent = '登録する（7日間無料）'
         btn.disabled = false
