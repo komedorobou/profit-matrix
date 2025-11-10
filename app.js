@@ -554,29 +554,106 @@ function showTrialBanner(daysLeft) {
     banner.id = 'trialBanner'
     banner.style.cssText = `
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000;
-        text-align: center;
-        padding: 12px;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, rgba(17, 24, 39, 0.98) 0%, rgba(31, 41, 55, 0.98) 100%);
+        border: 2px solid;
+        border-image: linear-gradient(135deg, #00FFA3, #00B8D9) 1;
+        color: white;
+        padding: 16px 60px 16px 24px;
+        border-radius: 12px;
         font-weight: 600;
+        font-size: 14px;
         z-index: 9999;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 8px 32px rgba(0, 255, 163, 0.3), 0 0 20px rgba(0, 184, 217, 0.2);
+        backdrop-filter: blur(10px);
+        animation: slideDown 0.5s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 90%;
     `
+
+    // アニメーションのキーフレームを追加
+    if (!document.getElementById('trialBannerStyle')) {
+        const style = document.createElement('style')
+        style.id = 'trialBannerStyle'
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @keyframes pulse {
+                0%, 100% {
+                    box-shadow: 0 8px 32px rgba(0, 255, 163, 0.3), 0 0 20px rgba(0, 184, 217, 0.2);
+                }
+                50% {
+                    box-shadow: 0 8px 32px rgba(0, 255, 163, 0.5), 0 0 30px rgba(0, 184, 217, 0.4);
+                }
+            }
+        `
+        document.head.appendChild(style)
+    }
+
     banner.innerHTML = `
-        🎉 無料トライアル残り ${daysLeft} 日 |
-        <span style="cursor: pointer; text-decoration: underline; margin-left: 10px;" onclick="openPlanModal()">
-            今すぐプランを選択
+        <span style="font-size: 20px;">⏰</span>
+        <span style="flex: 1;">
+            <span style="color: #00FFA3; font-weight: 700;">無料トライアル</span>
+            <span style="color: #94A3B8; margin: 0 8px;">|</span>
+            残り <span style="color: #FFD700; font-weight: 700; font-size: 16px;">${daysLeft}</span> 日
         </span>
+        <button onclick="openPlanModal()" style="
+            background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: #000;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            💎 プランを選択
+        </button>
+        <button onclick="document.getElementById('trialBanner').remove()" style="
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 0;
+            line-height: 1;
+        " onmouseover="this.style.background='rgba(255, 107, 157, 0.3)'; this.style.borderColor='rgba(255, 107, 157, 0.5)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'">
+            ×
+        </button>
     `
 
     // 既存のバナーを削除
     const existingBanner = document.getElementById('trialBanner')
     if (existingBanner) existingBanner.remove()
 
-    document.body.prepend(banner)
+    document.body.appendChild(banner)
+
+    // パルスアニメーションを追加
+    banner.style.animation = 'slideDown 0.5s ease-out, pulse 3s ease-in-out infinite'
 }
 
 // トライアル期限切れモーダルを表示
