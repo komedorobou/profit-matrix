@@ -25,132 +25,117 @@ let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPI�
 supabaseAuth.auth.onAuthStateChange(async (event, session) => {
     console.log('🔐 Auth event:', event, 'Session:', session ? 'あり' : 'なし')
 
-    try {
-        // SIGNED_INまたはINITIAL_SESSION（初回ロード時）の両方を処理
-        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-            console.log('✅ ログイン成功:', session.user.email)
-            currentUser = session.user
+    // SIGNED_INまたはINITIAL_SESSION（初回ロード時）の両方を処理
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+        console.log('✅ ログイン成功:', session.user.email)
+        currentUser = session.user
 
-            // プラン情報取得
-            console.log('📊 プロフィール情報を取得中...')
-            try {
-                const { data: profile, error: profileError } = await supabaseAuth
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single()
+        // ===================================
+        // 最優先：UI更新（絶対に失敗させない）
+        // ===================================
 
-                if (profileError) {
-                    console.warn('⚠️ プロフィール取得エラー:', profileError.message)
-                    // エラー時はトライアルとして扱う
-                    currentPlan = 'trial'
-                    subscriptionStatus = 'trial'
-                    planExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7日後
-                } else if (profile) {
-                    console.log('✅ プロフィール取得成功:', profile)
-                    currentPlan = profile.plan || 'trial'
-                    subscriptionStatus = profile.subscription_status || 'trial'
-                    planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
+        // ログインボタンをリセット
+        const loginBtn = document.getElementById('loginBtn')
+        if (loginBtn) {
+            loginBtn.textContent = 'ログイン'
+            loginBtn.disabled = false
+            console.log('✅ ログインボタンをリセット')
+        }
 
-                    // プランステータスをチェック
-                    checkPlanStatus()
-                } else {
-                    console.warn('⚠️ プロフィールが見つかりません')
-                    currentPlan = 'trial'
-                    subscriptionStatus = 'trial'
-                }
-            } catch (error) {
-                console.error('❌ プロフィール取得エラー:', error)
+        // 認証モーダルを閉じる
+        const authModal = document.getElementById('authModal')
+        if (authModal) {
+            authModal.style.display = 'none'
+            console.log('✅ 認証モーダルを非表示')
+        } else {
+            console.error('❌ authModal要素が見つかりません')
+        }
+
+        // ユーザーメニューを表示
+        const userMenu = document.getElementById('userMenu')
+        if (userMenu) {
+            userMenu.style.display = 'block'
+            console.log('✅ ユーザーメニューを表示')
+        } else {
+            console.error('❌ userMenu要素が見つかりません')
+        }
+
+        // メールアドレスを表示
+        const userEmail = document.getElementById('userEmail')
+        if (userEmail) {
+            userEmail.textContent = session.user.email
+            console.log('✅ メールアドレスを表示:', session.user.email)
+        } else {
+            console.error('❌ userEmail要素が見つかりません')
+        }
+
+        // ===================================
+        // プラン情報取得（エラーがあっても継続）
+        // ===================================
+
+        console.log('📊 プロフィール情報を取得中...')
+        try {
+            const { data: profile, error: profileError } = await supabaseAuth
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single()
+
+            if (profileError) {
+                console.warn('⚠️ プロフィール取得エラー:', profileError.message)
+                // エラー時はトライアルとして扱う
+                currentPlan = 'trial'
+                subscriptionStatus = 'trial'
+                planExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7日後
+            } else if (profile) {
+                console.log('✅ プロフィール取得成功:', profile)
+                currentPlan = profile.plan || 'trial'
+                subscriptionStatus = profile.subscription_status || 'trial'
+                planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
+
+                // プランステータスをチェック
+                checkPlanStatus()
+            } else {
+                console.warn('⚠️ プロフィールが見つかりません')
                 currentPlan = 'trial'
                 subscriptionStatus = 'trial'
             }
+        } catch (error) {
+            console.error('❌ プロフィール取得エラー:', error)
+            currentPlan = 'trial'
+            subscriptionStatus = 'trial'
+        }
 
-            // UI更新
-            console.log('🎨 UI更新開始...')
+        // プラン情報を表示
+        updatePlanDisplay()
 
-            // ログインボタンをリセット
-            const loginBtn = document.getElementById('loginBtn')
-            if (loginBtn) {
-                loginBtn.textContent = 'ログイン'
-                loginBtn.disabled = false
-                console.log('✅ ログインボタンをリセット')
-            }
+        // ===================================
+        // オーナー/一般ユーザー判定と追加設定
+        // ===================================
 
-            const authModal = document.getElementById('authModal')
-            const userMenu = document.getElementById('userMenu')
-            const userEmail = document.getElementById('userEmail')
+        const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
 
-            if (authModal) {
-                authModal.style.display = 'none'
-                console.log('✅ 認証モーダルを非表示')
-            } else {
-                console.error('❌ authModal要素が見つかりません')
-            }
+        if (isOwner) {
+            console.log('✅ オーナーモード: 専用機能を有効化')
 
-            if (userMenu) {
-                userMenu.style.display = 'block'
-                console.log('✅ ユーザーメニューを表示')
-            } else {
-                console.error('❌ userMenu要素が見つかりません')
-            }
+            // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
+            loadOwnerSettings()
 
-            if (userEmail) {
-                userEmail.textContent = session.user.email
-                console.log('✅ メールアドレスを表示:', session.user.email)
-            } else {
-                console.error('❌ userEmail要素が見つかりません')
-            }
-
-            // プラン情報を表示
-            updatePlanDisplay()
-
-            // オーナー専用機能の制御
-            const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
-
-            if (isOwner) {
-                console.log('✅ オーナーモード: 専用機能を有効化')
-
-                // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
-                loadOwnerSettings()
-
-                // SIGNED_INイベント（実際のログイン操作）の場合のみオーナー設定モーダルを表示
-                // INITIAL_SESSION（ページリロード時）の場合はスキップ
-                if (event === 'SIGNED_IN') {
-                    console.log('⚙️ オーナー設定モーダルを表示（ログイン時）')
+            // SIGNED_INイベント（実際のログイン操作）の場合のみオーナー設定モーダルを表示
+            // INITIAL_SESSION（ページリロード時）の場合はスキップ
+            if (event === 'SIGNED_IN') {
+                console.log('⚙️ オーナー設定モーダルを表示（ログイン時）')
+                // 500ms遅延させて、authModalが完全に閉じてから表示
+                setTimeout(() => {
                     const ownerSettingsModal = document.getElementById('ownerSettingsModal')
                     if (ownerSettingsModal) {
                         ownerSettingsModal.style.display = 'flex'
-                        shouldCheckApiKeyAfterOwnerSettings = true // オーナー設定後にAPIキーチェック
+                        shouldCheckApiKeyAfterOwnerSettings = true
                     }
-                } else {
-                    console.log('📋 INITIAL_SESSION: オーナー設定モーダルをスキップ')
-                    // ページリロード時はAPIキー確認のみ
-                    yahooApiKey = localStorage.getItem('yahooApiKey')
-                    if (!yahooApiKey) {
-                        console.log('⚙️ APIキーモーダルを表示')
-                        const apiKeyModal = document.getElementById('apiKeyModal')
-                        if (apiKeyModal) {
-                            apiKeyModal.style.display = 'flex'
-                        }
-                    }
-                }
+                }, 500)
             } else {
-                console.log('🔒 一般ユーザーモード')
-
-                // 外注先管理ボタンを非表示
-                const partnersBtn = document.getElementById('partnersBtn')
-                if (partnersBtn) {
-                    partnersBtn.style.display = 'none'
-                }
-
-                // 選択UIを非表示
-                const selectionUI = document.getElementById('selectionUI')
-                if (selectionUI) {
-                    selectionUI.style.display = 'none'
-                    console.log('🔒 選択UIを非表示（一般ユーザー）')
-                }
-
-                // 一般ユーザーの場合は通常通りAPIキー確認
+                console.log('📋 INITIAL_SESSION: オーナー設定モーダルをスキップ')
+                // ページリロード時はAPIキー確認のみ
                 yahooApiKey = localStorage.getItem('yahooApiKey')
                 if (!yahooApiKey) {
                     console.log('⚙️ APIキーモーダルを表示')
@@ -160,54 +145,76 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     }
                 }
             }
+        } else {
+            console.log('🔒 一般ユーザーモード')
 
-            console.log('✅ ログイン処理完了')
-
-        } else if (event === 'SIGNED_OUT') {
-            console.log('🚪 ログアウト')
-
-            // フラグとグローバル変数をリセット
-            shouldCheckApiKeyAfterOwnerSettings = false
-            currentUser = null
-            currentPlan = 'trial'
-            planExpiresAt = null
-            subscriptionStatus = 'trial'
-
-            // プラン情報のみクリア（APIキーとオーナー設定は保持）
-            localStorage.removeItem('profitMatrixPlan')
-
-            // トライアルバナーを削除
-            const trialBanner = document.getElementById('trialBanner')
-            if (trialBanner) trialBanner.remove()
-
-            // ログインフォームをリセット
-            const loginEmail = document.getElementById('loginEmail')
-            const loginPassword = document.getElementById('loginPassword')
-            const loginBtn = document.getElementById('loginBtn')
-
-            if (loginEmail) loginEmail.value = ''
-            if (loginPassword) loginPassword.value = ''
-            if (loginBtn) {
-                loginBtn.textContent = 'ログイン'
-                loginBtn.disabled = false
+            // 外注先管理ボタンを非表示
+            const partnersBtn = document.getElementById('partnersBtn')
+            if (partnersBtn) {
+                partnersBtn.style.display = 'none'
             }
 
-            // すべてのモーダルを閉じる
-            const authModal = document.getElementById('authModal')
-            const userMenu = document.getElementById('userMenu')
-            const ownerSettingsModal = document.getElementById('ownerSettingsModal')
-            const apiKeyModal = document.getElementById('apiKeyModal')
+            // 選択UIを非表示
+            const selectionUI = document.getElementById('selectionUI')
+            if (selectionUI) {
+                selectionUI.style.display = 'none'
+                console.log('🔒 選択UIを非表示（一般ユーザー）')
+            }
 
-            if (authModal) authModal.style.display = 'flex'
-            if (userMenu) userMenu.style.display = 'none'
-            if (ownerSettingsModal) ownerSettingsModal.style.display = 'none'
-            if (apiKeyModal) apiKeyModal.style.display = 'none'
-
-            console.log('✅ ログアウト処理完了、フォームリセット完了')
+            // 一般ユーザーの場合は通常通りAPIキー確認
+            yahooApiKey = localStorage.getItem('yahooApiKey')
+            if (!yahooApiKey) {
+                console.log('⚙️ APIキーモーダルを表示')
+                const apiKeyModal = document.getElementById('apiKeyModal')
+                if (apiKeyModal) {
+                    apiKeyModal.style.display = 'flex'
+                }
+            }
         }
-    } catch (error) {
-        console.error('❌ 認証処理でエラー発生:', error)
-        alert('認証処理中にエラーが発生しました。ページをリロードしてください。')
+
+        console.log('✅ ログイン処理完了')
+
+    } else if (event === 'SIGNED_OUT') {
+        console.log('🚪 ログアウト')
+
+        // フラグとグローバル変数をリセット
+        shouldCheckApiKeyAfterOwnerSettings = false
+        currentUser = null
+        currentPlan = 'trial'
+        planExpiresAt = null
+        subscriptionStatus = 'trial'
+
+        // プラン情報のみクリア（APIキーとオーナー設定は保持）
+        localStorage.removeItem('profitMatrixPlan')
+
+        // トライアルバナーを削除
+        const trialBanner = document.getElementById('trialBanner')
+        if (trialBanner) trialBanner.remove()
+
+        // ログインフォームをリセット
+        const loginEmail = document.getElementById('loginEmail')
+        const loginPassword = document.getElementById('loginPassword')
+        const loginBtn = document.getElementById('loginBtn')
+
+        if (loginEmail) loginEmail.value = ''
+        if (loginPassword) loginPassword.value = ''
+        if (loginBtn) {
+            loginBtn.textContent = 'ログイン'
+            loginBtn.disabled = false
+        }
+
+        // すべてのモーダルを閉じる
+        const authModal = document.getElementById('authModal')
+        const userMenu = document.getElementById('userMenu')
+        const ownerSettingsModal = document.getElementById('ownerSettingsModal')
+        const apiKeyModal = document.getElementById('apiKeyModal')
+
+        if (authModal) authModal.style.display = 'flex'
+        if (userMenu) userMenu.style.display = 'none'
+        if (ownerSettingsModal) ownerSettingsModal.style.display = 'none'
+        if (apiKeyModal) apiKeyModal.style.display = 'none'
+
+        console.log('✅ ログアウト処理完了、フォームリセット完了')
     }
 })
 
@@ -271,30 +278,8 @@ window.handleLogin = async function() {
             btn.textContent = 'ログイン'
             btn.disabled = false
         } else {
-            console.log('✅ ログイン成功！')
-
-            // モーダルを即座に閉じる
-            const authModal = document.getElementById('authModal')
-            if (authModal) {
-                authModal.style.display = 'none'
-                console.log('✅ 認証モーダルを非表示')
-            }
-
-            // ユーザーメニューを表示
-            const userMenu = document.getElementById('userMenu')
-            if (userMenu) {
-                userMenu.style.display = 'block'
-            }
-
-            // メールアドレスを表示
-            const userEmail = document.getElementById('userEmail')
-            if (userEmail) {
-                userEmail.textContent = email
-            }
-
-            // ボタンをリセット
-            btn.textContent = 'ログイン'
-            btn.disabled = false
+            console.log('✅ ログインリクエスト成功。onAuthStateChangeで自動処理されます。')
+            // UI更新はonAuthStateChangeで自動的に行われるため、ここでは何もしない
         }
     } catch (error) {
         console.error('❌ ログイン処理で例外発生:', error)
