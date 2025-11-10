@@ -101,6 +101,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 console.error('❌ userEmail要素が見つかりません')
             }
 
+            // プラン情報を表示
+            updatePlanDisplay()
+
             // オーナー専用機能の制御
             const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
 
@@ -506,6 +509,67 @@ function showPlanExpiredModal() {
 function showPaymentOverdueModal() {
     alert('⚠️ お支払いが確認できていません\n\nサービスの利用を継続するには、お支払い情報を更新してください。')
     openPlanModal()
+}
+
+// プラン表示を更新
+function updatePlanDisplay() {
+    const planDisplayEl = document.getElementById('userPlanDisplay')
+    const upgradeBtn = document.getElementById('upgradeBtn')
+
+    if (!planDisplayEl || !upgradeBtn) return
+
+    // オーナーアカウントの場合
+    if (currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini')) {
+        planDisplayEl.textContent = '👑 オーナー（無制限）'
+        planDisplayEl.style.color = '#FFD700'
+        upgradeBtn.style.display = 'none' // オーナーはアップグレード不要
+        return
+    }
+
+    // プラン名のマッピング
+    const planNames = {
+        trial: 'トライアル',
+        starter: 'スタータープラン',
+        standard: 'スタンダードプラン',
+        premium: 'プレミアムプラン'
+    }
+
+    const planName = planNames[currentPlan] || 'トライアル'
+
+    // トライアル期限を表示
+    if (subscriptionStatus === 'trial' && planExpiresAt) {
+        const now = new Date()
+        const daysLeft = Math.ceil((planExpiresAt - now) / (1000 * 60 * 60 * 24))
+
+        if (daysLeft > 0) {
+            planDisplayEl.textContent = `🎉 ${planName}（残り${daysLeft}日）`
+            planDisplayEl.style.color = '#FFD700'
+        } else {
+            planDisplayEl.textContent = '⚠️ トライアル期限切れ'
+            planDisplayEl.style.color = '#FF6B9D'
+        }
+    } else if (subscriptionStatus === 'active') {
+        planDisplayEl.textContent = `✅ ${planName}`
+        planDisplayEl.style.color = '#00FFA3'
+
+        // プレミアムプランの場合はアップグレードボタンを非表示
+        if (currentPlan === 'premium') {
+            upgradeBtn.textContent = '✨ 最高プラン'
+            upgradeBtn.style.background = 'rgba(255, 215, 0, 0.2)'
+            upgradeBtn.style.color = '#FFD700'
+            upgradeBtn.style.cursor = 'default'
+            upgradeBtn.onclick = null
+        }
+    } else if (subscriptionStatus === 'past_due') {
+        planDisplayEl.textContent = '⚠️ 支払い期限切れ'
+        planDisplayEl.style.color = '#FF6B9D'
+    } else if (subscriptionStatus === 'canceled') {
+        planDisplayEl.textContent = '❌ キャンセル済み'
+        planDisplayEl.style.color = '#94A3B8'
+    } else {
+        planDisplayEl.textContent = `📦 ${planName}`
+        planDisplayEl.style.color = '#00FFA3'
+    }
 }
 
 // プラン選択モーダルを開く

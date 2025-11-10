@@ -309,11 +309,25 @@
 
     <!-- ユーザーメニュー（ログアウトボタン） -->
     <div style="position: fixed; top: 20px; right: 20px; z-index: 1000; display: none;" id="userMenu">
-        <span id="userEmail" style="color: white; margin-right: 15px; font-size: 14px;"></span>
-        <button onclick="handleLogout()"
-                style="padding: 8px 16px; background: rgba(255, 107, 157, 0.2); border: 1px solid rgba(255, 107, 157, 0.4); border-radius: 5px; color: white; cursor: pointer;">
-            ログアウト
-        </button>
+        <div style="display: flex; align-items: center; gap: 15px; background: rgba(17, 24, 39, 0.95); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(0, 255, 163, 0.2); backdrop-filter: blur(10px);">
+            <!-- プラン表示 -->
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <span id="userEmail" style="color: #94A3B8; font-size: 13px; margin-bottom: 4px;"></span>
+                <span id="userPlanDisplay" style="color: #00FFA3; font-size: 12px; font-weight: 600;"></span>
+            </div>
+
+            <!-- アップグレードボタン -->
+            <button onclick="openPlanModal()" id="upgradeBtn"
+                    style="padding: 8px 16px; background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; font-size: 13px; white-space: nowrap; transition: all 0.3s ease;">
+                💎 アップグレード
+            </button>
+
+            <!-- ログアウトボタン -->
+            <button onclick="handleLogout()"
+                    style="padding: 8px 16px; background: rgba(255, 107, 157, 0.2); border: 1px solid rgba(255, 107, 157, 0.4); border-radius: 8px; color: white; cursor: pointer; font-size: 13px; transition: all 0.3s ease;">
+                ログアウト
+            </button>
+        </div>
     </div>
 
     <div class="container">
