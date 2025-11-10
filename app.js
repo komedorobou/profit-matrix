@@ -341,19 +341,34 @@ window.handleSignup = async function() {
 
         console.log('✅ サインアップ成功:', data)
 
-        // 登録成功
-        alert('✅ 登録完了！7日間の無料トライアルを開始しました。\n今すぐログインできます。')
+        // Stripe決済画面へリダイレクト（7日間無料トライアル付き）
+        btn.textContent = '決済画面へ移動中...'
 
-        // ログインフォームに切り替え
-        switchAuthTab('login')
+        const checkoutResponse = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                plan: 'starter',  // 新規登録時は4,980円/月のスタータープラン
+                userId: data.user.id,
+                customerEmail: email,
+                trial: true  // 7日間無料トライアル
+            })
+        })
 
-        // メールアドレスを自動入力
-        document.getElementById('loginEmail').value = email
+        const checkoutData = await checkoutResponse.json()
+
+        if (!checkoutResponse.ok) {
+            throw new Error(checkoutData.error || 'Stripe決済画面の作成に失敗しました')
+        }
+
+        console.log('✅ Stripe決済画面URL取得:', checkoutData.url)
+
+        // Stripe決済画面へリダイレクト
+        window.location.href = checkoutData.url
 
     } catch (error) {
         console.error('登録エラー:', error)
         alert('登録エラー: ' + error.message)
-    } finally {
         btn.textContent = '登録する（7日間無料）'
         btn.disabled = false
     }
@@ -414,6 +429,63 @@ window.handleLogout = function() {
     // 5. 完全に新しいページとして読み込み
     console.log('🔄 ページを完全リセット...')
     window.location.replace(window.location.pathname)
+}
+
+// サブスクリプションキャンセル処理
+window.handleCancelSubscription = async function() {
+    console.log('🚫 キャンセル処理開始')
+
+    // 確認メッセージ
+    let confirmMessage = 'サブスクリプションをキャンセルしますか？'
+
+    if (subscriptionStatus === 'trialing') {
+        confirmMessage = 'トライアルをキャンセルしますか？\n\n即座にキャンセルされ、課金は発生しません。'
+    } else if (subscriptionStatus === 'active') {
+        const expiresDate = planExpiresAt ? new Date(planExpiresAt).toLocaleDateString('ja-JP') : '次回更新日'
+        confirmMessage = `サブスクリプションをキャンセルしますか？\n\n${expiresDate}まで利用可能です。\nその後、自動的にキャンセルされます。`
+    }
+
+    if (!confirm(confirmMessage)) {
+        console.log('❌ キャンセルが中止されました')
+        return
+    }
+
+    const cancelBtn = document.getElementById('cancelSubBtn')
+    if (cancelBtn) {
+        cancelBtn.textContent = '処理中...'
+        cancelBtn.disabled = true
+    }
+
+    try {
+        const response = await fetch('/api/cancel-subscription', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: currentUser.id
+            })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.error || 'キャンセルに失敗しました')
+        }
+
+        console.log('✅ キャンセル成功:', data)
+        alert(data.message)
+
+        // ページをリロードして状態を更新
+        window.location.reload()
+
+    } catch (error) {
+        console.error('❌ キャンセルエラー:', error)
+        alert('キャンセルエラー: ' + error.message)
+
+        if (cancelBtn) {
+            cancelBtn.textContent = 'キャンセル'
+            cancelBtn.disabled = false
+        }
+    }
 }
 
 // パスワードリセット画面表示
@@ -526,8 +598,8 @@ function checkPlanStatus() {
         return
     }
 
-    // トライアル期限切れチェック
-    if (subscriptionStatus === 'trial' && planExpiresAt) {
+    // トライアル期限切れチェック（Stripeの'trialing'ステータスまたは従来の'trial'）
+    if ((subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') && planExpiresAt) {
         const now = new Date()
         if (now > planExpiresAt) {
             console.log('⚠️ トライアル期限切れ')
@@ -671,9 +743,16 @@ function showPaymentOverdueModal() {
 // プラン表示を更新
 function updatePlanDisplay() {
     const planDisplayEl = document.getElementById('userPlanDisplay')
+    const planExpiresDisplayEl = document.getElementById('planExpiresDisplay')
     const upgradeBtn = document.getElementById('upgradeBtn')
+    const cancelSubBtn = document.getElementById('cancelSubBtn')
 
     if (!planDisplayEl || !upgradeBtn) return
+
+    // デフォルトでキャンセルボタンを非表示
+    if (cancelSubBtn) cancelSubBtn.style.display = 'none'
+    // デフォルトで次回更新日を非表示
+    if (planExpiresDisplayEl) planExpiresDisplayEl.style.display = 'none'
 
     // オーナーアカウントの場合
     if (currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini')) {
@@ -686,6 +765,7 @@ function updatePlanDisplay() {
     // プラン名のマッピング
     const planNames = {
         trial: 'トライアル',
+        trialing: 'トライアル（Stripe）',
         starter: 'スタータープラン',
         standard: 'スタンダードプラン',
         premium: 'プレミアムプラン'
@@ -693,14 +773,24 @@ function updatePlanDisplay() {
 
     const planName = planNames[currentPlan] || 'トライアル'
 
-    // トライアル期限を表示
-    if (subscriptionStatus === 'trial' && planExpiresAt) {
+    // トライアル期限を表示（従来のtrialまたはStripeのtrialing）
+    if ((subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') && planExpiresAt) {
         const now = new Date()
         const daysLeft = Math.ceil((planExpiresAt - now) / (1000 * 60 * 60 * 24))
 
         if (daysLeft > 0) {
             planDisplayEl.textContent = `🎉 ${planName}（残り${daysLeft}日）`
             planDisplayEl.style.color = '#FFD700'
+
+            // 次回課金日を表示
+            if (planExpiresDisplayEl) {
+                const expiresDate = new Date(planExpiresAt).toLocaleDateString('ja-JP')
+                planExpiresDisplayEl.textContent = `次回課金: ${expiresDate}`
+                planExpiresDisplayEl.style.display = 'block'
+            }
+
+            // キャンセルボタンを表示
+            if (cancelSubBtn) cancelSubBtn.style.display = 'block'
         } else {
             planDisplayEl.textContent = '⚠️ トライアル期限切れ'
             planDisplayEl.style.color = '#FF6B9D'
@@ -708,6 +798,16 @@ function updatePlanDisplay() {
     } else if (subscriptionStatus === 'active') {
         planDisplayEl.textContent = `✅ ${planName}`
         planDisplayEl.style.color = '#00FFA3'
+
+        // 次回更新日を表示
+        if (planExpiresDisplayEl && planExpiresAt) {
+            const expiresDate = new Date(planExpiresAt).toLocaleDateString('ja-JP')
+            planExpiresDisplayEl.textContent = `次回更新: ${expiresDate}`
+            planExpiresDisplayEl.style.display = 'block'
+        }
+
+        // キャンセルボタンを表示
+        if (cancelSubBtn) cancelSubBtn.style.display = 'block'
 
         // プレミアムプランの場合はアップグレードボタンを非表示
         if (currentPlan === 'premium') {

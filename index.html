@@ -314,7 +314,14 @@
             <div style="display: flex; flex-direction: column; align-items: flex-end;">
                 <span id="userEmail" style="color: #94A3B8; font-size: 13px; margin-bottom: 4px;"></span>
                 <span id="userPlanDisplay" style="color: #00FFA3; font-size: 12px; font-weight: 600;"></span>
+                <span id="planExpiresDisplay" style="color: #94A3B8; font-size: 11px; margin-top: 2px; display: none;"></span>
             </div>
+
+            <!-- キャンセルボタン（トライアル・有料プラン時のみ表示） -->
+            <button onclick="handleCancelSubscription()" id="cancelSubBtn"
+                    style="padding: 8px 16px; background: rgba(255, 107, 157, 0.1); border: 1px solid rgba(255, 107, 157, 0.3); border-radius: 8px; color: #FF6B9D; cursor: pointer; font-size: 13px; white-space: nowrap; transition: all 0.3s ease; display: none;">
+                キャンセル
+            </button>
 
             <!-- アップグレードボタン -->
             <button onclick="openPlanModal()" id="upgradeBtn"

@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { plan, userId, customerEmail } = req.body;
+        const { plan, userId, customerEmail, trial } = req.body;
 
         // バリデーション
         if (!plan || !userId || !customerEmail) {
@@ -50,7 +50,8 @@ export default async function handler(req, res) {
         console.log('📊 Checkout Session作成リクエスト:', {
             plan,
             userId,
-            customerEmail
+            customerEmail,
+            trial: trial || false
         });
 
         // ユーザーのプロフィール情報を取得（アフィリエイトID確認用）
@@ -93,7 +94,9 @@ export default async function handler(req, res) {
                 metadata: {
                     userId: userId,
                     plan: plan
-                }
+                },
+                // トライアル期間（新規登録時のみ7日間）
+                ...(trial && { trial_period_days: 7 })
             },
 
             // 請求先情報の収集

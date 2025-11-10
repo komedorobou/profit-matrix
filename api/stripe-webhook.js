@@ -117,21 +117,40 @@ async function handleCheckoutCompleted(session) {
         return;
     }
 
+    // サブスクリプション情報を取得してトライアル状態を確認
+    let subscriptionStatus = 'active';
+    let planExpiresAt = null;
+
+    if (session.subscription) {
+        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+
+        // トライアル中の場合
+        if (subscription.status === 'trialing' && subscription.trial_end) {
+            subscriptionStatus = 'trialing';
+            planExpiresAt = new Date(subscription.trial_end * 1000).toISOString();
+            console.log('⏰ トライアル期間:', planExpiresAt);
+        } else if (subscription.current_period_end) {
+            // 有料プランの場合、次回更新日を設定
+            planExpiresAt = new Date(subscription.current_period_end * 1000).toISOString();
+        }
+    }
+
     // ユーザーのプランを更新
     const { error: updateError } = await supabase
         .from('profiles')
         .update({
             plan: plan,
-            subscription_status: 'active',
+            subscription_status: subscriptionStatus,
             stripe_customer_id: session.customer,
-            stripe_subscription_id: session.subscription
+            stripe_subscription_id: session.subscription,
+            plan_expires_at: planExpiresAt
         })
         .eq('id', userId);
 
     if (updateError) {
         console.error('❌ プロフィール更新エラー:', updateError);
     } else {
-        console.log('✅ プロフィール更新成功:', userId);
+        console.log('✅ プロフィール更新成功:', userId, subscriptionStatus);
     }
 
     // アフィリエイト報酬処理（将来実装）
@@ -176,12 +195,31 @@ async function handleSubscriptionUpdated(subscription) {
         status = 'past_due';
     } else if (status === 'canceled') {
         status = 'canceled';
+    } else if (status === 'trialing') {
+        status = 'trialing';
+    } else if (status === 'active') {
+        status = 'active';
     }
+
+    // 次回更新日を取得
+    let planExpiresAt = null;
+    if (subscription.status === 'trialing' && subscription.trial_end) {
+        planExpiresAt = new Date(subscription.trial_end * 1000).toISOString();
+        console.log('⏰ トライアル期間:', planExpiresAt);
+    } else if (subscription.current_period_end) {
+        planExpiresAt = new Date(subscription.current_period_end * 1000).toISOString();
+        console.log('📅 次回更新日:', planExpiresAt);
+    }
+
+    // キャンセル予定の場合
+    const cancelAtPeriodEnd = subscription.cancel_at_period_end;
+    console.log('🚫 期間終了時にキャンセル:', cancelAtPeriodEnd);
 
     await supabase
         .from('profiles')
         .update({
-            subscription_status: status
+            subscription_status: status,
+            plan_expires_at: planExpiresAt
         })
         .eq('id', userId);
 
