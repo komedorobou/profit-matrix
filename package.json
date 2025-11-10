@@ -2,7 +2,6 @@
   "name": "profit-matrix",
   "version": "2.0.0",
   "description": "PROFIT MATRIX - AI-powered profit finder for e-commerce arbitrage",
-  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"
