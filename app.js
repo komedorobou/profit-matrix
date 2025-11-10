@@ -360,63 +360,60 @@ window.handleSignup = async function() {
 }
 
 // ログアウト処理
-window.handleLogout = async function() {
+window.handleLogout = function() {
     console.log('🚪 ログアウト処理開始')
 
-    if (confirm('ログアウトしますか？')) {
-        console.log('✅ ログアウト確認OK')
-
-        // 1. ローカルストレージを完全にクリア
-        console.log('🧹 ローカルストレージを完全クリア中...')
-        const allKeys = []
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i)
-            if (key && (key.includes('supabase') || key.includes('sb-'))) {
-                allKeys.push(key)
-            }
-        }
-        allKeys.forEach(key => {
-            console.log('  削除:', key)
-            localStorage.removeItem(key)
-        })
-        console.log('✅ ローカルストレージクリア完了:', allKeys.length, '個のキーを削除')
-
-        // 2. セッションストレージもクリア
-        console.log('🧹 セッションストレージをクリア中...')
-        const sessionKeys = []
-        for (let i = 0; i < sessionStorage.length; i++) {
-            const key = sessionStorage.key(i)
-            if (key && (key.includes('supabase') || key.includes('sb-'))) {
-                sessionKeys.push(key)
-            }
-        }
-        sessionKeys.forEach(key => {
-            console.log('  削除:', key)
-            sessionStorage.removeItem(key)
-        })
-        console.log('✅ セッションストレージクリア完了:', sessionKeys.length, '個のキーを削除')
-
-        // 3. グローバル変数をリセット
-        currentUser = null
-        currentPlan = 'trial'
-        planExpiresAt = null
-        subscriptionStatus = 'trial'
-
-        // 4. Supabaseクライアントを完全にログアウト（同期的に待つ）
-        console.log('📡 Supabaseを完全にログアウト中...')
-        try {
-            await supabaseAuth.auth.signOut({ scope: 'global' })
-            console.log('✅ Supabaseログアウト成功')
-        } catch (err) {
-            console.warn('⚠️ Supabaseログアウトエラー:', err)
-        }
-
-        // 5. 完全に新しいページとして読み込み（location.replaceで履歴を残さない）
-        console.log('🔄 ページを完全リセット...')
-        window.location.replace(window.location.pathname)
-    } else {
+    if (!confirm('ログアウトしますか？')) {
         console.log('❌ ログアウトがキャンセルされました')
+        return
     }
+
+    console.log('✅ ログアウト確認OK')
+
+    // 1. ローカルストレージを完全にクリア
+    console.log('🧹 ローカルストレージを完全クリア中...')
+    const allKeys = []
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.includes('supabase') || key.includes('sb-'))) {
+            allKeys.push(key)
+        }
+    }
+    allKeys.forEach(key => {
+        console.log('  削除:', key)
+        localStorage.removeItem(key)
+    })
+    console.log('✅ ローカルストレージクリア完了:', allKeys.length, '個のキーを削除')
+
+    // 2. セッションストレージもクリア
+    console.log('🧹 セッションストレージをクリア中...')
+    const sessionKeys = []
+    for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i)
+        if (key && (key.includes('supabase') || key.includes('sb-'))) {
+            sessionKeys.push(key)
+        }
+    }
+    sessionKeys.forEach(key => {
+        console.log('  削除:', key)
+        sessionStorage.removeItem(key)
+    })
+    console.log('✅ セッションストレージクリア完了:', sessionKeys.length, '個のキーを削除')
+
+    // 3. グローバル変数をリセット
+    currentUser = null
+    currentPlan = 'trial'
+    planExpiresAt = null
+    subscriptionStatus = 'trial'
+    console.log('✅ グローバル変数リセット完了')
+
+    // 4. Supabaseのログアウトは完全にスキップ（ハングするため）
+    // ローカルストレージを削除すれば、次回ロード時にセッションは存在しない
+    console.log('⚠️ Supabase signOut()はスキップ（ローカルストレージ削除で十分）')
+
+    // 5. 完全に新しいページとして読み込み
+    console.log('🔄 ページを完全リセット...')
+    window.location.replace(window.location.pathname)
 }
 
 // パスワードリセット画面表示
