@@ -273,7 +273,11 @@ window.handleLogin = async function() {
         } else {
             console.log('✅ ログインリクエスト成功。認証イベント待機中...')
             // 成功時はonAuthStateChangeで自動処理される
-            // ボタンはそのまま「ログイン中...」を表示
+            // 念のため3秒後にボタンをリセット
+            setTimeout(() => {
+                btn.textContent = 'ログイン'
+                btn.disabled = false
+            }, 3000)
         }
     } catch (error) {
         console.error('❌ ログイン処理で例外発生:', error)
