@@ -322,7 +322,21 @@ window.handleSignup = async function() {
             })
         })
 
-        const data = await response.json()
+        console.log('Response status:', response.status)
+        console.log('Response headers:', response.headers)
+
+        // レスポンスのテキストを取得
+        const responseText = await response.text()
+        console.log('Response text:', responseText)
+
+        // JSONとしてパース
+        let data
+        try {
+            data = JSON.parse(responseText)
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError)
+            throw new Error('サーバーエラー: ' + responseText.substring(0, 100))
+        }
 
         if (!response.ok) {
             throw new Error(data.error || 'サインアップに失敗しました')
