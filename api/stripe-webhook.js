@@ -117,6 +117,73 @@ async function handleCheckoutCompleted(session) {
         return;
     }
 
+    // カードフィンガープリントを取得
+    let cardFingerprint = null;
+    try {
+        // Setup IntentまたはPayment Intentからpayment_methodを取得
+        if (session.setup_intent) {
+            const setupIntent = await stripe.setupIntents.retrieve(session.setup_intent);
+            if (setupIntent.payment_method) {
+                const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method);
+                cardFingerprint = paymentMethod.card?.fingerprint;
+            }
+        } else if (session.payment_intent) {
+            const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
+            if (paymentIntent.payment_method) {
+                const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method);
+                cardFingerprint = paymentMethod.card?.fingerprint;
+            }
+        }
+        // サブスクリプションから取得（最も確実）
+        else if (session.subscription) {
+            const subscription = await stripe.subscriptions.retrieve(session.subscription, {
+                expand: ['default_payment_method']
+            });
+            if (subscription.default_payment_method) {
+                cardFingerprint = subscription.default_payment_method.card?.fingerprint;
+            }
+        }
+
+        console.log('🔍 カードフィンガープリント:', cardFingerprint);
+    } catch (error) {
+        console.error('⚠️ カードフィンガープリント取得エラー:', error);
+    }
+
+    // カード重複チェック
+    if (cardFingerprint) {
+        const { data: existingProfiles, error: checkError } = await supabase
+            .from('profiles')
+            .select('id, email')
+            .eq('card_fingerprint', cardFingerprint)
+            .limit(1);
+
+        if (!checkError && existingProfiles && existingProfiles.length > 0) {
+            console.error('🚫 カード重複検出:', cardFingerprint, '既存ユーザー:', existingProfiles[0].email);
+
+            // サブスクリプションを即座にキャンセル
+            if (session.subscription) {
+                try {
+                    await stripe.subscriptions.cancel(session.subscription);
+                    console.log('✅ 重複カードのサブスクリプションをキャンセル:', session.subscription);
+                } catch (cancelError) {
+                    console.error('❌ サブスクリプションキャンセルエラー:', cancelError);
+                }
+            }
+
+            // ユーザーのステータスを更新（キャンセル済み）
+            await supabase
+                .from('profiles')
+                .update({
+                    subscription_status: 'canceled',
+                    plan: 'trial'
+                })
+                .eq('id', userId);
+
+            console.log('❌ 重複カードによる登録拒否完了');
+            return; // 処理を終了
+        }
+    }
+
     // サブスクリプション情報を取得してトライアル状態を確認
     let subscriptionStatus = 'active';
     let planExpiresAt = null;
@@ -135,7 +202,7 @@ async function handleCheckoutCompleted(session) {
         }
     }
 
-    // ユーザーのプランを更新
+    // ユーザーのプランを更新（カードフィンガープリントも保存）
     const { error: updateError } = await supabase
         .from('profiles')
         .update({
@@ -143,7 +210,8 @@ async function handleCheckoutCompleted(session) {
             subscription_status: subscriptionStatus,
             stripe_customer_id: session.customer,
             stripe_subscription_id: session.subscription,
-            plan_expires_at: planExpiresAt
+            plan_expires_at: planExpiresAt,
+            card_fingerprint: cardFingerprint  // カードフィンガープリントを保存
         })
         .eq('id', userId);
 
