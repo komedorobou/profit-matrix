@@ -112,6 +112,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         // プラン情報を表示
         updatePlanDisplay()
 
+        // ユーザー管理ボタンの表示（オーナーのみ）
+        showUserManagementButton()
+
         // ===================================
         // オーナー/一般ユーザー判定と追加設定
         // ===================================
@@ -2940,3 +2943,260 @@ window.updateOwnerSettings = function() {
 
     console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail, showSelectionUI });
 };
+
+// ============================================================================
+// ユーザー管理機能（オーナー専用）
+// ============================================================================
+
+// ユーザー管理モーダルを開く
+window.openUserManagementModal = async function() {
+    console.log('👑 ユーザー管理モーダルを開く')
+
+    const modal = document.getElementById('userManagementModal')
+    if (!modal) return
+
+    modal.style.display = 'block'
+
+    // ユーザー一覧を読み込み
+    await loadAllUsers()
+}
+
+// ユーザー管理モーダルを閉じる
+window.closeUserManagementModal = function() {
+    const modal = document.getElementById('userManagementModal')
+    if (modal) modal.style.display = 'none'
+}
+
+// 全ユーザーを取得して表示
+async function loadAllUsers() {
+    try {
+        const { data: profiles, error } = await supabaseAuth.auth.admin.listUsers()
+
+        if (error) throw error
+
+        // profilesテーブルからデータを取得
+        const { data: profileData, error: profileError } = await supabaseAuth
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+        if (profileError) throw profileError
+
+        console.log('✅ ユーザー一覧取得:', profileData.length, '人')
+
+        // テーブルに表示
+        displayUsers(profileData)
+
+    } catch (error) {
+        console.error('❌ ユーザー一覧取得エラー:', error)
+        alert('ユーザー一覧の取得に失敗しました')
+    }
+}
+
+// ユーザー一覧をテーブルに表示
+function displayUsers(users) {
+    const tbody = document.getElementById('userManagementTableBody')
+    if (!tbody) return
+
+    tbody.innerHTML = ''
+
+    users.forEach(user => {
+        const row = document.createElement('tr')
+        row.id = `user-row-${user.id}`
+        row.style.cssText = 'border-bottom: 1px solid rgba(255, 107, 157, 0.1); transition: all 0.3s ease;'
+
+        // ステータス表示
+        let statusDisplay = ''
+        let statusColor = '#94A3B8'
+
+        if (user.subscription_status === 'trial' || user.subscription_status === 'trialing') {
+            const daysLeft = user.plan_expires_at ? Math.ceil((new Date(user.plan_expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : 0
+            if (daysLeft > 0) {
+                statusDisplay = `トライアル (残り${daysLeft}日)`
+                statusColor = '#00FFA3'
+            } else {
+                statusDisplay = 'トライアル期限切れ'
+                statusColor = '#FF6B9D'
+            }
+        } else if (user.subscription_status === 'active') {
+            statusDisplay = '有料プラン'
+            statusColor = '#00B8D9'
+        } else if (user.subscription_status === 'canceled') {
+            statusDisplay = 'キャンセル済み'
+            statusColor = '#94A3B8'
+        } else {
+            statusDisplay = user.subscription_status
+        }
+
+        // オーナーかチェック
+        const isOwner = user.email && user.email.includes('komedorobouinuzini')
+        const accountType = isOwner ? '<span style="color: #FFD700;">👑 オーナー</span>' : '一般'
+
+        row.innerHTML = `
+            <td style="padding: 15px; color: ${isOwner ? '#FFD700' : '#E2E8F0'}; font-weight: ${isOwner ? '700' : '400'};">${user.email || 'N/A'}</td>
+            <td style="padding: 15px; text-align: center; color: #94A3B8;">${user.plan || 'trial'}</td>
+            <td style="padding: 15px; text-align: center; color: ${statusColor};">${statusDisplay}</td>
+            <td style="padding: 15px; text-align: center; color: #94A3B8; font-size: 12px;">${user.plan_expires_at ? new Date(user.plan_expires_at).toLocaleDateString('ja-JP') : '-'}</td>
+            <td style="padding: 15px; text-align: center; color: #94A3B8; font-size: 12px;">${new Date(user.created_at).toLocaleDateString('ja-JP')}</td>
+            <td style="padding: 15px; text-align: center;">
+                ${isOwner ?
+                    `<span style="color: #FFD700; font-size: 12px;">保護中</span>` :
+                    `<button onclick="eraseUser('${user.id}', '${user.email}')" style="padding: 8px 20px; background: linear-gradient(135deg, #FF0032 0%, #FF6B9D 100%); border: none; border-radius: 8px; color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 0, 50, 0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🗑️ 追放
+                    </button>`
+                }
+            </td>
+        `
+
+        tbody.appendChild(row)
+    })
+}
+
+// ユーザーを追放（ERASERエフェクト付き）
+window.eraseUser = async function(userId, userEmail) {
+    console.log('🚨 ユーザー追放開始:', userEmail)
+
+    // 確認ダイアログ
+    const confirmed = confirm(`本当に ${userEmail} を追放しますか？\n\nこの操作は取り消せません。`)
+    if (!confirmed) return
+
+    try {
+        // 行に削除アニメーションを追加
+        const row = document.getElementById(`user-row-${userId}`)
+        if (row) {
+            row.classList.add('user-row-deleting')
+        }
+
+        // 少し待ってからERASERエフェクトを再生
+        setTimeout(() => {
+            playEraserEffect()
+        }, 300)
+
+        // Supabaseから削除
+        const { error } = await supabaseAuth
+            .from('profiles')
+            .delete()
+            .eq('id', userId)
+
+        if (error) throw error
+
+        // auth.usersからも削除（Supabase Admin APIが必要）
+        // Note: フロントエンドからauth.usersを直接削除するのは制限があるため、
+        // バックエンドAPIを用意するか、profilesテーブルのみ削除する
+
+        console.log('✅ ユーザー削除成功:', userEmail)
+
+        // ERASERエフェクト完了後に行を削除
+        setTimeout(() => {
+            if (row) {
+                row.remove()
+            }
+
+            // エフェクトを非表示
+            hideEraserEffect()
+
+            alert(`✅ ${userEmail} を追放しました`)
+        }, 2500)
+
+    } catch (error) {
+        console.error('❌ ユーザー削除エラー:', error)
+        alert(`エラー: ${error.message}`)
+
+        // エラー時は行のアニメーションを解除
+        const row = document.getElementById(`user-row-${userId}`)
+        if (row) {
+            row.classList.remove('user-row-deleting')
+        }
+    }
+}
+
+// ERASERエフェクトを再生
+function playEraserEffect() {
+    const effect = document.getElementById('eraserEffect')
+    const flash = document.getElementById('eraserFlash')
+    const text = document.getElementById('eraserText')
+    const particles = document.getElementById('eraserParticles')
+
+    if (!effect || !flash || !text || !particles) return
+
+    // エフェクトを表示
+    effect.style.display = 'block'
+
+    // フラッシュ
+    flash.style.opacity = '1'
+    setTimeout(() => {
+        flash.style.opacity = '0'
+    }, 200)
+
+    // ERASERテキストを表示
+    setTimeout(() => {
+        text.style.transform = 'translate(-50%, -50%) scale(1)'
+        text.style.animation = 'eraserPulse 0.5s ease-in-out'
+    }, 100)
+
+    // グリッチエフェクト
+    setTimeout(() => {
+        text.style.animation = 'eraserGlitch 0.3s ease-in-out'
+    }, 600)
+
+    // パーティクル生成
+    setTimeout(() => {
+        createParticles(particles)
+    }, 400)
+
+    // フェードアウト
+    setTimeout(() => {
+        text.style.animation = 'eraserFadeOut 0.8s ease-out forwards'
+    }, 1500)
+}
+
+// ERASERエフェクトを非表示
+function hideEraserEffect() {
+    const effect = document.getElementById('eraserEffect')
+    const text = document.getElementById('eraserText')
+    const particles = document.getElementById('eraserParticles')
+
+    if (effect) effect.style.display = 'none'
+    if (text) {
+        text.style.transform = 'translate(-50%, -50%) scale(0)'
+        text.style.animation = 'none'
+    }
+    if (particles) particles.innerHTML = ''
+}
+
+// パーティクルを生成
+function createParticles(container) {
+    container.innerHTML = ''
+
+    const particleCount = 30
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div')
+        particle.className = 'eraser-particle'
+
+        // ランダムな方向と距離
+        const angle = (Math.PI * 2 * i) / particleCount
+        const distance = 200 + Math.random() * 200
+        const tx = Math.cos(angle) * distance
+        const ty = Math.sin(angle) * distance
+
+        particle.style.setProperty('--tx', `${tx}px`)
+        particle.style.setProperty('--ty', `${ty}px`)
+        particle.style.animationDelay = `${Math.random() * 0.2}s`
+
+        container.appendChild(particle)
+    }
+}
+
+// オーナーアカウント判定時にユーザー管理ボタンを表示
+function showUserManagementButton() {
+    const btn = document.getElementById('userManagementBtn')
+    if (btn && currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini')) {
+        btn.style.display = 'block'
+        console.log('✅ ユーザー管理ボタンを表示')
+    }
+}
+
+// 認証状態変更時にユーザー管理ボタンの表示を更新
+// （既存のonAuthStateChangeハンドラーに追加する必要があるが、ここでは呼び出し例を示す）
+// showUserManagementButton() を updatePlanDisplay() の後などに呼び出す
