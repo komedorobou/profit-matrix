@@ -96,6 +96,48 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 subscriptionStatus = profile.subscription_status || 'trial'
                 planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
 
+                // オーナーアカウント以外で stripe_customer_id がない場合は強制的にStripeへ
+                const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
+                if (!isOwner && !profile.stripe_customer_id) {
+                    console.log('🚨 クレジットカード未登録ユーザーを検出 - Stripeへリダイレクト')
+
+                    // Stripe決済画面を作成してリダイレクト
+                    try {
+                        const checkoutResponse = await fetch('/api/create-checkout-session', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                plan: 'starter',
+                                userId: session.user.id,
+                                customerEmail: session.user.email,
+                                trial: true
+                            })
+                        })
+
+                        const checkoutData = await checkoutResponse.json()
+
+                        if (checkoutResponse.ok) {
+                            // ユーザーIDを保存（キャンセル時の削除用）
+                            localStorage.setItem('pendingUserId', session.user.id)
+                            localStorage.setItem('pendingUserEmail', session.user.email)
+
+                            // Stripeへリダイレクト
+                            window.location.href = checkoutData.url
+                            return
+                        } else {
+                            console.error('❌ Stripe決済画面作成エラー:', checkoutData)
+                            alert('クレジットカード登録が必要です。\n\nエラーが発生しました: ' + checkoutData.error)
+                            await supabaseAuth.auth.signOut()
+                            return
+                        }
+                    } catch (error) {
+                        console.error('❌ Stripe決済画面作成エラー:', error)
+                        alert('クレジットカード登録が必要です。\n\nエラーが発生しました。')
+                        await supabaseAuth.auth.signOut()
+                        return
+                    }
+                }
+
                 // プランステータスをチェック
                 checkPlanStatus()
             } else {
