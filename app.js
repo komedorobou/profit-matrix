@@ -2970,26 +2970,36 @@ window.closeUserManagementModal = function() {
 // 全ユーザーを取得して表示
 async function loadAllUsers() {
     try {
-        const { data: profiles, error } = await supabaseAuth.auth.admin.listUsers()
+        // セッショントークンを取得
+        const { data: { session } } = await supabaseAuth.auth.getSession()
 
-        if (error) throw error
+        if (!session) {
+            throw new Error('セッションが見つかりません')
+        }
 
-        // profilesテーブルからデータを取得
-        const { data: profileData, error: profileError } = await supabaseAuth
-            .from('profiles')
-            .select('*')
-            .order('created_at', { ascending: false })
+        // バックエンドAPIを呼び出し
+        const response = await fetch('/api/get-all-users', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json'
+            }
+        })
 
-        if (profileError) throw profileError
+        const data = await response.json()
 
-        console.log('✅ ユーザー一覧取得:', profileData.length, '人')
+        if (!response.ok) {
+            throw new Error(data.error || 'ユーザー取得に失敗しました')
+        }
+
+        console.log('✅ ユーザー一覧取得:', data.count, '人')
 
         // テーブルに表示
-        displayUsers(profileData)
+        displayUsers(data.users)
 
     } catch (error) {
         console.error('❌ ユーザー一覧取得エラー:', error)
-        alert('ユーザー一覧の取得に失敗しました')
+        alert('ユーザー一覧の取得に失敗しました: ' + error.message)
     }
 }
 
@@ -3072,17 +3082,31 @@ window.eraseUser = async function(userId, userEmail) {
             playEraserEffect()
         }, 300)
 
-        // Supabaseから削除
-        const { error } = await supabaseAuth
-            .from('profiles')
-            .delete()
-            .eq('id', userId)
+        // セッショントークンを取得
+        const { data: { session } } = await supabaseAuth.auth.getSession()
 
-        if (error) throw error
+        if (!session) {
+            throw new Error('セッションが見つかりません')
+        }
 
-        // auth.usersからも削除（Supabase Admin APIが必要）
-        // Note: フロントエンドからauth.usersを直接削除するのは制限があるため、
-        // バックエンドAPIを用意するか、profilesテーブルのみ削除する
+        // バックエンドAPIを呼び出してユーザーを削除
+        const response = await fetch('/api/delete-user', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                userEmail: userEmail
+            })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.error || 'ユーザー削除に失敗しました')
+        }
 
         console.log('✅ ユーザー削除成功:', userEmail)
 
