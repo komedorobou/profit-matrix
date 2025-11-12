@@ -2980,11 +2980,15 @@ async function loadAllUsers() {
             throw new Error('セッションが見つかりません')
         }
 
+        // ユーザー情報を取得
+        const userId = session.user.id
+        const userEmail = session.user.email
+
         console.log('📡 APIリクエスト送信中: /api/get-all-users')
-        console.log('👤 ユーザー情報:', currentUser.id, currentUser.email)
+        console.log('👤 ユーザー情報:', userId, userEmail)
 
         // バックエンドAPIを呼び出し（クエリパラメータでユーザー情報を送信）
-        const response = await fetch(`/api/get-all-users?userId=${encodeURIComponent(currentUser.id)}&userEmail=${encodeURIComponent(currentUser.email)}`, {
+        const response = await fetch(`/api/get-all-users?userId=${encodeURIComponent(userId)}&userEmail=${encodeURIComponent(userEmail)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -3092,8 +3096,18 @@ window.eraseUser = async function(userId, userEmail) {
             playEraserEffect()
         }, 300)
 
+        // セッションからユーザー情報を取得
+        const { data: { session } } = await supabaseAuth.auth.getSession()
+
+        if (!session) {
+            throw new Error('セッションが見つかりません')
+        }
+
+        const requestUserId = session.user.id
+        const requestUserEmail = session.user.email
+
         console.log('🗑️ ユーザー削除開始:', userId, userEmail)
-        console.log('👤 リクエストユーザー:', currentUser.id, currentUser.email)
+        console.log('👤 リクエストユーザー:', requestUserId, requestUserEmail)
 
         // バックエンドAPIを呼び出してユーザーを削除
         const response = await fetch('/api/delete-user', {
@@ -3102,8 +3116,8 @@ window.eraseUser = async function(userId, userEmail) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                requestUserId: currentUser.id,
-                requestUserEmail: currentUser.email,
+                requestUserId: requestUserId,
+                requestUserEmail: requestUserEmail,
                 userId: userId,
                 userEmail: userEmail
             })
