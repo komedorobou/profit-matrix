@@ -2998,10 +2998,10 @@ async function loadAllUsers() {
         console.log('📡 APIレスポンス:', response.status, response.statusText)
 
         const data = await response.json()
-        console.log('📦 APIレスポンスデータ:', data)
+        console.log('📦 APIレスポンスデータ:', JSON.stringify(data, null, 2))
 
         if (!response.ok) {
-            console.error('❌ APIエラー:', data)
+            console.error('❌ APIエラー:', JSON.stringify(data, null, 2))
             throw new Error(data.error || data.message || 'ユーザー取得に失敗しました')
         }
 
