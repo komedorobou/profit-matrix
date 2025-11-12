@@ -86,10 +86,10 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
 
             if (profileError) {
                 console.warn('⚠️ プロフィール取得エラー:', profileError.message)
-                // エラー時はトライアルとして扱う
+                // エラー時はトライアルとして扱う（期限はnullのまま）
                 currentPlan = 'trial'
                 subscriptionStatus = 'trial'
-                planExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7日後
+                planExpiresAt = null  // エラー時は期限を設定しない
             } else if (profile) {
                 console.log('✅ プロフィール取得成功:', profile)
                 currentPlan = profile.plan || 'trial'
