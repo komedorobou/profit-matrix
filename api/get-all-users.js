@@ -22,6 +22,8 @@ module.exports = async function handler(req, res) {
         }
 
         console.log('📡 リクエスト受信:', userId, userEmail);
+        console.log('🔑 SUPABASE_URL:', process.env.SUPABASE_URL ? '設定済み' : '未設定');
+        console.log('🔑 SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? '設定済み (長さ: ' + process.env.SUPABASE_SERVICE_KEY.length + ')' : '未設定');
 
         // profilesテーブルからユーザー情報を確認
         const { data: requestUser, error: userError } = await supabase
@@ -32,7 +34,13 @@ module.exports = async function handler(req, res) {
 
         if (userError || !requestUser) {
             console.error('❌ ユーザー確認エラー:', userError);
-            return res.status(401).json({ error: 'Unauthorized: User not found' });
+            console.error('❌ エラー詳細:', JSON.stringify(userError, null, 2));
+            console.error('❌ リクエストデータ:', { userId, userEmail });
+            return res.status(401).json({
+                error: 'Unauthorized: User not found',
+                details: userError?.message || 'Unknown error',
+                hint: userError?.hint || 'Check RLS policies and Service Role Key'
+            });
         }
 
         // メールアドレスが一致するか確認

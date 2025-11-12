@@ -84,10 +84,14 @@ CREATE POLICY "Users can update own profile"
   USING (auth.uid() = id);
 
 -- Service Role（API）は全アクセス可能
+-- IMPORTANT: auth.role() doesn't work with Service Role Key
+-- Use true to bypass RLS for service_role key
 CREATE POLICY "Enable all for service role"
   ON public.profiles
   FOR ALL
-  USING (auth.role() = 'service_role');
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 
 -- ============================================================================
 -- STEP 3: トリガー関数の再作成
