@@ -2970,12 +2970,17 @@ window.closeUserManagementModal = function() {
 // 全ユーザーを取得して表示
 async function loadAllUsers() {
     try {
+        console.log('🔍 ユーザー一覧取得開始...')
+
         // セッショントークンを取得
         const { data: { session } } = await supabaseAuth.auth.getSession()
+        console.log('📝 セッション取得:', session ? '成功' : '失敗')
 
         if (!session) {
             throw new Error('セッションが見つかりません')
         }
+
+        console.log('📡 APIリクエスト送信中: /api/get-all-users')
 
         // バックエンドAPIを呼び出し
         const response = await fetch('/api/get-all-users', {
@@ -2986,10 +2991,14 @@ async function loadAllUsers() {
             }
         })
 
+        console.log('📡 APIレスポンス:', response.status, response.statusText)
+
         const data = await response.json()
+        console.log('📦 APIレスポンスデータ:', data)
 
         if (!response.ok) {
-            throw new Error(data.error || 'ユーザー取得に失敗しました')
+            console.error('❌ APIエラー:', data)
+            throw new Error(data.error || data.message || 'ユーザー取得に失敗しました')
         }
 
         console.log('✅ ユーザー一覧取得:', data.count, '人')
@@ -2999,7 +3008,8 @@ async function loadAllUsers() {
 
     } catch (error) {
         console.error('❌ ユーザー一覧取得エラー:', error)
-        alert('ユーザー一覧の取得に失敗しました: ' + error.message)
+        console.error('❌ エラー詳細:', error.message)
+        alert('ユーザー一覧の取得に失敗しました:\n\n' + error.message + '\n\n開発者ツール（F12）のConsoleタブで詳細を確認してください。')
     }
 }
 
