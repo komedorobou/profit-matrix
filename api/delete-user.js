@@ -14,31 +14,41 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Authorization ヘッダーからトークンを取得
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Unauthorized: No token provided' });
+        // リクエストボディから情報を取得
+        const { requestUserId, requestUserEmail, userId, userEmail } = req.body;
+
+        if (!requestUserId || !requestUserEmail) {
+            return res.status(400).json({ error: 'requestUserId and requestUserEmail are required' });
         }
 
-        const token = authHeader.replace('Bearer ', '');
+        console.log('📡 削除リクエスト受信:', { requestUserId, requestUserEmail, targetUserId: userId });
 
-        // トークンを検証してユーザー情報を取得
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        // リクエストしたユーザーがprofilesテーブルに存在するか確認
+        const { data: requestUser, error: userError } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', requestUserId)
+            .single();
 
-        if (authError || !user) {
-            return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        if (userError || !requestUser) {
+            console.error('❌ リクエストユーザー確認エラー:', userError);
+            return res.status(401).json({ error: 'Unauthorized: User not found' });
+        }
+
+        // メールアドレスが一致するか確認
+        if (requestUser.email !== requestUserEmail) {
+            console.error('❌ メールアドレス不一致');
+            return res.status(401).json({ error: 'Unauthorized: Email mismatch' });
         }
 
         // オーナーアカウントかチェック
-        if (!user.email || !user.email.includes('komedorobouinuzini')) {
+        if (!requestUserEmail.includes('komedorobouinuzini')) {
             return res.status(403).json({ error: 'Forbidden: Owner access only' });
         }
 
-        console.log('👑 オーナーアカウントからのリクエスト:', user.email);
+        console.log('👑 オーナーアカウントからのリクエスト:', requestUserEmail);
 
-        // リクエストボディから削除対象ユーザーIDを取得
-        const { userId, userEmail } = req.body;
-
+        // 削除対象ユーザーIDのチェック
         if (!userId) {
             return res.status(400).json({ error: 'userId is required' });
         }

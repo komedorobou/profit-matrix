@@ -14,27 +14,39 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Authorization ヘッダーからトークンを取得
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Unauthorized: No token provided' });
+        // クエリパラメータからユーザー情報を取得
+        const { userId, userEmail } = req.query;
+
+        if (!userId || !userEmail) {
+            return res.status(400).json({ error: 'userId and userEmail are required' });
         }
 
-        const token = authHeader.replace('Bearer ', '');
+        console.log('📡 リクエスト受信:', userId, userEmail);
 
-        // トークンを検証してユーザー情報を取得
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        // profilesテーブルからユーザー情報を確認
+        const { data: requestUser, error: userError } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', userId)
+            .single();
 
-        if (authError || !user) {
-            return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        if (userError || !requestUser) {
+            console.error('❌ ユーザー確認エラー:', userError);
+            return res.status(401).json({ error: 'Unauthorized: User not found' });
+        }
+
+        // メールアドレスが一致するか確認
+        if (requestUser.email !== userEmail) {
+            console.error('❌ メールアドレス不一致');
+            return res.status(401).json({ error: 'Unauthorized: Email mismatch' });
         }
 
         // オーナーアカウントかチェック
-        if (!user.email || !user.email.includes('komedorobouinuzini')) {
+        if (!userEmail.includes('komedorobouinuzini')) {
             return res.status(403).json({ error: 'Forbidden: Owner access only' });
         }
 
-        console.log('👑 オーナーアカウントからのリクエスト:', user.email);
+        console.log('👑 オーナーアカウントからのリクエスト:', userEmail);
 
         // 全ユーザーを取得
         const { data: profiles, error: profileError } = await supabase

@@ -2981,12 +2981,12 @@ async function loadAllUsers() {
         }
 
         console.log('📡 APIリクエスト送信中: /api/get-all-users')
+        console.log('👤 ユーザー情報:', currentUser.id, currentUser.email)
 
-        // バックエンドAPIを呼び出し
-        const response = await fetch('/api/get-all-users', {
+        // バックエンドAPIを呼び出し（クエリパラメータでユーザー情報を送信）
+        const response = await fetch(`/api/get-all-users?userId=${encodeURIComponent(currentUser.id)}&userEmail=${encodeURIComponent(currentUser.email)}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.access_token}`,
                 'Content-Type': 'application/json'
             }
         })
@@ -3092,21 +3092,18 @@ window.eraseUser = async function(userId, userEmail) {
             playEraserEffect()
         }, 300)
 
-        // セッショントークンを取得
-        const { data: { session } } = await supabaseAuth.auth.getSession()
-
-        if (!session) {
-            throw new Error('セッションが見つかりません')
-        }
+        console.log('🗑️ ユーザー削除開始:', userId, userEmail)
+        console.log('👤 リクエストユーザー:', currentUser.id, currentUser.email)
 
         // バックエンドAPIを呼び出してユーザーを削除
         const response = await fetch('/api/delete-user', {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${session.access_token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                requestUserId: currentUser.id,
+                requestUserEmail: currentUser.email,
                 userId: userId,
                 userEmail: userEmail
             })
