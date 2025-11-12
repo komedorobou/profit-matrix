@@ -344,7 +344,15 @@ window.handleSignup = async function() {
 
         console.log('✅ サインアップ成功:', data)
 
-        // Stripe決済画面へリダイレクト（7日間無料トライアル付き）
+        // オーナーアカウントの場合はStripeスキップ
+        if (email.includes('komedorobouinuzini')) {
+            console.log('👑 オーナーアカウント: Stripe決済をスキップ')
+            alert('オーナーアカウントとして登録されました。ページをリロードします。')
+            window.location.reload()
+            return
+        }
+
+        // 一般ユーザーはStripe決済画面へリダイレクト（7日間無料トライアル付き）
         btn.textContent = '決済画面へ移動中...'
 
         const checkoutResponse = await fetch('/api/create-checkout-session', {
@@ -365,6 +373,10 @@ window.handleSignup = async function() {
         }
 
         console.log('✅ Stripe決済画面URL取得:', checkoutData.url)
+
+        // ユーザーIDをlocalStorageに保存（キャンセル時の削除用）
+        localStorage.setItem('pendingUserId', data.user.id)
+        localStorage.setItem('pendingUserEmail', email)
 
         // Stripe決済画面へリダイレクト
         window.location.href = checkoutData.url
@@ -957,9 +969,53 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (paymentCanceled === 'true') {
         console.log('⚠️ Stripe決済キャンセル')
-        alert('⚠️ お支払いがキャンセルされました。\n\n再度プランを選択してください。')
+
         // URLをクリーンに
         window.history.replaceState(null, '', window.location.pathname)
+
+        // キャンセルしたユーザーのアカウントを削除
+        const pendingUserId = localStorage.getItem('pendingUserId')
+        const pendingUserEmail = localStorage.getItem('pendingUserEmail')
+
+        if (pendingUserId && pendingUserEmail) {
+            console.log('🗑️ クレジットカード未登録ユーザーを削除:', pendingUserEmail)
+
+            try {
+                // バックエンドAPIを呼んでユーザーを削除
+                const response = await fetch('/api/delete-pending-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: pendingUserId,
+                        userEmail: pendingUserEmail
+                    })
+                })
+
+                const data = await response.json()
+
+                if (!response.ok) {
+                    console.error('❌ ユーザー削除エラー:', data)
+                } else {
+                    console.log('✅ ユーザー削除成功:', data)
+                }
+            } catch (error) {
+                console.error('❌ ユーザー削除処理エラー:', error)
+            }
+
+            // localStorageをクリア
+            localStorage.removeItem('pendingUserId')
+            localStorage.removeItem('pendingUserEmail')
+        }
+
+        alert('⚠️ クレジットカード登録がキャンセルされました。\n\nアカウントは削除されました。\n\n再度サインアップが必要です。')
+
+        // ログイン画面を表示
+        const authModal = document.getElementById('authModal')
+        if (authModal) {
+            authModal.style.display = 'flex'
+        }
+
+        return
     }
 
     // URLハッシュをチェック
