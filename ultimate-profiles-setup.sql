@@ -1,11 +1,14 @@
 -- ============================================================================
--- PROFIT MATRIX - 究極のprofilesテーブルセットアップスクリプト
+-- PROFIT MATRIX - 究極のprofilesテーブルセットアップスクリプト【完全版】
 -- ============================================================================
+--
+-- 🎯 これ一つ実行すればすべて完了！
 --
 -- 機能:
 --   ✅ 既存データを完全保護
---   ✅ RLS有効化でセキュリティ強化
+--   ✅ RLS有効化でセキュリティ強化（Service Role Key 対応済み）
 --   ✅ トライアル期限バグ完全修正
+--   ✅ ユーザー管理API完全対応
 --   ✅ カード重複検出機能
 --   ✅ アフィリエイト機能対応
 --   ✅ 詳細なエラーハンドリング
@@ -15,6 +18,8 @@
 --
 -- 実行方法: Supabase Dashboard > SQL Editor で実行
 -- 実行時間: 約5-10秒
+--
+-- ⚠️ 重要: このスクリプトは既存データを保護します。安心して実行してください。
 -- ============================================================================
 
 BEGIN;
@@ -63,7 +68,7 @@ END $$;
 -- 2.1 RLSを有効化
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- 2.2 既存のポリシーを削除
+-- 2.2 既存のポリシーをすべて削除
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
@@ -71,6 +76,7 @@ DROP POLICY IF EXISTS "Enable all for service role" ON public.profiles;
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.profiles;
 
 -- 2.3 新しいポリシーを作成
+
 -- ユーザーは自分のプロフィールのみ閲覧可能
 CREATE POLICY "Users can view own profile"
   ON public.profiles
@@ -83,15 +89,16 @@ CREATE POLICY "Users can update own profile"
   FOR UPDATE
   USING (auth.uid() = id);
 
--- Service Role（API）は全アクセス可能
+-- 🚨 最重要: Service Role（バックエンドAPI）は全アクセス可能
 -- IMPORTANT: auth.role() doesn't work with Service Role Key
--- Use true to bypass RLS for service_role key
+-- Service Role Key は JWT コンテキストを提供しないため、auth.role() は NULL を返す
+-- 解決策: TO service_role を使用して明示的にロールを指定
 CREATE POLICY "Enable all for service role"
   ON public.profiles
   FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  TO service_role        -- 👈 ここが重要！service_role ロールを明示的に指定
+  USING (true)           -- 👈 すべての行にアクセス許可
+  WITH CHECK (true);     -- 👈 すべての変更を許可
 
 -- ============================================================================
 -- STEP 3: トリガー関数の再作成
@@ -197,7 +204,7 @@ BEGIN
     RETURN FALSE;
   END IF;
 
-  -- オーナーアカウントは無制限
+  -- 👑 オーナーアカウントは無制限
   IF user_email LIKE '%komedorobouinuzini%' THEN
     RETURN TRUE;
   END IF;
@@ -466,7 +473,7 @@ WHERE subscription_status IN ('trial', 'trialing')
 ORDER BY plan_expires_at DESC
 LIMIT 10;
 
--- 8.3 RLSポリシー確認
+-- 8.3 RLSポリシー確認（重要！）
 SELECT
   schemaname,
   tablename,
@@ -474,9 +481,16 @@ SELECT
   permissive,
   roles,
   cmd,
-  qual
+  qual,
+  with_check
 FROM pg_policies
-WHERE tablename = 'profiles';
+WHERE tablename = 'profiles'
+ORDER BY policyname;
+
+-- 期待される結果:
+-- 1. "Enable all for service role" - roles: {service_role}, cmd: ALL, qual: true, with_check: true
+-- 2. "Users can update own profile" - roles: {public}, cmd: UPDATE
+-- 3. "Users can view own profile" - roles: {public}, cmd: SELECT
 
 -- 8.4 トリガー確認
 SELECT
@@ -495,3 +509,19 @@ COMMIT;
 -- ============================================================================
 SELECT '🎉 究極のセットアップが完了しました！' as message;
 SELECT '📊 レポートを確認: SELECT * FROM user_status_report;' as next_step;
+SELECT '👑 ユーザー管理API: 完全対応済み！' as api_status;
+
+-- ============================================================================
+-- トラブルシューティング用クエリ（必要に応じて実行）
+-- ============================================================================
+
+-- RLSが有効になっているか確認
+-- SELECT schemaname, tablename, rowsecurity
+-- FROM pg_tables
+-- WHERE tablename = 'profiles';
+
+-- Service Role ポリシーが正しく設定されているか確認
+-- SELECT policyname, roles, cmd, qual, with_check
+-- FROM pg_policies
+-- WHERE tablename = 'profiles'
+--   AND policyname = 'Enable all for service role';
