@@ -1,5 +1,5 @@
 // ユーザー一覧取得API（オーナー専用）
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Supabaseクライアント初期化（サービスキーで管理者権限）
 const supabase = createClient(
@@ -7,7 +7,7 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_KEY
 );
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     // GETリクエストのみ許可
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
