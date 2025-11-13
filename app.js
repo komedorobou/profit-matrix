@@ -103,6 +103,7 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
 
                     // Stripe決済画面を作成してリダイレクト
                     try {
+                        console.log('📡 Stripe決済画面作成リクエスト送信中...')
                         const checkoutResponse = await fetch('/api/create-checkout-session', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -114,19 +115,23 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                             })
                         })
 
+                        console.log('📡 Stripe決済画面作成レスポンス:', checkoutResponse.status)
                         const checkoutData = await checkoutResponse.json()
+                        console.log('📦 Stripe決済画面データ:', checkoutData)
 
-                        if (checkoutResponse.ok) {
+                        if (checkoutResponse.ok && checkoutData.url) {
+                            console.log('✅ StripeへリダイレクトURL取得:', checkoutData.url)
                             // ユーザーIDを保存（キャンセル時の削除用）
                             localStorage.setItem('pendingUserId', session.user.id)
                             localStorage.setItem('pendingUserEmail', session.user.email)
 
                             // Stripeへリダイレクト
+                            console.log('🚀 Stripeへリダイレクト実行中...')
                             window.location.href = checkoutData.url
                             return
                         } else {
                             console.error('❌ Stripe決済画面作成エラー:', checkoutData)
-                            alert('クレジットカード登録が必要です。\n\nエラーが発生しました: ' + checkoutData.error)
+                            alert('クレジットカード登録が必要です。\n\nエラーが発生しました: ' + (checkoutData.error || 'Unknown error'))
                             await supabaseAuth.auth.signOut()
                             return
                         }
