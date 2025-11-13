@@ -375,6 +375,11 @@ window.handleSignup = async function() {
     btn.disabled = true
 
     try {
+        // 🚨 重要: フラグを先に設定（onAuthStateChangeが発火する前に準備）
+        console.log('🚀 サインアップフラグを事前設定')
+        localStorage.setItem('justSignedUp', 'true')
+        redirectingToStripe = true
+
         // Supabaseで直接サインアップ（トリガーが自動的にprofilesを作成）
         const { data, error } = await supabaseAuth.auth.signUp({
             email: email,
@@ -383,6 +388,9 @@ window.handleSignup = async function() {
 
         if (error) {
             console.error('サインアップエラー:', error)
+            // エラー時はフラグをクリア
+            localStorage.removeItem('justSignedUp')
+            redirectingToStripe = false
             throw new Error(error.message)
         }
 
@@ -391,6 +399,9 @@ window.handleSignup = async function() {
         // オーナーアカウントの場合はStripeスキップ
         if (email.includes('komedorobouinuzini')) {
             console.log('👑 オーナーアカウント: Stripe決済をスキップ')
+            // オーナーはフラグをクリア（通常フロー）
+            localStorage.removeItem('justSignedUp')
+            redirectingToStripe = false
             alert('オーナーアカウントとして登録されました。ページをリロードします。')
             window.location.reload()
             return
@@ -413,6 +424,9 @@ window.handleSignup = async function() {
         const checkoutData = await checkoutResponse.json()
 
         if (!checkoutResponse.ok) {
+            // エラー時はフラグをクリア
+            localStorage.removeItem('justSignedUp')
+            redirectingToStripe = false
             throw new Error(checkoutData.error || 'Stripe決済画面の作成に失敗しました')
         }
 
@@ -421,9 +435,6 @@ window.handleSignup = async function() {
         // ユーザーIDをlocalStorageに保存（キャンセル時の削除用）
         localStorage.setItem('pendingUserId', data.user.id)
         localStorage.setItem('pendingUserEmail', email)
-
-        // サインアップ直後フラグを立てる（ログイン時チェックをスキップ）
-        localStorage.setItem('justSignedUp', 'true')
 
         // Stripe決済画面へリダイレクト
         console.log('🚀 Stripeへリダイレクト:', checkoutData.url)
@@ -1011,10 +1022,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // URLをクリーンにしてからアラート表示
         window.history.replaceState(null, '', window.location.pathname)
 
-        // サインアップフラグをクリア
+        // サインアップフラグとリダイレクトフラグをクリア
         localStorage.removeItem('justSignedUp')
         localStorage.removeItem('pendingUserId')
         localStorage.removeItem('pendingUserEmail')
+        redirectingToStripe = false
 
         alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
         // onAuthStateChangeでプラン情報が更新される
@@ -1027,8 +1039,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // URLをクリーンに
         window.history.replaceState(null, '', window.location.pathname)
 
-        // サインアップフラグをクリア
+        // サインアップフラグとリダイレクトフラグをクリア
         localStorage.removeItem('justSignedUp')
+        redirectingToStripe = false
 
         // キャンセルしたユーザーのアカウントを削除
         const pendingUserId = localStorage.getItem('pendingUserId')
