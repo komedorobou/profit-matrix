@@ -314,6 +314,12 @@ window.switchAuthTab = function(tab) {
 window.handleLogin = async function() {
     console.log('🔑 ログイン処理開始')
 
+    // 🚨 重要: ログイン時はサインアップフラグをクリア（ログインとサインアップは別処理）
+    console.log('🧹 justSignedUpフラグをクリア（ログイン時）')
+    localStorage.removeItem('justSignedUp')
+    localStorage.removeItem('pendingUserId')
+    localStorage.removeItem('pendingUserEmail')
+
     const email = document.getElementById('loginEmail').value.trim()
     const password = document.getElementById('loginPassword').value
 
