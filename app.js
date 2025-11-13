@@ -103,59 +103,33 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 subscriptionStatus = profile.subscription_status || 'trial'
                 planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
 
-                // オーナーアカウント以外で stripe_customer_id がない場合は強制的にStripeへ
+                // オーナーアカウント以外で stripe_customer_id がない場合は強制ログアウト
                 const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
                 if (!isOwner && !profile.stripe_customer_id) {
-                    console.log('🚨 クレジットカード未登録ユーザーを検出 - Stripeへリダイレクト')
+                    console.log('🚨 クレジットカード未登録ユーザーを検出 - 強制ログアウト')
 
-                    // Stripe決済画面を作成してリダイレクト
+                    // アカウントを削除
                     try {
-                        console.log('📡 Stripe決済画面作成リクエスト送信中...')
-                        const checkoutResponse = await fetch('/api/create-checkout-session', {
+                        await fetch('/api/delete-pending-user', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                plan: 'starter',
                                 userId: session.user.id,
-                                customerEmail: session.user.email,
-                                trial: true
+                                userEmail: session.user.email
                             })
                         })
-
-                        console.log('📡 Stripe決済画面作成レスポンス:', checkoutResponse.status)
-                        const checkoutData = await checkoutResponse.json()
-                        console.log('📦 Stripe決済画面データ:', checkoutData)
-
-                        if (checkoutResponse.ok && checkoutData.url) {
-                            console.log('✅ StripeへリダイレクトURL取得:', checkoutData.url)
-                            // ユーザーIDを保存（キャンセル時の削除用）
-                            localStorage.setItem('pendingUserId', session.user.id)
-                            localStorage.setItem('pendingUserEmail', session.user.email)
-
-                            // リダイレクト中フラグを立てる
-                            redirectingToStripe = true
-
-                            // Stripeへリダイレクト（replace を使用して履歴を残さない）
-                            console.log('🚀 Stripeへリダイレクト実行中...')
-                            console.log('🔗 リダイレクト先:', checkoutData.url)
-
-                            // 即座にリダイレクト
-                            window.location.replace(checkoutData.url)
-
-                            // 念のため、以降の処理を完全に停止
-                            throw new Error('Redirecting to Stripe...')
-                        } else {
-                            console.error('❌ Stripe決済画面作成エラー:', checkoutData)
-                            alert('クレジットカード登録が必要です。\n\nエラーが発生しました: ' + (checkoutData.error || 'Unknown error'))
-                            await supabaseAuth.auth.signOut()
-                            return
-                        }
+                        console.log('✅ クレジットカード未登録アカウント削除完了')
                     } catch (error) {
-                        console.error('❌ Stripe決済画面作成エラー:', error)
-                        alert('クレジットカード登録が必要です。\n\nエラーが発生しました。')
-                        await supabaseAuth.auth.signOut()
-                        return
+                        console.error('❌ アカウント削除エラー:', error)
                     }
+
+                    // ログアウト
+                    await supabaseAuth.auth.signOut()
+
+                    // ログイン画面を表示
+                    alert('⚠️ クレジットカード登録が必要です。\n\nアカウントは削除されました。\n新規登録からやり直してください。')
+
+                    return
                 }
 
                 // プランステータスをチェック
