@@ -135,10 +135,15 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                             // リダイレクト中フラグを立てる
                             redirectingToStripe = true
 
-                            // Stripeへリダイレクト
+                            // Stripeへリダイレクト（replace を使用して履歴を残さない）
                             console.log('🚀 Stripeへリダイレクト実行中...')
-                            window.location.href = checkoutData.url
-                            return
+                            console.log('🔗 リダイレクト先:', checkoutData.url)
+
+                            // 即座にリダイレクト
+                            window.location.replace(checkoutData.url)
+
+                            // 念のため、以降の処理を完全に停止
+                            throw new Error('Redirecting to Stripe...')
                         } else {
                             console.error('❌ Stripe決済画面作成エラー:', checkoutData)
                             alert('クレジットカード登録が必要です。\n\nエラーが発生しました: ' + (checkoutData.error || 'Unknown error'))
