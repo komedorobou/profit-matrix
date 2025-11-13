@@ -23,10 +23,17 @@ let shouldCheckApiKeyAfterOwnerSettings = false; // オーナー設定後のAPI�
 
 // UI更新済みフラグ（2重実行防止）
 let uiInitialized = false
+let redirectingToStripe = false  // Stripeリダイレクト中フラグ
 
 // 認証状態監視
 supabaseAuth.auth.onAuthStateChange(async (event, session) => {
     console.log('🔐 Auth event:', event, 'Session:', session ? 'あり' : 'なし', 'uiInitialized:', uiInitialized)
+
+    // Stripeリダイレクト中は何もしない
+    if (redirectingToStripe) {
+        console.log('⏸️ Stripeリダイレクト中のため処理をスキップ')
+        return
+    }
 
     // SIGNED_INまたはINITIAL_SESSION（初回ロード時）の両方を処理
     if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
@@ -124,6 +131,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                             // ユーザーIDを保存（キャンセル時の削除用）
                             localStorage.setItem('pendingUserId', session.user.id)
                             localStorage.setItem('pendingUserEmail', session.user.email)
+
+                            // リダイレクト中フラグを立てる
+                            redirectingToStripe = true
 
                             // Stripeへリダイレクト
                             console.log('🚀 Stripeへリダイレクト実行中...')
