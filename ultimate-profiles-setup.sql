@@ -1,5 +1,5 @@
 -- ============================================================================
--- PROFIT MATRIX - 究極のprofilesテーブルセットアップスクリプト【完全版】
+-- PROFIT MATRIX - 究極のprofilesテーブルセットアップスクリプト【完全版v2】
 -- ============================================================================
 --
 -- 🎯 これ一つ実行すればすべて完了！
@@ -9,7 +9,9 @@
 --   ✅ RLS有効化でセキュリティ強化（Service Role Key 対応済み）
 --   ✅ トライアル期限バグ完全修正
 --   ✅ ユーザー管理API完全対応
+--   ✅ クレジットカード登録必須システム対応
 --   ✅ カード重複検出機能
+--   ✅ 不正ユーザー一括削除機能（オプション）
 --   ✅ アフィリエイト機能対応
 --   ✅ 詳細なエラーハンドリング
 --   ✅ パフォーマンス最適化
@@ -20,6 +22,12 @@
 -- 実行時間: 約5-10秒
 --
 -- ⚠️ 重要: このスクリプトは既存データを保護します。安心して実行してください。
+--
+-- 🔐 セキュリティポリシー:
+--   - オーナーアカウント以外は stripe_customer_id 必須
+--   - クレジットカード未登録ユーザーはログイン時に自動削除
+--   - オーナーアカウント: メールに 'komedorobouinuzini' を含む
+--
 -- ============================================================================
 
 BEGIN;
@@ -337,6 +345,11 @@ CREATE INDEX IF NOT EXISTS idx_profiles_status_expires
 CREATE INDEX IF NOT EXISTS idx_profiles_plan_status
   ON public.profiles(plan, subscription_status);
 
+-- クレジットカード未登録ユーザー検出用インデックス
+CREATE INDEX IF NOT EXISTS idx_profiles_no_stripe
+  ON public.profiles(stripe_customer_id)
+  WHERE stripe_customer_id IS NULL;
+
 -- ============================================================================
 -- STEP 6: 既存データの修正とクリーンアップ
 -- ============================================================================
@@ -384,6 +397,8 @@ DECLARE
   active_users INTEGER;
   expired_trials INTEGER;
   missing_expiry INTEGER;
+  no_stripe_card INTEGER;
+  owner_accounts INTEGER;
 BEGIN
   SELECT COUNT(*) INTO total_users FROM auth.users;
   SELECT COUNT(*) INTO total_profiles FROM public.profiles;
@@ -406,27 +421,55 @@ BEGIN
   WHERE subscription_status IN ('trial', 'trialing')
     AND plan_expires_at IS NULL;
 
+  SELECT COUNT(*) INTO no_stripe_card
+  FROM public.profiles
+  WHERE stripe_customer_id IS NULL
+    AND email NOT LIKE '%komedorobouinuzini%';
+
+  SELECT COUNT(*) INTO owner_accounts
+  FROM public.profiles
+  WHERE email LIKE '%komedorobouinuzini%';
+
   RAISE NOTICE '========================================';
   RAISE NOTICE '📊 データベース統計';
   RAISE NOTICE '========================================';
   RAISE NOTICE 'auth.users総数: %', total_users;
   RAISE NOTICE 'profiles総数: %', total_profiles;
+  RAISE NOTICE '👑 オーナーアカウント: %', owner_accounts;
   RAISE NOTICE 'トライアルユーザー: %', trial_users;
-  RAISE NOTICE 'アクティブユーザー: %', active_users;
-  RAISE NOTICE '期限切れトライアル: %', expired_trials;
-  RAISE NOTICE '期限未設定: %', missing_expiry;
+  RAISE NOTICE '💎 アクティブユーザー: %', active_users;
+  RAISE NOTICE '⏰ 期限切れトライアル: %', expired_trials;
+  RAISE NOTICE '❌ 期限未設定: %', missing_expiry;
+  RAISE NOTICE '🚨 クレジットカード未登録: %', no_stripe_card;
   RAISE NOTICE '========================================';
+
+  IF no_stripe_card > 0 THEN
+    RAISE NOTICE '⚠️ 警告: % 人のクレジットカード未登録ユーザーが存在します', no_stripe_card;
+    RAISE NOTICE '   次のログインで自動的に削除されます。';
+    RAISE NOTICE '   手動で削除する場合は STEP 8 を実行してください。';
+  END IF;
 END $$;
 
 -- 7.2 詳細レポート用ビューを作成
+DROP VIEW IF EXISTS public.user_status_report;
 CREATE OR REPLACE VIEW public.user_status_report AS
 SELECT
   p.id,
   p.email,
+  CASE
+    WHEN p.email LIKE '%komedorobouinuzini%' THEN '👑 オーナー'
+    ELSE '👤 一般ユーザー'
+  END as user_type,
   p.plan,
   p.subscription_status,
+  CASE
+    WHEN p.stripe_customer_id IS NOT NULL THEN '✅ 登録済み'
+    WHEN p.email LIKE '%komedorobouinuzini%' THEN '➖ 不要（オーナー）'
+    ELSE '❌ 未登録（次回ログイン時削除）'
+  END as stripe_status,
   p.plan_expires_at,
   CASE
+    WHEN p.email LIKE '%komedorobouinuzini%' THEN '👑 オーナー権限'
     WHEN p.plan_expires_at IS NULL THEN '❌ 期限未設定'
     WHEN p.subscription_status IN ('trial', 'trialing') AND p.plan_expires_at > NOW() THEN
       '✅ トライアル中 (残り' || CEIL(EXTRACT(EPOCH FROM (p.plan_expires_at - NOW())) / 86400) || '日)'
@@ -444,36 +487,89 @@ SELECT
   p.created_at,
   p.updated_at
 FROM public.profiles p
-ORDER BY p.created_at DESC;
+ORDER BY
+  CASE WHEN p.email LIKE '%komedorobouinuzini%' THEN 0 ELSE 1 END,  -- オーナーを最初に表示
+  p.created_at DESC;
 
 -- ============================================================================
--- STEP 8: 最終確認とコミット
+-- STEP 8: クレジットカード未登録ユーザーの削除（オプション）
+-- ============================================================================
+--
+-- ⚠️ 警告: このセクションはデフォルトでコメントアウトされています
+-- 実行する場合は /* と */ を削除してください
+--
+-- 👉 通常は必要ありません。次回ログイン時に自動削除されます。
+-- 👉 今すぐ削除したい場合のみ実行してください。
+--
 -- ============================================================================
 
--- 8.1 検証クエリ
+/*
+-- 8.1 削除対象ユーザーを確認
+SELECT
+  '🗑️ 削除対象ユーザー' as action,
+  id,
+  email,
+  plan,
+  subscription_status,
+  stripe_customer_id,
+  created_at
+FROM public.profiles
+WHERE stripe_customer_id IS NULL
+  AND email NOT LIKE '%komedorobouinuzini%'  -- オーナーアカウントは除外
+ORDER BY created_at DESC;
+
+-- 8.2 実際に削除（上記確認後に実行）
+--
+-- ⚠️ 注意: この操作は取り消せません！
+-- 必ず上記の SELECT で削除対象を確認してから実行してください。
+--
+
+DELETE FROM public.profiles
+WHERE stripe_customer_id IS NULL
+  AND email NOT LIKE '%komedorobouinuzini%';
+
+-- 8.3 削除されたユーザーのauth.usersレコードも削除が必要
+--
+-- これは Supabase Dashboard の Authentication > Users で手動削除してください
+-- または以下のクエリで削除対象IDを確認:
+
+SELECT
+  '🗑️ auth.usersから削除が必要' as action,
+  au.id,
+  au.email,
+  au.created_at
+FROM auth.users au
+WHERE au.id NOT IN (SELECT id FROM public.profiles)
+ORDER BY au.created_at DESC;
+
+*/
+
+-- ============================================================================
+-- STEP 9: 最終確認とコミット
+-- ============================================================================
+
+-- 9.1 検証クエリ
 SELECT
   '✅ 究極セットアップ完了！' as status,
   (SELECT COUNT(*) FROM public.profiles) as total_profiles,
+  (SELECT COUNT(*) FROM public.profiles WHERE email LIKE '%komedorobouinuzini%') as owner_accounts,
   (SELECT COUNT(*) FROM public.profiles WHERE subscription_status IN ('trial', 'trialing')) as trial_users,
-  (SELECT COUNT(*) FROM public.profiles WHERE subscription_status = 'active') as active_users;
+  (SELECT COUNT(*) FROM public.profiles WHERE subscription_status = 'active') as active_users,
+  (SELECT COUNT(*) FROM public.profiles WHERE stripe_customer_id IS NULL AND email NOT LIKE '%komedorobouinuzini%') as unauthorized_users;
 
--- 8.2 トライアルユーザーの詳細
+-- 9.2 クレジットカード未登録ユーザーの詳細
 SELECT
+  '🚨 クレジットカード未登録ユーザー一覧（次回ログイン時自動削除）' as warning,
   email,
+  plan,
   subscription_status,
-  CASE
-    WHEN plan_expires_at IS NULL THEN 'エラー: 期限未設定'
-    WHEN plan_expires_at > NOW() THEN '残り' || CEIL(EXTRACT(EPOCH FROM (plan_expires_at - NOW())) / 86400) || '日'
-    ELSE '期限切れ'
-  END as trial_status,
-  plan_expires_at,
   created_at
 FROM public.profiles
-WHERE subscription_status IN ('trial', 'trialing')
-ORDER BY plan_expires_at DESC
-LIMIT 10;
+WHERE stripe_customer_id IS NULL
+  AND email NOT LIKE '%komedorobouinuzini%'
+ORDER BY created_at DESC;
 
--- 8.3 RLSポリシー確認（重要！）
+-- 9.3 RLSポリシー確認（重要！）
 SELECT
   schemaname,
   tablename,
@@ -492,7 +588,7 @@ ORDER BY policyname;
 -- 2. "Users can update own profile" - roles: {public}, cmd: UPDATE
 -- 3. "Users can view own profile" - roles: {public}, cmd: SELECT
 
--- 8.4 トリガー確認
+-- 9.4 トリガー確認
 SELECT
   trigger_name,
   event_manipulation,
@@ -510,18 +606,46 @@ COMMIT;
 SELECT '🎉 究極のセットアップが完了しました！' as message;
 SELECT '📊 レポートを確認: SELECT * FROM user_status_report;' as next_step;
 SELECT '👑 ユーザー管理API: 完全対応済み！' as api_status;
+SELECT '🔐 クレジットカード登録必須システム: 有効化済み！' as security_status;
 
 -- ============================================================================
--- トラブルシューティング用クエリ（必要に応じて実行）
+-- 便利なクエリ集（必要に応じて実行）
 -- ============================================================================
+
+-- 全ユーザーのステータスを確認
+-- SELECT * FROM user_status_report;
+
+-- クレジットカード未登録ユーザーのみ表示
+-- SELECT * FROM user_status_report WHERE stripe_status LIKE '%未登録%';
+
+-- オーナーアカウントのみ表示
+-- SELECT * FROM user_status_report WHERE user_type LIKE '%オーナー%';
+
+-- トライアル残日数を確認
+-- SELECT email, get_trial_days_left(id) as days_left FROM public.profiles WHERE subscription_status IN ('trial', 'trialing');
 
 -- RLSが有効になっているか確認
--- SELECT schemaname, tablename, rowsecurity
--- FROM pg_tables
--- WHERE tablename = 'profiles';
+-- SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE tablename = 'profiles';
 
 -- Service Role ポリシーが正しく設定されているか確認
--- SELECT policyname, roles, cmd, qual, with_check
--- FROM pg_policies
--- WHERE tablename = 'profiles'
---   AND policyname = 'Enable all for service role';
+-- SELECT policyname, roles, cmd, qual, with_check FROM pg_policies WHERE tablename = 'profiles' AND policyname = 'Enable all for service role';
+
+-- ============================================================================
+-- 🎯 セキュリティポリシーまとめ
+-- ============================================================================
+--
+-- ✅ オーナーアカウント（komedorobouinuzini を含むメール）:
+--    - クレジットカード登録不要
+--    - すべての機能に無制限アクセス
+--    - ユーザー管理権限あり
+--
+-- ✅ 一般ユーザー:
+--    - クレジットカード登録必須
+--    - 未登録の場合、次回ログイン時に自動削除
+--    - Stripe決済キャンセル時も即座に削除
+--
+-- ✅ 新規サインアップフロー:
+--    1. サインアップ → 2. Stripeへリダイレクト → 3. 決済完了 → 4. 使用可能
+--    キャンセル時: アカウント自動削除
+--
+-- ============================================================================
