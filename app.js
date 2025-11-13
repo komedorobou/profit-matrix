@@ -40,6 +40,18 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         console.log('✅ ログイン成功:', session.user.email)
         currentUser = session.user
 
+        // 🚨 重要: INITIAL_SESSIONの場合はjustSignedUpフラグをクリア
+        // ページリロード時にフラグが残っていると、stripe_customer_idチェックがスキップされる
+        if (event === 'INITIAL_SESSION') {
+            const hadFlag = localStorage.getItem('justSignedUp') === 'true'
+            if (hadFlag) {
+                console.log('🧹 INITIAL_SESSION: justSignedUpフラグをクリア（ページリロード検出）')
+                localStorage.removeItem('justSignedUp')
+                localStorage.removeItem('pendingUserId')
+                localStorage.removeItem('pendingUserEmail')
+            }
+        }
+
         // ===================================
         // 最優先：UI更新（絶対に失敗させない）
         // ===================================
