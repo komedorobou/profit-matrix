@@ -105,7 +105,15 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
 
                 // オーナーアカウント以外で stripe_customer_id がない場合は強制ログアウト
                 const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
+                const justSignedUp = localStorage.getItem('justSignedUp') === 'true'
+
                 if (!isOwner && !profile.stripe_customer_id) {
+                    // サインアップ直後はスキップ（Stripeに飛ばす）
+                    if (justSignedUp) {
+                        console.log('📝 サインアップ直後のため、Stripeリダイレクトを優先')
+                        return
+                    }
+
                     console.log('🚨 クレジットカード未登録ユーザーを検出 - 強制ログアウト')
 
                     // アカウントを削除
@@ -414,8 +422,12 @@ window.handleSignup = async function() {
         localStorage.setItem('pendingUserId', data.user.id)
         localStorage.setItem('pendingUserEmail', email)
 
+        // サインアップ直後フラグを立てる（ログイン時チェックをスキップ）
+        localStorage.setItem('justSignedUp', 'true')
+
         // Stripe決済画面へリダイレクト
-        window.location.href = checkoutData.url
+        console.log('🚀 Stripeへリダイレクト:', checkoutData.url)
+        window.location.replace(checkoutData.url)
 
     } catch (error) {
         console.error('登録エラー:', error)
@@ -998,6 +1010,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('✅ Stripe決済成功')
         // URLをクリーンにしてからアラート表示
         window.history.replaceState(null, '', window.location.pathname)
+
+        // サインアップフラグをクリア
+        localStorage.removeItem('justSignedUp')
+        localStorage.removeItem('pendingUserId')
+        localStorage.removeItem('pendingUserEmail')
+
         alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
         // onAuthStateChangeでプラン情報が更新される
         return
@@ -1008,6 +1026,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // URLをクリーンに
         window.history.replaceState(null, '', window.location.pathname)
+
+        // サインアップフラグをクリア
+        localStorage.removeItem('justSignedUp')
 
         // キャンセルしたユーザーのアカウントを削除
         const pendingUserId = localStorage.getItem('pendingUserId')
