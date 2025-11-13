@@ -84,15 +84,23 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         // ===================================
 
         console.log('📊 プロフィール情報を取得中...')
+        console.log('🔍 ユーザーID:', session.user.id)
+        console.log('🔍 メール:', session.user.email)
         try {
+            console.log('🔍 Supabaseクエリ開始...')
             const { data: profile, error: profileError } = await supabaseAuth
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single()
 
+            console.log('🔍 Supabaseクエリ完了')
+            console.log('🔍 取得データ:', profile)
+            console.log('🔍 エラー:', profileError)
+
             if (profileError) {
                 console.warn('⚠️ プロフィール取得エラー:', profileError.message)
+                console.warn('⚠️ エラー詳細:', JSON.stringify(profileError, null, 2))
                 // エラー時はトライアルとして扱う（期限はnullのまま）
                 currentPlan = 'trial'
                 subscriptionStatus = 'trial'
@@ -106,6 +114,10 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 // オーナーアカウント以外で stripe_customer_id がない場合は強制ログアウト
                 const isOwner = session.user.email && session.user.email.includes('komedorobouinuzini')
                 const justSignedUp = localStorage.getItem('justSignedUp') === 'true'
+
+                console.log('🔍 オーナーチェック:', isOwner, '(メール:', session.user.email, ')')
+                console.log('🔍 justSignedUpフラグ:', justSignedUp)
+                console.log('🔍 stripe_customer_id:', profile.stripe_customer_id || 'なし')
 
                 if (!isOwner && !profile.stripe_customer_id) {
                     // サインアップ直後はスキップ（Stripeに飛ばす）
