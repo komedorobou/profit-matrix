@@ -88,11 +88,24 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         console.log('🔍 メール:', session.user.email)
         try {
             console.log('🔍 Supabaseクエリ開始...')
-            const { data: profile, error: profileError } = await supabaseAuth
+
+            // タイムアウト機能付きクエリ（5秒でタイムアウト）
+            const queryPromise = supabaseAuth
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single()
+
+            const timeoutPromise = new Promise((resolve) =>
+                setTimeout(() => {
+                    console.error('⏱️ プロフィールクエリが5秒でタイムアウト - Supabase接続問題またはRLSブロックの可能性')
+                    resolve({ data: null, error: { message: 'Query timeout after 5 seconds - possible Supabase connection issue', code: 'TIMEOUT' } })
+                }, 5000)
+            )
+
+            const result = await Promise.race([queryPromise, timeoutPromise])
+            const profile = result.data
+            const profileError = result.error
 
             console.log('🔍 Supabaseクエリ完了')
             console.log('🔍 取得データ:', profile)
@@ -101,10 +114,23 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             if (profileError) {
                 console.warn('⚠️ プロフィール取得エラー:', profileError.message)
                 console.warn('⚠️ エラー詳細:', JSON.stringify(profileError, null, 2))
-                // エラー時はトライアルとして扱う（期限はnullのまま）
+
+                // タイムアウトの場合は、UIだけ更新して処理を続行
+                if (profileError.code === 'TIMEOUT') {
+                    console.warn('⚠️ タイムアウトのため、UI更新のみ実行して処理を続行')
+                    currentPlan = 'trial'
+                    subscriptionStatus = 'trial'
+                    planExpiresAt = null
+                    // プラン情報を表示してユーザーメニューは表示
+                    updatePlanDisplay()
+                    showUserManagementButton()
+                    return  // これ以上の処理はスキップ
+                }
+
+                // その他のエラー時はトライアルとして扱う（期限はnullのまま）
                 currentPlan = 'trial'
                 subscriptionStatus = 'trial'
-                planExpiresAt = null  // エラー時は期限を設定しない
+                planExpiresAt = null
             } else if (profile) {
                 console.log('✅ プロフィール取得成功:', profile)
                 currentPlan = profile.plan || 'trial'
@@ -155,9 +181,13 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 // プランステータスをチェック
                 checkPlanStatus()
             } else {
-                console.warn('⚠️ プロフィールが見つかりません')
-                currentPlan = 'trial'
-                subscriptionStatus = 'trial'
+                console.warn('⚠️ プロフィールが見つかりません - 新規サインアップまたはトリガー未実行')
+                console.warn('⚠️ ユーザーをログアウトさせ、プロフィール作成を待機します')
+
+                // プロフィールがない場合はログアウト
+                alert('⚠️ アカウント設定中です。\n\n数秒後に再度ログインしてください。')
+                await supabaseAuth.auth.signOut()
+                return
             }
         } catch (error) {
             console.error('❌ プロフィール取得エラー:', error)
