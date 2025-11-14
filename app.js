@@ -1024,7 +1024,7 @@ function canUseSearch(rowCount) {
     }
 
     // トライアル期限切れチェック
-    if (subscriptionStatus === 'trial' && planExpiresAt) {
+    if ((subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') && planExpiresAt) {
         const now = new Date()
         if (now > planExpiresAt) {
             return {
@@ -1036,7 +1036,8 @@ function canUseSearch(rowCount) {
     }
 
     // サブスクリプション状態チェック
-    if (subscriptionStatus !== 'trial' && subscriptionStatus !== 'active') {
+    // trial: 無料トライアル, trialing: Stripeトライアル期間, active: 有料プラン有効
+    if (subscriptionStatus !== 'trial' && subscriptionStatus !== 'trialing' && subscriptionStatus !== 'active') {
         return {
             allowed: false,
             reason: 'サブスクリプション無効',
