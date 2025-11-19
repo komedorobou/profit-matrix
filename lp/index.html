@@ -907,12 +907,23 @@
                 <span class="highlight">ラクにしませんか？</span>
             </h1>
             
-            <!-- 動画リンク -->
+            <!-- サムネイル画像（動画リンク） -->
             <div style="margin: 2rem auto; text-align: center;">
-                <a href="https://youtu.be/NXRsy-1n_lc" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--dark); padding: 1.5rem 3rem; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.2rem; transition: all 0.3s; box-shadow: 0 0 30px rgba(0, 255, 240, 0.5);">
-                    📺 デモ動画を見る
+                <a href="https://youtu.be/NXRsy-1n_lc" target="_blank" rel="noopener noreferrer" style="display: inline-block; position: relative; border-radius: 15px; overflow: hidden; box-shadow: 0 0 40px rgba(0, 255, 240, 0.4); transition: all 0.3s;">
+                    <img src="サムネ.jpg" alt="PROFIT MATRIX デモ動画" style="max-width: 100%; width: 800px; height: auto; display: block; transition: transform 0.3s;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.7); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        ▶
+                    </div>
                 </a>
             </div>
+            <style>
+                a:has(img[alt*="デモ動画"]):hover img {
+                    transform: scale(1.05);
+                }
+                a:has(img[alt*="デモ動画"]):hover {
+                    box-shadow: 0 0 60px rgba(0, 255, 240, 0.6);
+                }
+            </style>
             
             <p class="hero-subtitle">
                 せどりリサーチを30分の1に圧縮する<br>
