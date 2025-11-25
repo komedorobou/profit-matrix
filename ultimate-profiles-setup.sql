@@ -384,6 +384,14 @@ UPDATE public.profiles
 SET plan = 'trial'
 WHERE plan IS NULL;
 
+-- 6.5 トライアル期限切れ＆Stripe課金済みなのにtrialingのままのユーザーをactiveに修正
+-- （Webhookが失敗してsubscription_statusが更新されなかったケースの救済）
+UPDATE public.profiles
+SET subscription_status = 'active'
+WHERE subscription_status = 'trialing'
+  AND stripe_subscription_id IS NOT NULL
+  AND plan_expires_at < NOW();
+
 -- ============================================================================
 -- STEP 7: データ整合性チェックとレポート
 -- ============================================================================
