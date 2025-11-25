@@ -381,15 +381,23 @@ async function handlePaymentSucceeded(invoice) {
         console.log('✅ DBからユーザーを特定:', userId);
     }
 
-    // ステータスを更新
+    // 次回更新日を取得
+    let planExpiresAt = null;
+    if (subscription.current_period_end) {
+        planExpiresAt = new Date(subscription.current_period_end * 1000).toISOString();
+        console.log('📅 次回更新日:', planExpiresAt);
+    }
+
+    // ステータスと次回更新日を更新
     await supabase
         .from('profiles')
         .update({
-            subscription_status: 'active'
+            subscription_status: 'active',
+            plan_expires_at: planExpiresAt
         })
         .eq('id', userId);
 
-    console.log('✅ 支払い成功処理完了:', userId);
+    console.log('✅ 支払い成功処理完了:', userId, '次回更新:', planExpiresAt);
 }
 
 // 支払い失敗時の処理
