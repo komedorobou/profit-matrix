@@ -7,7 +7,7 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'trial';
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS plan_expires_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial'; -- trial, active, canceled, past_due
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial'; -- trial, trialing, active, canceled, past_due
 
 -- 2. プロフィールテーブルがない場合は作成
 CREATE TABLE IF NOT EXISTS profiles (
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   plan_expires_at TIMESTAMP WITH TIME ZONE,
   stripe_customer_id TEXT UNIQUE,
   stripe_subscription_id TEXT UNIQUE,
-  subscription_status TEXT DEFAULT 'trial',  -- trial, active, canceled, past_due
+  subscription_status TEXT DEFAULT 'trial',  -- trial, trialing, active, canceled, past_due
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -92,8 +92,8 @@ BEGIN
     RETURN TRUE;
   END IF;
 
-  -- トライアル期間チェック
-  IF user_status = 'trial' THEN
+  -- トライアル期間チェック（trial: 従来の無料トライアル, trialing: Stripeトライアル）
+  IF user_status = 'trial' OR user_status = 'trialing' THEN
     IF NOW() < expires_at THEN
       -- トライアル期間中は300行まで（Standardと同等）
       RETURN rows_count <= 300;
