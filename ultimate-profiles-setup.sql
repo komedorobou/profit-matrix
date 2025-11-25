@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   plan_expires_at TIMESTAMP WITH TIME ZONE,
   stripe_customer_id TEXT UNIQUE,
   stripe_subscription_id TEXT UNIQUE,
-  subscription_status TEXT DEFAULT 'trial' NOT NULL,
+  subscription_status TEXT DEFAULT 'trial' NOT NULL,  -- trial, trialing, active, canceled, past_due
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
