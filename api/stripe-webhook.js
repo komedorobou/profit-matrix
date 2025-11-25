@@ -253,9 +253,24 @@ async function handleSubscriptionCreated(subscription) {
 async function handleSubscriptionUpdated(subscription) {
     console.log('🔄 サブスクリプション更新:', subscription.id);
 
-    const userId = subscription.metadata.userId;
+    let userId = subscription.metadata?.userId;
 
-    if (!userId) return;
+    // metadataにuserIdがない場合、stripe_subscription_idから逆引き
+    if (!userId) {
+        console.log('⚠️ metadataにuserIdがありません。DBから検索します...');
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('stripe_subscription_id', subscription.id)
+            .single();
+
+        if (error || !profile) {
+            console.error('❌ ユーザーが見つかりません:', subscription.id);
+            return;
+        }
+        userId = profile.id;
+        console.log('✅ DBからユーザーを特定:', userId);
+    }
 
     // ステータスをマッピング
     let status = subscription.status;
@@ -283,24 +298,48 @@ async function handleSubscriptionUpdated(subscription) {
     const cancelAtPeriodEnd = subscription.cancel_at_period_end;
     console.log('🚫 期間終了時にキャンセル:', cancelAtPeriodEnd);
 
+    // 更新データを準備
+    const updateData = {
+        subscription_status: status,
+        plan_expires_at: planExpiresAt
+    };
+
+    // トライアル終了→active移行時、metadataからplanを取得して更新
+    if (status === 'active' && subscription.metadata.plan) {
+        updateData.plan = subscription.metadata.plan;
+        console.log('✅ トライアル終了→プラン移行:', subscription.metadata.plan);
+    }
+
     await supabase
         .from('profiles')
-        .update({
-            subscription_status: status,
-            plan_expires_at: planExpiresAt
-        })
+        .update(updateData)
         .eq('id', userId);
 
-    console.log('✅ サブスクリプションステータス更新:', userId, status);
+    console.log('✅ サブスクリプションステータス更新:', userId, status, updateData.plan || '(planなし)');
 }
 
 // サブスクリプション削除時の処理
 async function handleSubscriptionDeleted(subscription) {
     console.log('🚫 サブスクリプション削除:', subscription.id);
 
-    const userId = subscription.metadata.userId;
+    let userId = subscription.metadata?.userId;
 
-    if (!userId) return;
+    // metadataにuserIdがない場合、stripe_subscription_idから逆引き
+    if (!userId) {
+        console.log('⚠️ metadataにuserIdがありません。DBから検索します...');
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('stripe_subscription_id', subscription.id)
+            .single();
+
+        if (error || !profile) {
+            console.error('❌ ユーザーが見つかりません:', subscription.id);
+            return;
+        }
+        userId = profile.id;
+        console.log('✅ DBからユーザーを特定:', userId);
+    }
 
     await supabase
         .from('profiles')
@@ -323,9 +362,24 @@ async function handlePaymentSucceeded(invoice) {
 
     // サブスクリプション情報を取得
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const userId = subscription.metadata.userId;
+    let userId = subscription.metadata?.userId;
 
-    if (!userId) return;
+    // metadataにuserIdがない場合、stripe_subscription_idから逆引き
+    if (!userId) {
+        console.log('⚠️ metadataにuserIdがありません。DBから検索します...');
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('stripe_subscription_id', subscriptionId)
+            .single();
+
+        if (error || !profile) {
+            console.error('❌ ユーザーが見つかりません:', subscriptionId);
+            return;
+        }
+        userId = profile.id;
+        console.log('✅ DBからユーザーを特定:', userId);
+    }
 
     // ステータスを更新
     await supabase
@@ -348,9 +402,24 @@ async function handlePaymentFailed(invoice) {
 
     // サブスクリプション情報を取得
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const userId = subscription.metadata.userId;
+    let userId = subscription.metadata?.userId;
 
-    if (!userId) return;
+    // metadataにuserIdがない場合、stripe_subscription_idから逆引き
+    if (!userId) {
+        console.log('⚠️ metadataにuserIdがありません。DBから検索します...');
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('stripe_subscription_id', subscriptionId)
+            .single();
+
+        if (error || !profile) {
+            console.error('❌ ユーザーが見つかりません:', subscriptionId);
+            return;
+        }
+        userId = profile.id;
+        console.log('✅ DBからユーザーを特定:', userId);
+    }
 
     // ステータスを更新
     await supabase
