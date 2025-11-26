@@ -392,6 +392,15 @@ WHERE subscription_status = 'trialing'
   AND stripe_subscription_id IS NOT NULL
   AND plan_expires_at < NOW();
 
+-- 6.6 activeユーザーのplan_expires_atが過去日付のままの場合、1ヶ月後に修正
+-- （Webhookでplan_expires_atが更新されなかったケースの救済）
+-- ※ 本来はStripeのcurrent_period_endを使うべきだが、DBから取得できないため暫定対応
+UPDATE public.profiles
+SET plan_expires_at = NOW() + INTERVAL '1 month'
+WHERE subscription_status = 'active'
+  AND stripe_subscription_id IS NOT NULL
+  AND plan_expires_at < NOW();
+
 -- ============================================================================
 -- STEP 7: データ整合性チェックとレポート
 -- ============================================================================
