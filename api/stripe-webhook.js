@@ -226,6 +226,20 @@ async function handleCheckoutCompleted(session) {
         console.log('💰 アフィリエイトID検出:', affiliateId);
         // TODO: コンバージョン記録と報酬計算
     }
+
+    // クレジット登録完了メール送信（トライアル開始時のみ）
+    if (subscriptionStatus === 'trialing' && session.customer_email) {
+        try {
+            await fetch('https://profit-matrix.jp/api/send-welcome-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: session.customer_email, type: 'credit_registered' })
+            });
+            console.log('✅ クレジット登録完了メール送信:', session.customer_email);
+        } catch (emailError) {
+            console.error('⚠️ クレジット登録完了メール送信失敗:', emailError);
+        }
+    }
 }
 
 // サブスクリプション作成時の処理

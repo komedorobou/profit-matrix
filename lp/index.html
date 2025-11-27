@@ -851,6 +851,17 @@
             border-top: 2px solid var(--primary);
             color: var(--text-muted);
         }
+
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--primary) !important;
+        }
         
         /* ====== レスポンシブ ====== */
         @media (max-width: 768px) {
@@ -902,6 +913,55 @@
             section {
                 padding: 3rem 1rem;
             }
+
+            .footer a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+
+            .hero-cta {
+                font-size: 1rem;
+                padding: 1rem 2rem;
+            }
+
+            .feature-image {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* 小さいスマホ対応 */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+            }
+
+            .header-cta,
+            .hero-cta,
+            .final-cta-button {
+                font-size: 0.9rem;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .logo {
+                font-size: 1rem;
+            }
+
+            .footer a {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -910,7 +970,7 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">PROFIT MATRIX</div>
-            <a href="#pricing" class="header-cta">7日間無料で試す</a>
+            <a href="https://profit-matrix.jp?mode=signup" class="header-cta">7日間無料で試す</a>
         </div>
     </header>
 
@@ -925,7 +985,7 @@
             <!-- 動画サムネイル -->
             <div style="margin: 2rem auto; text-align: center; max-width: 800px;">
                 <a href="https://youtu.be/NXRsy-1n_lc" target="_blank" rel="noopener noreferrer" style="display: block; position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(0, 255, 240, 0.5); transition: all 0.3s;">
-                    <img src="thumbnail.jpg" alt="PROFIT MATRIX デモ動画" style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
+                    <img src="/lp/thumbnail.jpg" alt="PROFIT MATRIX デモ動画" style="width: 100%; min-height: 450px; object-fit: cover; display: block; transition: transform 0.3s;">
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 255, 240, 0.9); color: #0a0a0a; padding: 1rem 2rem; border-radius: 50px; font-weight: bold; font-size: 1.2rem; pointer-events: none;">
                         ▶ デモ動画を見る
                     </div>
@@ -946,7 +1006,7 @@
             </p>
             
             <div class="hero-right">
-                <a href="#pricing" class="hero-cta">7日間無料で試す ▶</a>
+                <a href="https://profit-matrix.jp?mode=signup" class="hero-cta">7日間無料で試す ▶</a>
                 
                 <div class="hero-note">
                     <p>※ 7日後に自動で有料プランに移行</p>
@@ -1052,7 +1112,7 @@
                         <p class="feature-description">
                             利益率40%以上の商品だけを自動抽出。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/00fff0?text=高利益率商品の自動抽出画面" alt="高利益率商品の自動抽出" class="feature-image">
+                        <img src="/lp/high-profit-filter.jpg" alt="高利益率商品の自動抽出" class="feature-image">
                     </div>
                 </div>
                 
@@ -1065,7 +1125,7 @@
                         <p class="feature-description">
                             CSVアップロードで100商品も3分で検索完了。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/00fff0?text=CSV一括アップロード画面" alt="CSV一括アップロード" class="feature-image">
+                        <img src="/lp/bulk-search.jpg" alt="CSV一括アップロード" class="feature-image">
                     </div>
                 </div>
             </div>
@@ -1080,22 +1140,6 @@
             <div class="feature-accordion">
                 <div class="feature-accordion-item">
                     <div class="feature-accordion-header">
-                        <span class="feature-accordion-icon">🔍</span>
-                        <span>600+ブランド正規化対応</span>
-                    </div>
-                    <div class="feature-accordion-body">
-                        <p class="feature-description">
-                            「Deuxieme Classe」「ドゥーズィエムクラス」などの表記ゆれを自動統一。99%の精度で検索可能です。
-                        </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/ff00ff?text=ブランド名正規化の仕組み" alt="ブランド名正規化" class="feature-image">
-                        <p style="margin-top: 1rem;">
-                            カタカナ・英語・略語・スペースの有無に関わらず、全て同じブランドとして認識。表記ゆれによる検索漏れを防ぎます。
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="feature-accordion-item">
-                    <div class="feature-accordion-header">
                         <span class="feature-accordion-icon">📁</span>
                         <span>複数CSV統合</span>
                     </div>
@@ -1103,7 +1147,7 @@
                         <p class="feature-description">
                             異なるブランドや期間のCSVを一括統合。データが散らばらず、一元管理できます。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/ff00ff?text=複数CSV統合画面" alt="複数CSV統合" class="feature-image">
+                        <img src="/lp/csv-merge.jpg" alt="複数CSV統合" class="feature-image">
                         <p style="margin-top: 1rem;">
                             複数のCSVファイルをアップロードするだけで、自動的に統合。データの重複チェックも自動で行います。
                         </p>
@@ -1119,7 +1163,7 @@
                         <p class="feature-description">
                             重複データの除去、ブランド名の正規化、不要な列の削除など、自動でデータを整理します。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/ff00ff?text=データクリーニング画面" alt="データクリーニング" class="feature-image">
+                        <img src="/lp/data-cleaning.jpg" alt="データクリーニング" class="feature-image">
                         <p style="margin-top: 1rem;">
                             汚いデータも自動で綺麗に整形。手動でExcelを開いて編集する必要はありません。
                         </p>
@@ -1128,16 +1172,16 @@
                 
                 <div class="feature-accordion-item">
                     <div class="feature-accordion-header">
-                        <span class="feature-accordion-icon">📈</span>
-                        <span>利益率順ソート</span>
+                        <span class="feature-accordion-icon">📦</span>
+                        <span>商品グループ化</span>
                     </div>
                     <div class="feature-accordion-body">
                         <p class="feature-description">
-                            利益率の高い商品から順に並べ替え。高利益商品に優先的にフォーカスできます。
+                            色名やサイズ違いを自動統合。同じ商品の価格分布を一目で把握できます。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/ff00ff?text=利益率順ソート画面" alt="利益率順ソート" class="feature-image">
+                        <img src="/lp/product-grouping.jpg" alt="商品グループ化" class="feature-image">
                         <p style="margin-top: 1rem;">
-                            ワンクリックで利益率の高い順に自動ソート。最も稼げる商品が一目でわかります。
+                            類似商品を自動でグループ化し、中央値・最頻値・平均値を算出。相場感がすぐつかめます。
                         </p>
                     </div>
                 </div>
@@ -1151,7 +1195,7 @@
                         <p class="feature-description">
                             統合・整理したCSVを保存・再利用できるため、同じブランドを何度もリサーチする手間が省けます。
                         </p>
-                        <img src="https://via.placeholder.com/800x450/1a1a1a/ff00ff?text=CSV保存・再利用画面" alt="CSV保存・再利用" class="feature-image">
+                        <img src="/lp/data-asset.jpg" alt="CSV保存・再利用" class="feature-image">
                         <p style="margin-top: 1rem;">
                             一度整理したデータは資産として保存。次回からは保存したCSVを読み込むだけでOKです。検索結果も蓄積されるため、知識が増えていきます。
                         </p>
@@ -1284,7 +1328,7 @@
                     <li>全機能アップデート無料</li>
                 </ul>
                 
-                <a href="#signup" class="pricing-cta">今すぐ始める</a>
+                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
             </div>
 
             <div class="pricing-card featured">
@@ -1303,9 +1347,9 @@
                     <li>全機能アップデート無料</li>
                 </ul>
                 
-                <a href="#signup" class="pricing-cta">今すぐ始める</a>
+                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
             </div>
-            
+
             <div class="pricing-card">
                 <h3 class="pricing-plan">プレミアムプラン</h3>
                 <div class="pricing-price">¥19,800</div>
@@ -1321,7 +1365,7 @@
                     <li>全機能アップデート無料</li>
                 </ul>
                 
-                <a href="#signup" class="pricing-cta">今すぐ始める</a>
+                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
             </div>
         </div>
     </section>
@@ -1422,7 +1466,7 @@
             PROFIT MATRIXで、せどりリサーチを効率化しよう
         </p>
         
-        <a href="#pricing" class="final-cta-button">7日間無料で試す ▶</a>
+        <a href="https://profit-matrix.jp?mode=signup" class="final-cta-button">7日間無料で試す ▶</a>
         
         <div class="final-cta-notes">
             <p>※ 7日後に自動で有料プランに移行</p>
@@ -1432,6 +1476,11 @@
 
     <!-- フッター -->
     <footer class="footer">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="/terms.html" target="_blank">利用規約</a>
+            <a href="/privacy.html" target="_blank">プライバシーポリシー</a>
+            <a href="/commerce.html" target="_blank">特定商取引法に基づく表記</a>
+        </div>
         <p>© 2025 PROFIT MATRIX. All rights reserved.</p>
     </footer>
 

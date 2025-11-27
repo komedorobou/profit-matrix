@@ -191,7 +191,7 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 }
 
                 // プランステータスをチェック
-                checkPlanStatus()
+                await checkPlanStatus()
             } else {
                 console.warn('⚠️ プロフィールが見つかりません - 新規サインアップまたはトリガー未実行')
                 console.warn('⚠️ ユーザーをログアウトさせ、プロフィール作成を待機します')
@@ -414,6 +414,7 @@ window.handleSignup = async function() {
     const email = document.getElementById('signupEmail').value.trim()
     const password = document.getElementById('signupPassword').value
     const passwordConfirm = document.getElementById('signupPasswordConfirm').value
+    const selectedPlan = document.getElementById('signupPlan').value
 
     if (!email || !password || !passwordConfirm) {
         alert('全ての項目を入力してください')
@@ -431,8 +432,10 @@ window.handleSignup = async function() {
     }
 
     const btn = document.getElementById('signupBtn')
-    btn.textContent = '登録中...'
     btn.disabled = true
+    btn.textContent = '登録中...'
+
+    console.log('💳 登録プラン:', selectedPlan, '(7日間無料トライアル付き)')
 
     try {
         // 🚨 重要: フラグを先に設定（onAuthStateChangeが発火する前に準備）
@@ -467,17 +470,19 @@ window.handleSignup = async function() {
             return
         }
 
-        // 一般ユーザーはStripe決済画面へリダイレクト（7日間無料トライアル付き）
+        // 一般ユーザーはStripe決済画面へリダイレクト
         btn.textContent = '決済画面へ移動中...'
+
+        console.log('💳 Stripe決済パラメータ:', { enableTrial })
 
         const checkoutResponse = await fetch('/api/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                plan: 'starter',  // 新規登録時は4,980円/月のスタータープラン
+                plan: selectedPlan,  // 選択されたプラン
                 userId: data.user.id,
                 customerEmail: email,
-                trial: true  // 7日間無料トライアル
+                trial: selectedPlan === 'starter'  // スタータープランのみ7日間無料
             })
         })
 
@@ -719,7 +724,27 @@ window.handlePasswordUpdate = async function() {
 // ========================================
 
 // プランステータスをチェック
-function checkPlanStatus() {
+async function checkPlanStatus() {
+    // 最新のプロフィール情報を取得
+    if (currentUser) {
+        try {
+            const { data: profile, error } = await supabaseAuth
+                .from('profiles')
+                .select('plan, subscription_status, plan_expires_at')
+                .eq('id', currentUser.id)
+                .single()
+
+            if (!error && profile) {
+                currentPlan = profile.plan || 'trial'
+                subscriptionStatus = profile.subscription_status || 'trial'
+                planExpiresAt = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null
+                console.log('🔄 プロフィール情報を更新しました:', { currentPlan, subscriptionStatus, planExpiresAt })
+            }
+        } catch (e) {
+            console.warn('プロフィール更新エラー:', e)
+        }
+    }
+
     console.log('📊 プランステータスチェック:', {
         plan: currentPlan,
         status: subscriptionStatus,
@@ -1023,10 +1048,10 @@ function canUseSearch(rowCount) {
         return { allowed: true }
     }
 
-    // トライアル期限切れチェック
+    // トライアル期限切れチェック（activeステータスの場合はスキップ）
     if ((subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') && planExpiresAt) {
         const now = new Date()
-        if (now > planExpiresAt) {
+        if (now > planExpiresAt && subscriptionStatus !== 'active') {
             return {
                 allowed: false,
                 reason: 'トライアル期限切れ',
@@ -1073,10 +1098,15 @@ function canUseSearch(rowCount) {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 アプリ初期化開始')
 
-    // URLパラメータをチェック（Stripe決済結果）
+    // URLパラメータをチェック
     const urlParams = new URLSearchParams(window.location.search)
     const paymentSuccess = urlParams.get('success')
     const paymentCanceled = urlParams.get('canceled')
+    const authMode = urlParams.get('mode') // LPから新規登録に飛ばす用
+    const trialParam = urlParams.get('trial') // トライアル有無（デフォルトtrue）
+    if (trialParam === 'false') {
+        localStorage.setItem('disableTrial', 'true') // トライアル無効をlocalStorageに保存
+    }
 
     if (paymentSuccess === 'true') {
         console.log('✅ Stripe決済成功')
@@ -1087,6 +1117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.removeItem('justSignedUp')
         localStorage.removeItem('pendingUserId')
         localStorage.removeItem('pendingUserEmail')
+        localStorage.removeItem('disableTrial')
         redirectingToStripe = false
 
         alert('🎉 お支払いが完了しました！\n\nプランが有効化されました。\nご利用ありがとうございます。')
@@ -1147,6 +1178,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         return
+    }
+
+    // LPから新規登録モードで来た場合
+    if (authMode === 'signup') {
+        console.log('📝 新規登録モードで開始')
+        const authModal = document.getElementById('authModal')
+        if (authModal) {
+            authModal.style.display = 'flex'
+            switchAuthTab('signup')
+        }
+        // URLをクリーンに
+        window.history.replaceState(null, '', window.location.pathname)
     }
 
     // URLハッシュをチェック

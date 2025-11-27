@@ -67,7 +67,20 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to create profile: ' + profileError.message })
     }
 
-    // 3. 成功レスポンス
+    // 3. ウェルカムメール送信（非同期で実行、失敗しても登録は成功させる）
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://profit-matrix.jp'}/api/send-welcome-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: email, type: 'signup' })
+      })
+      console.log('✅ ウェルカムメール送信:', email)
+    } catch (emailError) {
+      console.error('⚠️ ウェルカムメール送信失敗:', emailError)
+      // メール送信失敗しても登録は成功
+    }
+
+    // 4. 成功レスポンス
     return res.status(200).json({
       success: true,
       message: '登録完了！7日間の無料トライアルを開始しました。',
