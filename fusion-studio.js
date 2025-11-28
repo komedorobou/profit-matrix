@@ -71,13 +71,35 @@ function detectFileFormat(data) {
             if (cellText.includes('品番') || cellText.includes('コード')) columns.productCode = i;
         });
     } else {
-        // ヘッダーなし: 列数で判定
-        // 最終列が数値っぽいか確認
+        // ヘッダーなし: 列数とデータパターンで判定
         const sampleRows = data.slice(0, Math.min(10, data.length));
         const lastColNumeric = sampleRows.every(row => {
             const val = row[colCount - 1];
             return !isNaN(parseFloat(val));
         });
+
+        // 各列のパターンを分析
+        const colPatterns = [];
+        for (let col = 0; col < colCount; col++) {
+            let numericCount = 0;
+            let productCodeCount = 0; // XX-XXX-XXX-XXXX パターン
+            let textCount = 0;
+
+            sampleRows.forEach(row => {
+                const val = String(row[col] || '');
+                if (/^\d+$/.test(val.replace(/[,\.]/g, ''))) {
+                    numericCount++;
+                } else if (/^\d{2,}-\d{2,}-\d{2,}/.test(val)) {
+                    productCodeCount++;
+                } else if (val.length > 0) {
+                    textCount++;
+                }
+            });
+
+            colPatterns.push({ col, numericCount, productCodeCount, textCount });
+        }
+
+        console.log('[detectFileFormat] 列パターン分析:', colPatterns);
 
         if (colCount === 3 && lastColNumeric) {
             // WBC系3列: ブランド / 品番 / 価格
@@ -85,6 +107,30 @@ function detectFileFormat(data) {
         } else if (colCount === 4 && lastColNumeric) {
             // WBC系4列: ブランド / 品番 / 商品名 / 価格
             columns = { brand: 0, productCode: 1, productName: 2, price: 3 };
+        } else if (colCount >= 4 && lastColNumeric) {
+            // 4列以上: パターンから商品名列を推定
+            // 商品コードパターンでない、数値でない列を商品名とする
+            columns = { brand: 0, price: colCount - 1 };
+
+            // 商品コード列を探す（XX-XXX-XXX パターン）
+            for (let i = 1; i < colCount - 1; i++) {
+                if (colPatterns[i].productCodeCount > sampleRows.length / 2) {
+                    columns.productCode = i;
+                    break;
+                }
+            }
+
+            // 商品名列を探す（テキストが多く、商品コードパターンでない列）
+            for (let i = 1; i < colCount - 1; i++) {
+                if (colPatterns[i].textCount > sampleRows.length / 2 &&
+                    colPatterns[i].productCodeCount < sampleRows.length / 2 &&
+                    i !== columns.productCode) {
+                    columns.productName = i;
+                    break;
+                }
+            }
+
+            console.log('[detectFileFormat] 推定された列構成:', columns);
         } else {
             // 不明: とりあえず全列そのまま
             columns = { unknown: true };
@@ -877,15 +923,41 @@ window.previewGrouping = function() {
         return;
     }
 
+    // 商品名列を特定
+    let productNameCol = 1; // デフォルトはB列
+    const format = window.currentFileFormat;
+    if (format && format.columns && typeof format.columns.productName === 'number') {
+        productNameCol = format.columns.productName;
+        console.log('[previewGrouping] 商品名列を自動検出: 列' + (productNameCol + 1));
+    } else if (format && format.colCount === 3) {
+        // 3列の場合は商品名がない（ブランド/品番/価格）ので品番でグループ化
+        console.log('[previewGrouping] 3列構成のため商品コードでグループ化に切り替え');
+        previewProductCodeGrouping();
+        return;
+    } else {
+        // ヘッダーから商品名列を探す
+        const headerRow = mergedData[0];
+        if (headerRow) {
+            for (let i = 0; i < headerRow.length; i++) {
+                const cellText = String(headerRow[i] || '').toLowerCase();
+                if (cellText.includes('商品名') || cellText.includes('タイトル') || cellText.includes('商品タイトル')) {
+                    productNameCol = i;
+                    console.log('[previewGrouping] ヘッダーから商品名列を検出: 列' + (productNameCol + 1));
+                    break;
+                }
+            }
+        }
+    }
+
     // グループ化処理
     const groups = {};
     const processed = new Set();
-    
+
     for (let i = startRow; i < mergedData.length; i++) {
         if (processed.has(i)) continue;
-        if (!mergedData[i] || mergedData[i].length < 2) continue;
-        
-        const productName = mergedData[i][1];
+        if (!mergedData[i] || mergedData[i].length <= productNameCol) continue;
+
+        const productName = mergedData[i][productNameCol];
         const baseName = extractBaseName(productName, options);
         
         if (!baseName) continue;
