@@ -1033,11 +1033,26 @@ function deriveGroupName(group, options = {}) {
 
     // 2) 単語レベルでの組み合わせ生成
     if (wordFreq.size > 0) {
-        const sortedWords = [...wordFreq.entries()]
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 2)
-            .map(([word]) => word);
-        return sortedWords.join(' ');
+        // 商品コードパターン判定（例：22-020-220-6070）
+        const isProductCode = (word) => /^\d{2,}-\d{2,}-\d{2,}/.test(word);
+
+        // 商品コード以外の単語を優先
+        const nonCodeWords = [...wordFreq.entries()]
+            .filter(([word]) => !isProductCode(word))
+            .sort((a, b) => b[1] - a[1]);
+
+        if (nonCodeWords.length > 0) {
+            // 商品コード以外の単語があればそれを使用
+            const sortedWords = nonCodeWords.slice(0, 2).map(([word]) => word);
+            return sortedWords.join(' ');
+        } else {
+            // 全て商品コードの場合は1つだけ使用（連結しない）
+            const sortedWords = [...wordFreq.entries()]
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 1)
+                .map(([word]) => word);
+            return sortedWords.join(' ');
+        }
     }
 
     // 3) フォールバック
