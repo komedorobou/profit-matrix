@@ -627,6 +627,9 @@ window.mergeCSV = function() {
             }
         }
 
+        // ヘッダー設定を再取得（予測ヘッダー挿入後の値を使う）
+        const includeHeadersUpdated = document.getElementById('includeHeaders').checked;
+
         console.log('[Fusion Studio] パース結果サンプル（1ファイル目の最初の2行）:');
         if (parsedFiles[0] && parsedFiles[0][0]) {
             console.log('  行0:', typeof parsedFiles[0][0], Array.isArray(parsedFiles[0][0]));
@@ -649,7 +652,7 @@ window.mergeCSV = function() {
                     mergedData = [...data];
                     window.mergedData = [...data]; // グローバル変数も更新
                 } else {
-                    const startIndex = includeHeaders ? 1 : 0;
+                    const startIndex = includeHeadersUpdated ? 1 : 0;
                     mergedData.push(...data.slice(startIndex));
                     window.mergedData.push(...data.slice(startIndex)); // グローバル変数も更新
                 }
