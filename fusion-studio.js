@@ -67,10 +67,15 @@ function detectFileFormat(data) {
         }
     });
 
-    // 2列以上がヘッダーキーワードにマッチし、かつ最後の列が数値でない場合のみヘッダーと判定
-    const lastCellValue = String(firstRow[firstRow.length - 1] || '').replace(/[,\.]/g, '');
-    const lastCellIsNumeric = /^\d+$/.test(lastCellValue) && parseInt(lastCellValue) > 100;
-    const hasHeader = headerMatchCount >= 2 && !lastCellIsNumeric;
+    // 最終列が数値（価格）ならデータ行と判定（ヘッダーではない）
+    const lastCellValue = String(firstRow[firstRow.length - 1] || '').replace(/[,\.]/g, '').trim();
+    const lastCellIsNumeric = /^\d+$/.test(lastCellValue) && parseInt(lastCellValue) >= 100;
+
+    // 最終列が数値なら絶対にヘッダーではない
+    // そうでなければ、2列以上がヘッダーキーワードにマッチする必要がある
+    const hasHeader = !lastCellIsNumeric && headerMatchCount >= 2;
+
+    console.log('[detectFileFormat] 最終セル値:', lastCellValue, '数値判定:', lastCellIsNumeric);
 
     console.log('[detectFileFormat] ヘッダー判定:', { headerMatchCount, lastCellIsNumeric, hasHeader });
 
