@@ -34,6 +34,66 @@ let brandsData = null;
 let groupedData = null;
 let isGrouped = false;
 let PRODUCT_NAME_COL = 1; // 商品名の列インデックス（初期値：B列=1、グループ化後：C列=2）
+window.currentFileFormat = null; // ファイル形式の自動判定結果
+
+/**
+ * ヘッダーあり/なし、列構成を自動判定
+ */
+function detectFileFormat(data) {
+    if (!data || data.length === 0) {
+        return { hasHeader: false, columns: {}, colCount: 0 };
+    }
+
+    const firstRow = data[0];
+    const colCount = firstRow.length;
+
+    // ヘッダー判定: 1行目に日本語キーワードがあるか
+    const headerKeywords = ['サイト', '商品', '価格', '落札', '出品', 'タイトル', 'URL', 'ブランド', '状態', '品番', 'コード'];
+    const firstRowText = firstRow.map(cell => String(cell || '')).join(' ');
+    const hasHeader = headerKeywords.some(kw => firstRowText.includes(kw));
+
+    // 列マッピング自動判定
+    let columns = {};
+
+    if (hasHeader) {
+        // ヘッダーから列を特定
+        firstRow.forEach((cell, i) => {
+            const cellText = String(cell || '').toLowerCase();
+            if (cellText.includes('サイト')) columns.site = i;
+            if (cellText.includes('タイトル') || cellText.includes('商品名')) columns.productName = i;
+            if (cellText.includes('価格') || cellText.includes('落札')) columns.price = i;
+            if (cellText.includes('出品日')) columns.listingDate = i;
+            if (cellText.includes('取引日')) columns.soldDate = i;
+            if (cellText.includes('出品者')) columns.seller = i;
+            if (cellText.includes('状態')) columns.condition = i;
+            if (cellText.includes('url')) columns.url = i;
+            if (cellText.includes('ブランド')) columns.brand = i;
+            if (cellText.includes('品番') || cellText.includes('コード')) columns.productCode = i;
+        });
+    } else {
+        // ヘッダーなし: 列数で判定
+        // 最終列が数値っぽいか確認
+        const sampleRows = data.slice(0, Math.min(10, data.length));
+        const lastColNumeric = sampleRows.every(row => {
+            const val = row[colCount - 1];
+            return !isNaN(parseFloat(val));
+        });
+
+        if (colCount === 3 && lastColNumeric) {
+            // WBC系3列: ブランド / 品番 / 価格
+            columns = { brand: 0, productCode: 1, price: 2 };
+        } else if (colCount === 4 && lastColNumeric) {
+            // WBC系4列: ブランド / 品番 / 商品名 / 価格
+            columns = { brand: 0, productCode: 1, productName: 2, price: 3 };
+        } else {
+            // 不明: とりあえず全列そのまま
+            columns = { unknown: true };
+        }
+    }
+
+    console.log('[detectFileFormat]', { hasHeader, colCount, columns });
+    return { hasHeader, colCount, columns };
+}
 
 // プレビュー数変更時の処理
 window.updatePreviewCount = function() {
@@ -209,13 +269,22 @@ function handleFiles(files) {
             reader.onload = (e) => {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const workbook = XLSX.read(data, {
+                        type: 'array',
+                        cellDates: false,
+                        cellText: false,
+                        raw: true,
+                        cellNF: false
+                    });
 
                     // 最初のシートを取得
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 
-                    // CSVに変換
-                    const csvContent = XLSX.utils.sheet_to_csv(firstSheet);
+                    // CSVに変換（品番が日付に変換されるバグを防止）
+                    const csvContent = XLSX.utils.sheet_to_csv(firstSheet, {
+                        rawNumbers: true,
+                        blankrows: false
+                    });
 
                     csvFiles.push({
                         name: file.name,
@@ -449,6 +518,19 @@ window.mergeCSV = function() {
         const parsedFiles = csvFiles.map(file => parseFusionCSV(file.content));
         console.log('[Fusion Studio] CSVパース完了:', parsedFiles.length, 'ファイル');
         console.log('[Fusion Studio] パースされた行数:', parsedFiles.map(f => f.length));
+
+        // ファイル形式を自動判定（最初のファイルで判定）
+        if (parsedFiles[0] && parsedFiles[0].length > 0) {
+            const format = detectFileFormat(parsedFiles[0]);
+            window.currentFileFormat = format;
+
+            // ヘッダーありの場合、自動でチェックを入れる
+            if (format.hasHeader) {
+                document.getElementById('includeHeaders').checked = true;
+                console.log('[Fusion Studio] ヘッダーあり自動検出: チェックボックスをONに設定');
+            }
+        }
+
         console.log('[Fusion Studio] パース結果サンプル（1ファイル目の最初の2行）:');
         if (parsedFiles[0] && parsedFiles[0][0]) {
             console.log('  行0:', typeof parsedFiles[0][0], Array.isArray(parsedFiles[0][0]));
