@@ -1640,13 +1640,31 @@ window.generateGroupSummary = function() {
     const summaryData = [];
     summaryData.push(['ブランド', 'グループ名', '件数', '最頻値価格', '商品コード', '価格帯', '追加日時']);
 
-    // 商品コード列を特定（detectFileFormatの結果を使用）
-    const format = window.currentFileFormat;
+    // 商品コード列を特定（グループ化後のデータから直接探す）
+    // グループ化後の構造: [ブランド, グループ名, (元の列...)]
+    // 商品コードは通常C列以降にある
     let productCodeCol = -1;
-    if (format && format.columns && typeof format.columns.productCode === 'number') {
-        // グループ化後はB列にグループ名が挿入されているので+1
-        productCodeCol = format.columns.productCode + 1;
-        console.log('[generateGroupSummary] 商品コード列: ' + productCodeCol);
+
+    // サンプル行から商品コードパターンを持つ列を探す
+    const sampleRows = mergedData.slice(1, Math.min(20, mergedData.length));
+    for (let col = 2; col < (mergedData[0] || []).length - 1; col++) {
+        let codeCount = 0;
+        sampleRows.forEach(row => {
+            const val = String(row[col] || '').trim();
+            if (/^\d{2,}-\d{2,}-\d{2,}/.test(val)) {
+                codeCount++;
+            }
+        });
+        // 20%以上の行で商品コードパターンがあれば、その列を商品コード列とする
+        if (codeCount >= sampleRows.length * 0.2) {
+            productCodeCol = col;
+            console.log('[generateGroupSummary] 商品コード列を検出: ' + col + ' (パターンマッチ: ' + codeCount + '/' + sampleRows.length + ')');
+            break;
+        }
+    }
+
+    if (productCodeCol === -1) {
+        console.log('[generateGroupSummary] 商品コード列が見つかりませんでした');
     }
 
     // 各グループを処理
