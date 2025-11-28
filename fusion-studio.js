@@ -808,6 +808,10 @@ function extractBaseName(productName, options = {}) {
         baseName = baseName.replace(/\b(AW|SS|FW)\d{2}\b/gi, '');
     }
 
+    // 商品コードパターンを除去（例：22-020-220-6070, 14-020-220-7230）
+    baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}-\d{2,}\b/g, '');
+    baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}\b/g, '');
+
     // 末尾ノイズの除去
     baseName = baseName.replace(/\s*品\s*$/, '');  // 末尾の「品」
     baseName = baseName.replace(/\s*新品\s*$/, '');  // 末尾の「新品」
@@ -1005,8 +1009,15 @@ function deriveGroupName(group, options = {}) {
         const currentCount = freq.get(baseName) || 0;
         freq.set(baseName, currentCount + 1);
 
-        // 単語レベルの頻度カウント
-        const words = baseName.split(/\s+/).filter(word => word.length > 2);
+        // 単語レベルの頻度カウント（商品コードっぽいものは除外）
+        const words = baseName.split(/\s+/).filter(word => {
+            if (word.length <= 2) return false;
+            // 商品コードパターンを除外（数字-数字-数字-数字 など）
+            if (/^\d{2,}-\d{2,}-\d{2,}/.test(word)) return false;
+            // 数字とハイフンだけの文字列を除外
+            if (/^[\d\-]+$/.test(word)) return false;
+            return true;
+        });
         words.forEach(word => {
             const wordCount = wordFreq.get(word) || 0;
             wordFreq.set(word, wordCount + 1);
