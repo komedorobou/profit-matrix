@@ -997,10 +997,6 @@ function deriveGroupName(group, options = {}) {
 
         // 色・サイズ・年代を除去してベース名化
         let baseName = extractBaseName(name, options);
-
-        // グループ名生成用：商品コードを除去（グループ化の類似度計算には影響しない）
-        baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}-\d{2,}\b/g, '');
-        baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}\b/g, '');
         baseName = baseName.replace(/\s+/g, ' ').trim();
 
         if (!baseName || baseName.length < 3) continue;
@@ -1009,15 +1005,8 @@ function deriveGroupName(group, options = {}) {
         const currentCount = freq.get(baseName) || 0;
         freq.set(baseName, currentCount + 1);
 
-        // 単語レベルの頻度カウント（商品コードっぽいものは除外）
-        const words = baseName.split(/\s+/).filter(word => {
-            if (word.length <= 2) return false;
-            // 商品コードパターンを除外（数字-数字-数字-数字 など）
-            if (/^\d{2,}-\d{2,}-\d{2,}/.test(word)) return false;
-            // 数字とハイフンだけの文字列を除外
-            if (/^[\d\-]+$/.test(word)) return false;
-            return true;
-        });
+        // 単語レベルの頻度カウント
+        const words = baseName.split(/\s+/).filter(word => word.length > 2);
         words.forEach(word => {
             const wordCount = wordFreq.get(word) || 0;
             wordFreq.set(word, wordCount + 1);
