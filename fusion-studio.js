@@ -808,10 +808,6 @@ function extractBaseName(productName, options = {}) {
         baseName = baseName.replace(/\b(AW|SS|FW)\d{2}\b/gi, '');
     }
 
-    // 商品コードパターンを除去（例：22-020-220-6070, 14-020-220-7230）
-    baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}-\d{2,}\b/g, '');
-    baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}\b/g, '');
-
     // 末尾ノイズの除去
     baseName = baseName.replace(/\s*品\s*$/, '');  // 末尾の「品」
     baseName = baseName.replace(/\s*新品\s*$/, '');  // 末尾の「新品」
@@ -1001,6 +997,10 @@ function deriveGroupName(group, options = {}) {
 
         // 色・サイズ・年代を除去してベース名化
         let baseName = extractBaseName(name, options);
+
+        // グループ名生成用：商品コードを除去（グループ化の類似度計算には影響しない）
+        baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}-\d{2,}\b/g, '');
+        baseName = baseName.replace(/\b\d{2,}-\d{2,}-\d{2,}\b/g, '');
         baseName = baseName.replace(/\s+/g, ' ').trim();
 
         if (!baseName || baseName.length < 3) continue;
