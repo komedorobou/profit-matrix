@@ -269,13 +269,23 @@ function handleFiles(files) {
             reader.onload = (e) => {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    // 品番が日付変換されるバグを防止（raw:trueで生データを保持）
+                    const workbook = XLSX.read(data, {
+                        type: 'array',
+                        cellDates: false,
+                        cellText: false,
+                        raw: true,
+                        cellNF: false
+                    });
 
                     // 最初のシートを取得
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 
-                    // CSVに変換
-                    const csvContent = XLSX.utils.sheet_to_csv(firstSheet);
+                    // CSVに変換（rawNumbersで数値をそのまま出力）
+                    const csvContent = XLSX.utils.sheet_to_csv(firstSheet, {
+                        rawNumbers: true,
+                        blankrows: false
+                    });
 
                     csvFiles.push({
                         name: file.name,
@@ -1475,6 +1485,7 @@ window.generateGroupSummary = function() {
 
     // 現在のテーブルのヘッダーから価格列を特定
     const headerRow = mergedData[0];
+    const includeHeaders = document.getElementById('includeHeaders').checked;
     let priceCol = -1;
 
     // 価格列を検索（優先順位：価格、落札価格、平均価格など）
@@ -1486,8 +1497,56 @@ window.generateGroupSummary = function() {
         }
     }
 
-    // 見つからなければC列（インデックス2）を使用
-    if (priceCol === -1) priceCol = 2;
+    // ヘッダーから見つからない場合、データから価格列を推定
+    if (priceCol === -1) {
+        const colCount = headerRow.length;
+        const startRow = includeHeaders ? 1 : 0;
+        const sampleSize = Math.min(20, mergedData.length - startRow);
+
+        // 各列の数値スコアを計算
+        const colScores = [];
+        for (let col = 0; col < colCount; col++) {
+            let numericCount = 0;
+            let priceRangeCount = 0;
+
+            for (let i = startRow; i < startRow + sampleSize && i < mergedData.length; i++) {
+                const row = mergedData[i];
+                if (!row || row.length <= col) continue;
+
+                const cellStr = (row[col] || '').toString().replace(/[¥,円]/g, '').trim();
+                const num = parseFloat(cellStr);
+
+                if (!isNaN(num)) {
+                    numericCount++;
+                    // 価格らしい範囲（100〜10000000）
+                    if (num >= 100 && num <= 10000000) {
+                        priceRangeCount++;
+                    }
+                }
+            }
+
+            colScores.push({
+                col: col,
+                numericCount: numericCount,
+                priceRangeCount: priceRangeCount,
+                score: priceRangeCount * 2 + numericCount
+            });
+        }
+
+        // スコアが最も高い列を価格列とする（ただしA列とB列は除外）
+        const candidates = colScores
+            .filter(c => c.col >= 2 && c.priceRangeCount > 0)
+            .sort((a, b) => b.score - a.score);
+
+        if (candidates.length > 0) {
+            priceCol = candidates[0].col;
+            console.log('🔍 価格列を推定:', candidates);
+        } else {
+            // フォールバック：最後の列を使用
+            priceCol = colCount - 1;
+            console.log('⚠️ 価格列が見つからないため最終列を使用:', priceCol);
+        }
+    }
 
     console.log(`💰 価格列: ${headerRow[priceCol]} (列${priceCol}: ${String.fromCharCode(65 + priceCol)}列)`);
 
