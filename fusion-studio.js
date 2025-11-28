@@ -47,10 +47,32 @@ function detectFileFormat(data) {
     const firstRow = data[0];
     const colCount = firstRow.length;
 
-    // ヘッダー判定: 1行目に日本語キーワードがあるか
-    const headerKeywords = ['サイト', '商品', '価格', '落札', '出品', 'タイトル', 'URL', 'ブランド', '状態', '品番', 'コード'];
-    const firstRowText = firstRow.map(cell => String(cell || '')).join(' ');
-    const hasHeader = headerKeywords.some(kw => firstRowText.includes(kw));
+    // ヘッダー判定: 1行目の各セルがヘッダーキーワードそのもの（または近い）かどうか
+    // 商品名に「コート」「ブランド名」等が含まれる場合の誤認識を防ぐ
+    const headerKeywords = ['サイト', '商品名', '商品コード', '価格', '落札価格', '出品日', 'タイトル', 'URL', 'ブランド', '状態', '品番', 'コード', '件数'];
+
+    // 各セルを個別にチェック：セルの内容がキーワードとほぼ一致するか
+    let headerMatchCount = 0;
+    firstRow.forEach(cell => {
+        const cellText = String(cell || '').trim();
+        // セルの内容が短く（20文字以下）、キーワードを含むか
+        if (cellText.length <= 20) {
+            const isHeader = headerKeywords.some(kw => {
+                // 完全一致または「商品名」「価格」など単独キーワードとして含む
+                return cellText === kw ||
+                       cellText.endsWith(kw) ||
+                       (cellText.includes(kw) && cellText.length <= kw.length + 5);
+            });
+            if (isHeader) headerMatchCount++;
+        }
+    });
+
+    // 2列以上がヘッダーキーワードにマッチし、かつ最後の列が数値でない場合のみヘッダーと判定
+    const lastCellValue = String(firstRow[firstRow.length - 1] || '').replace(/[,\.]/g, '');
+    const lastCellIsNumeric = /^\d+$/.test(lastCellValue) && parseInt(lastCellValue) > 100;
+    const hasHeader = headerMatchCount >= 2 && !lastCellIsNumeric;
+
+    console.log('[detectFileFormat] ヘッダー判定:', { headerMatchCount, lastCellIsNumeric, hasHeader });
 
     // 列マッピング自動判定
     let columns = {};
