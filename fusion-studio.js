@@ -159,8 +159,22 @@ function detectFileFormat(data) {
         }
     }
 
+    // ヘッダーがない場合、予測ヘッダーを生成
+    let predictedHeader = null;
+    if (!hasHeader) {
+        predictedHeader = [];
+        for (let i = 0; i < colCount; i++) {
+            if (columns.brand === i) predictedHeader.push('ブランド');
+            else if (columns.productCode === i) predictedHeader.push('商品コード');
+            else if (columns.productName === i) predictedHeader.push('商品名');
+            else if (columns.price === i) predictedHeader.push('価格');
+            else predictedHeader.push('列' + (i + 1));
+        }
+        console.log('[detectFileFormat] 予測ヘッダー:', predictedHeader);
+    }
+
     console.log('[detectFileFormat]', { hasHeader, colCount, columns });
-    return { hasHeader, colCount, columns };
+    return { hasHeader, colCount, columns, predictedHeader };
 }
 
 // プレビュー数変更時の処理
@@ -597,6 +611,14 @@ window.mergeCSV = function() {
             if (format.hasHeader) {
                 document.getElementById('includeHeaders').checked = true;
                 console.log('[Fusion Studio] ヘッダーあり自動検出: チェックボックスをONに設定');
+            } else if (format.predictedHeader) {
+                // ヘッダーがない場合、予測ヘッダーを各ファイルの先頭に挿入
+                parsedFiles.forEach((fileData, idx) => {
+                    fileData.unshift(format.predictedHeader);
+                    console.log('[Fusion Studio] ファイル' + (idx + 1) + 'に予測ヘッダーを挿入:', format.predictedHeader);
+                });
+                document.getElementById('includeHeaders').checked = true;
+                console.log('[Fusion Studio] 予測ヘッダーを挿入: チェックボックスをONに設定');
             }
         }
 
