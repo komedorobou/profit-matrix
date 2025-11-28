@@ -1640,12 +1640,22 @@ window.generateGroupSummary = function() {
     const summaryData = [];
     summaryData.push(['ブランド', 'グループ名', '件数', '最頻値価格', '商品コード', '価格帯', '追加日時']);
 
+    // 商品コード列を特定（detectFileFormatの結果を使用）
+    const format = window.currentFileFormat;
+    let productCodeCol = -1;
+    if (format && format.columns && typeof format.columns.productCode === 'number') {
+        // グループ化後はB列にグループ名が挿入されているので+1
+        productCodeCol = format.columns.productCode + 1;
+        console.log('[generateGroupSummary] 商品コード列: ' + productCodeCol);
+    }
+
     // 各グループを処理
     groupedData.forEach(group => {
         const prices = [];
+        const productCodes = new Set(); // 商品コードを収集
         let brandName = '';
 
-        // 現在のテーブルから価格を直接取得
+        // 現在のテーブルから価格と商品コードを直接取得
         for (let i = 1; i < mergedData.length; i++) { // ヘッダーをスキップ
             const row = mergedData[i];
             if (row[1] === group.representativeName) { // グループ名で一致確認
@@ -1657,6 +1667,33 @@ window.generateGroupSummary = function() {
                 }
                 if (!brandName && row[0]) {
                     brandName = row[0];
+                }
+                // 商品コードを収集
+                if (productCodeCol >= 0 && row[productCodeCol]) {
+                    const code = row[productCodeCol].toString().trim();
+                    if (code && /^\d{2,}-\d{2,}-\d{2,}/.test(code)) {
+                        productCodes.add(code);
+                    }
+                }
+            }
+        }
+
+        // 最も頻出する商品コードを取得（なければグループ内から探す）
+        let representativeCode = '';
+        if (productCodes.size > 0) {
+            representativeCode = [...productCodes][0]; // 最初のコードを使用
+        } else if (group.items && group.items.length > 0) {
+            // グループのitemsから商品コードを探す
+            for (const item of group.items) {
+                if (item.row) {
+                    for (let col = 1; col < item.row.length - 1; col++) {
+                        const val = String(item.row[col] || '');
+                        if (/^\d{2,}-\d{2,}-\d{2,}/.test(val)) {
+                            representativeCode = val;
+                            break;
+                        }
+                    }
+                    if (representativeCode) break;
                 }
             }
         }
@@ -1692,7 +1729,7 @@ window.generateGroupSummary = function() {
                 group.representativeName,
                 `${prices.length}件`,
                 modePrice > 0 ? `¥${modePrice.toLocaleString()}` : '価格不明',
-                group.representativeName,  // 商品コード = グループ名
+                representativeCode || '-',  // 実際の商品コード
                 `¥${minPrice.toLocaleString()}〜¥${maxPrice.toLocaleString()}`,
                 new Date().toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
             ]);
@@ -1703,7 +1740,7 @@ window.generateGroupSummary = function() {
                 group.representativeName,
                 `${group.count}件`,
                 '価格不明',
-                group.representativeName,  // 商品コード = グループ名
+                representativeCode || '-',  // 実際の商品コード
                 '価格不明',
                 new Date().toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
             ]);
