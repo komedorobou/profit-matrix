@@ -272,17 +272,34 @@ function handleFiles(files) {
                     const workbook = XLSX.read(data, {
                         type: 'array',
                         cellDates: false,
-                        cellText: false,
-                        raw: true,
-                        cellNF: false
+                        raw: false  // フォーマットされた値を使用
                     });
 
                     // 最初のシートを取得
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 
-                    // CSVに変換（品番が日付に変換されるバグを防止）
+                    // 各セルの値を文字列として取得（日付変換を防止）
+                    const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1');
+                    for (let R = range.s.r; R <= range.e.r; R++) {
+                        for (let C = range.s.c; C <= range.e.c; C++) {
+                            const cellAddr = XLSX.utils.encode_cell({ r: R, c: C });
+                            const cell = firstSheet[cellAddr];
+                            if (cell) {
+                                // セルにフォーマットされた値(w)があればそれを使用
+                                // なければ生の値(v)を文字列化
+                                if (cell.w) {
+                                    cell.v = cell.w;
+                                    cell.t = 's';  // 文字列型に強制
+                                } else if (cell.v !== undefined) {
+                                    cell.v = String(cell.v);
+                                    cell.t = 's';
+                                }
+                            }
+                        }
+                    }
+
+                    // CSVに変換
                     const csvContent = XLSX.utils.sheet_to_csv(firstSheet, {
-                        rawNumbers: true,
                         blankrows: false
                     });
 
