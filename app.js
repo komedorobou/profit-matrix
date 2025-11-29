@@ -135,14 +135,17 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 .eq('id', session.user.id)
                 .single()
 
-            const timeoutPromise = new Promise((resolve) =>
-                setTimeout(() => {
+            let timeoutId
+            const timeoutPromise = new Promise((resolve) => {
+                timeoutId = setTimeout(() => {
                     console.error('⏱️ プロフィールクエリが5秒でタイムアウト - Supabase接続問題またはRLSブロックの可能性')
                     resolve({ data: null, error: { message: 'Query timeout after 5 seconds - possible Supabase connection issue', code: 'TIMEOUT' } })
                 }, 5000)
-            )
+            })
 
             const result = await Promise.race([queryPromise, timeoutPromise])
+            // クエリ成功時はタイムアウトタイマーをキャンセル
+            clearTimeout(timeoutId)
             const profile = result.data
             const profileError = result.error
 
