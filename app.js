@@ -1517,7 +1517,7 @@ async function startBatchSearch() {
     }
 }
 
-// CSV パース
+// CSV パース（列数自動判定対応）
 function parseCSV(text) {
     // BOM除去
     if (text.charCodeAt(0) === 0xFEFF) {
@@ -1525,17 +1525,84 @@ function parseCSV(text) {
     }
 
     const lines = text.split('\n').filter(line => line.trim());
+    if (lines.length < 2) return [];
+
     const data = [];
 
-    // ヘッダー行をスキップ
+    // ヘッダー行から列構造を自動判定
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    console.log('📋 CSVヘッダー:', headers);
+
+    // 列インデックスを自動検出
+    let brandCol = -1;
+    let itemCol = -1;
+    let priceCol = -1;
+
+    headers.forEach((header, index) => {
+        // ブランド列を検出
+        if (brandCol === -1 && (
+            header.includes('ブランド') ||
+            header.includes('brand') ||
+            header === 'a' ||
+            header === 'a列'
+        )) {
+            brandCol = index;
+        }
+        // 商品名列を検出
+        if (itemCol === -1 && (
+            header.includes('商品') ||
+            header.includes('グループ') ||
+            header.includes('item') ||
+            header.includes('name') ||
+            header.includes('title') ||
+            header === 'b' ||
+            header === 'b列'
+        )) {
+            itemCol = index;
+        }
+        // 価格列を検出
+        if (priceCol === -1 && (
+            header.includes('価格') ||
+            header.includes('price') ||
+            header.includes('金額') ||
+            header.includes('最頻値') ||
+            header.includes('相場')
+        )) {
+            priceCol = index;
+        }
+    });
+
+    // 価格列が見つからない場合、最後の列を価格とみなす
+    if (priceCol === -1) {
+        priceCol = headers.length - 1;
+        console.log('⚠️ 価格列が見つからないため、最終列を使用:', priceCol);
+    }
+
+    // ブランド列が見つからない場合、最初の列をブランドとみなす
+    if (brandCol === -1) {
+        brandCol = 0;
+        console.log('⚠️ ブランド列が見つからないため、最初の列を使用:', brandCol);
+    }
+
+    // 商品名列が見つからない場合、ブランドの次の列を使用（あれば）
+    if (itemCol === -1 && headers.length > 2) {
+        itemCol = brandCol + 1;
+        if (itemCol === priceCol) itemCol = -1; // 価格列と被る場合は無効
+        console.log('⚠️ 商品名列が見つからないため、推定:', itemCol);
+    }
+
+    console.log(`📊 列マッピング: ブランド=${brandCol}, 商品名=${itemCol}, 価格=${priceCol}`);
+
+    // データ行を処理
     for (let i = 1; i < lines.length; i++) {
         const columns = lines[i].split(',');
 
-        if (columns.length < 4) continue;
+        // 最低限、ブランド列と価格列が必要
+        if (columns.length <= Math.max(brandCol, priceCol)) continue;
 
-        const brand = columns[0]?.trim();
-        const item = columns[1]?.trim();
-        const priceStr = columns[3]?.trim();
+        const brand = columns[brandCol]?.trim();
+        const item = itemCol >= 0 ? columns[itemCol]?.trim() : '';
+        const priceStr = columns[priceCol]?.trim();
 
         if (!brand || !priceStr) continue;
 
@@ -1551,6 +1618,7 @@ function parseCSV(text) {
         });
     }
 
+    console.log(`✅ パース完了: ${data.length}件の商品を読み込み`);
     return data;
 }
 
