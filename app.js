@@ -40,6 +40,33 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
         console.log('✅ ログイン成功:', session.user.email)
         currentUser = session.user
 
+        // 🚨 重複実行防止: SIGNED_INとINITIAL_SESSIONが連続発火した場合、2回目をスキップ
+        // 同じユーザーで既に処理済みの場合はスキップ（UI更新とSupabaseクエリの重複防止）
+        if (uiInitialized && currentUser?.id === session.user.id) {
+            console.log('⏭️ 重複イベントをスキップ（既に処理済み）:', event)
+            return
+        }
+
+        // 🚀 SIGNED_INが先に来た場合、INITIAL_SESSIONを待つ（接続が安定してから処理）
+        // ページリロード時はINITIAL_SESSIONのみ発火するので、そちらで処理
+        if (event === 'SIGNED_IN' && !uiInitialized) {
+            console.log('⏳ SIGNED_IN検出 - INITIAL_SESSIONを待機（接続安定化のため）')
+            // UI更新だけ先に行う（ユーザー体験向上）
+            const loginBtn = document.getElementById('loginBtn')
+            if (loginBtn) {
+                loginBtn.textContent = 'ログイン'
+                loginBtn.disabled = false
+            }
+            const authModal = document.getElementById('authModal')
+            if (authModal) authModal.style.display = 'none'
+            const userMenu = document.getElementById('userMenu')
+            if (userMenu) userMenu.style.display = 'block'
+            const userEmail = document.getElementById('userEmail')
+            if (userEmail) userEmail.textContent = session.user.email
+            console.log('✅ UI更新完了 - Supabaseクエリは INITIAL_SESSION で実行')
+            return
+        }
+
         // 🚨 重要: INITIAL_SESSIONの場合はjustSignedUpフラグをクリア
         // ページリロード時にフラグが残っていると、stripe_customer_idチェックがスキップされる
         if (event === 'INITIAL_SESSION') {
@@ -136,6 +163,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     // プラン情報を表示してユーザーメニューは表示
                     updatePlanDisplay()
                     showUserManagementButton()
+                    // 重複実行防止フラグをセット（次のINITIAL_SESSIONで正常処理させる）
+                    // タイムアウトはスキップせず、次のイベントに期待
+                    console.log('⏳ タイムアウト発生 - 次のイベントで再試行を許可')
                     return  // これ以上の処理はスキップ
                 }
 
@@ -276,7 +306,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             }
         }
 
-        console.log('✅ ログイン処理完了')
+        // 処理完了フラグをセット（重複実行防止）
+        uiInitialized = true
+        console.log('✅ ログイン処理完了（uiInitialized = true）')
 
     } else if (event === 'SIGNED_OUT') {
         console.log('🚪 ログアウト')
