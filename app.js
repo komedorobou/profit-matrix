@@ -1511,11 +1511,10 @@ async function startBatchSearch() {
             // 並列検索実行
             let batchResults = [];
             if (isParallelMode && batch.length === 2) {
-                // 2つのAPIキーで並列実行（1秒ずらしてサーバー負荷分散）
-                const [results1, results2] = await Promise.all([
-                    searchYahooShopping(batch[0], yahooApiKey),
-                    sleep(1000).then(() => searchYahooShopping(batch[1], yahooApiKey2))
-                ]);
+                // 2つのAPIキーで交互実行（1秒間隔でずらして2倍速）
+                const results1 = await searchYahooShopping(batch[0], yahooApiKey);
+                await sleep(1000);
+                const results2 = await searchYahooShopping(batch[1], yahooApiKey2);
                 batchResults = [...results1, ...results2];
                 completed += 2;
             } else {
