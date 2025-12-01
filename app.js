@@ -1511,31 +1511,53 @@ async function startBatchSearch() {
             // 並列検索実行
             let batchResults = [];
             if (isParallelMode && batch.length === 2) {
-                // 2つのAPIキーで交互実行（1秒間隔でずらして2倍速）
+                // 2つのAPIキーで交互実行（各APIキー2秒間隔、1秒ずらしで2倍速）
+                // 0秒: API1実行 → 1秒: API2実行 → 2秒: API1実行...
                 const results1 = await searchYahooShopping(batch[0], yahooApiKey);
-                await sleep(1000);
+                batchResults.push(...results1);
+                if (results1.length > 0) {
+                    results1.forEach(result => {
+                        appendResultCard(resultsContainer, result, cardIndex++);
+                    });
+                }
+                completed++;
+                updateStats(completed, limitedData.length);
+
+                await sleep(1000);  // 1秒後にAPI2
+
                 const results2 = await searchYahooShopping(batch[1], yahooApiKey2);
-                batchResults = [...results1, ...results2];
-                completed += 2;
+                batchResults.push(...results2);
+                if (results2.length > 0) {
+                    results2.forEach(result => {
+                        appendResultCard(resultsContainer, result, cardIndex++);
+                    });
+                }
+                completed++;
+                updateStats(completed, limitedData.length);
+
+                searchResults.push(...batchResults);
+
+                // 1秒待機（次のAPI1まで2秒間隔を維持）
+                await sleep(1000);
             } else {
                 // 通常の逐次実行
                 const results = await searchYahooShopping(batch[0], yahooApiKey);
                 batchResults = results;
                 completed++;
+
+                if (batchResults.length > 0) {
+                    searchResults.push(...batchResults);
+                    batchResults.forEach(result => {
+                        appendResultCard(resultsContainer, result, cardIndex++);
+                    });
+                }
+
+                // 統計更新
+                updateStats(completed, limitedData.length);
+
+                // API制限対策: 2秒待機 (Yahoo API: 30req/min制限)
+                await sleep(2000);
             }
-
-            if (batchResults.length > 0) {
-                searchResults.push(...batchResults);
-                batchResults.forEach(result => {
-                    appendResultCard(resultsContainer, result, cardIndex++);
-                });
-            }
-
-            // 統計更新
-            updateStats(completed, limitedData.length);
-
-            // API制限対策: 2秒待機 (Yahoo API: 30req/min制限)
-            await sleep(2000);
 
             // 29個目で追加5秒待機（次の1分枠に入るため）
             // 並列モードの場合は58個（29x2）で待機
