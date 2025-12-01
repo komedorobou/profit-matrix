@@ -10,6 +10,7 @@ const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // グローバル変数
 let yahooApiKey = null;
+let yahooApiKey2 = null;  // オーナー専用: 並列検索用の2つ目のAPIキー
 let csvFile = null;
 let searchResults = [];
 let selectedProducts = []; // 選択された商品を保持
@@ -274,11 +275,18 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 console.log('📋 INITIAL_SESSION: オーナー設定モーダルをスキップ')
                 // ページリロード時はAPIキー確認のみ
                 yahooApiKey = localStorage.getItem('yahooApiKey')
+                yahooApiKey2 = localStorage.getItem('yahooApiKey2')  // オーナー専用: 2つ目のAPIキー
+                if (yahooApiKey2) {
+                    console.log('✅ APIキー2を読み込み（並列検索有効）')
+                }
                 if (!yahooApiKey) {
                     console.log('⚙️ APIキーモーダルを表示')
                     const apiKeyModal = document.getElementById('apiKeyModal')
                     if (apiKeyModal) {
                         apiKeyModal.style.display = 'flex'
+                        // オーナーなので2つ目のAPIキー入力欄を表示
+                        const apiKey2Container = document.getElementById('apiKey2Container')
+                        if (apiKey2Container) apiKey2Container.style.display = 'block'
                     }
                 }
             }
@@ -1266,6 +1274,21 @@ document.getElementById('saveApiKey').addEventListener('click', () => {
 
     yahooApiKey = key;
     localStorage.setItem('yahooApiKey', key);
+
+    // オーナー専用: 2つ目のAPIキー保存
+    const key2Input = document.getElementById('apiKeyInput2');
+    if (key2Input) {
+        const key2 = key2Input.value.trim();
+        if (key2.length >= 10) {
+            yahooApiKey2 = key2;
+            localStorage.setItem('yahooApiKey2', key2);
+            console.log('✅ APIキー2を保存（並列検索有効）');
+        } else {
+            yahooApiKey2 = null;
+            localStorage.removeItem('yahooApiKey2');
+        }
+    }
+
     document.getElementById('apiKeyModal').style.display = 'none';
 });
 
@@ -1273,6 +1296,19 @@ document.getElementById('saveApiKey').addEventListener('click', () => {
 document.getElementById('settingsBtn').addEventListener('click', () => {
     document.getElementById('apiKeyModal').style.display = 'flex';
     document.getElementById('apiKeyInput').value = yahooApiKey || '';
+
+    // オーナーの場合は2つ目のAPIキー入力欄を表示
+    const isOwner = currentUser?.email?.includes('komedorobouinuzini');
+    const apiKey2Container = document.getElementById('apiKey2Container');
+    const apiKeyInput2 = document.getElementById('apiKeyInput2');
+    if (apiKey2Container && isOwner) {
+        apiKey2Container.style.display = 'block';
+        if (apiKeyInput2) {
+            apiKeyInput2.value = yahooApiKey2 || '';
+        }
+    } else if (apiKey2Container) {
+        apiKey2Container.style.display = 'none';
+    }
 });
 
 // CSVファイル選択
@@ -1447,23 +1483,51 @@ async function startBatchSearch() {
         resultsDiv.innerHTML = '';
         resultsDiv.appendChild(resultsContainer);
 
-        for (const item of limitedData) {
-            completed++;
+        // オーナー専用: 2つのAPIキーで並列検索
+        const isParallelMode = yahooApiKey2 && currentUser?.email?.includes('komedorobouinuzini');
+        if (isParallelMode) {
+            console.log('🚀 並列検索モード（2倍速）');
+        }
+
+        // 並列検索の場合は2件ずつ処理
+        const batchSize = isParallelMode ? 2 : 1;
+
+        for (let i = 0; i < limitedData.length; i += batchSize) {
+            const batch = limitedData.slice(i, i + batchSize);
 
             // 検索中の商品を表示
             const currentSearchDiv = document.getElementById('currentSearch');
             const currentSearchText = document.getElementById('currentSearchText');
             const searchProgress = document.getElementById('searchProgress');
             currentSearchDiv.style.display = 'block';
-            currentSearchText.textContent = `${item.brand} ${item.item || ''}`;
-            searchProgress.textContent = `${completed}/${limitedData.length}`;
 
-            // 検索実行
-            const results = await searchYahooShopping(item);
+            if (isParallelMode && batch.length === 2) {
+                currentSearchText.textContent = `${batch[0].brand} ${batch[0].item || ''} / ${batch[1].brand} ${batch[1].item || ''}`;
+            } else {
+                currentSearchText.textContent = `${batch[0].brand} ${batch[0].item || ''}`;
+            }
+            searchProgress.textContent = `${Math.min(i + batchSize, limitedData.length)}/${limitedData.length}`;
 
-            if (results.length > 0) {
-                searchResults.push(...results);
-                results.forEach(result => {
+            // 並列検索実行
+            let batchResults = [];
+            if (isParallelMode && batch.length === 2) {
+                // 2つのAPIキーで並列実行
+                const [results1, results2] = await Promise.all([
+                    searchYahooShopping(batch[0], yahooApiKey),
+                    searchYahooShopping(batch[1], yahooApiKey2)
+                ]);
+                batchResults = [...results1, ...results2];
+                completed += 2;
+            } else {
+                // 通常の逐次実行
+                const results = await searchYahooShopping(batch[0], yahooApiKey);
+                batchResults = results;
+                completed++;
+            }
+
+            if (batchResults.length > 0) {
+                searchResults.push(...batchResults);
+                batchResults.forEach(result => {
                     appendResultCard(resultsContainer, result, cardIndex++);
                 });
             }
@@ -1475,8 +1539,10 @@ async function startBatchSearch() {
             await sleep(2000);
 
             // 29個目で追加5秒待機（次の1分枠に入るため）
-            if (completed % 29 === 0) {
-                console.log(`29個処理完了。追加5秒待機...`);
+            // 並列モードの場合は58個（29x2）で待機
+            const waitThreshold = isParallelMode ? 58 : 29;
+            if (completed % waitThreshold === 0 && completed > 0) {
+                console.log(`${waitThreshold}個処理完了。追加5秒待機...`);
                 await sleep(5000);
             }
         }
@@ -1622,13 +1688,14 @@ function parseCSV(text) {
     return data;
 }
 
-// Yahoo Shopping API検索
-async function searchYahooShopping(item) {
+// Yahoo Shopping API検索（apiKeyを引数で指定可能）
+async function searchYahooShopping(item, apiKey = null) {
+    const useApiKey = apiKey || yahooApiKey;
     const query = `${item.brand} ${item.item || ''}`.trim();
     const maxPrice = Math.floor(item.originalPrice * 0.6); // 40%利益 = 60%価格
 
     const params = new URLSearchParams({
-        appid: yahooApiKey,
+        appid: useApiKey,
         query: query,
         price_to: maxPrice,
         results: 30,
@@ -1647,7 +1714,7 @@ async function searchYahooShopping(item) {
             if (response.status === 429) {
                 console.warn('Rate limit exceeded. Waiting 60 seconds...');
                 await sleep(60000);
-                return searchYahooShopping(item); // リトライ
+                return searchYahooShopping(item, apiKey); // リトライ
             }
 
             return [];
