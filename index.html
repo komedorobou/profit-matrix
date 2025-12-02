@@ -7,6 +7,8 @@
     <!-- Auth System v2.0 -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fusion-studio.css">
+    <!-- SheetJS for Excel support -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- 認証モーダル -->
@@ -374,7 +376,7 @@
             <!-- CSVアップロードセクション -->
         <div class="upload-section">
             <div class="upload-container" id="yahooUploadArea" onclick="document.getElementById('csvFile').click()">
-                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" style="display: none;">
                 <div class="upload-icon">
                     <div class="cube-3d">
                         <div class="cube-face cube-front"></div>

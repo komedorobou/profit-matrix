@@ -1392,12 +1392,27 @@ async function startBatchSearch() {
     });
 
     try {
-        // CSVを読み込み
-        const text = await csvFile.text();
-        const csvData = parseCSV(text);
+        // ファイルを読み込み（CSV/Excel対応）
+        let csvData;
+        const fileName = csvFile.name.toLowerCase();
+
+        if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+            // Excelファイルの場合
+            console.log('📊 Excelファイルを読み込み中...');
+            const arrayBuffer = await csvFile.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const csvText = XLSX.utils.sheet_to_csv(firstSheet);
+            csvData = parseCSV(csvText);
+            console.log('✅ Excelファイル読み込み完了');
+        } else {
+            // CSVファイルの場合
+            const text = await csvFile.text();
+            csvData = parseCSV(text);
+        }
 
         if (csvData.length === 0) {
-            throw new Error('CSVデータが空です');
+            throw new Error('ファイルにデータがありません');
         }
 
         // プランチェック
