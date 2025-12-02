@@ -1675,9 +1675,10 @@ async function searchYahooShopping(item) {
     const query = `${item.brand} ${item.item || ''}`.trim();
     let results = await executeYahooSearch(query, maxPrice, item);
 
-    // 結果がなく、商品番号がある場合は商品番号で再検索
+    // 結果がなく、商品番号がある場合は2秒待機してから商品番号で再検索
     if (results.length === 0 && item.productCode) {
-        console.log(`🔄 商品名で結果なし → 商品番号で再検索: ${item.productCode}`);
+        console.log(`🔄 商品名で結果なし → 2秒待機後に商品番号で再検索: ${item.productCode}`);
+        await sleep(2000);
         const codeQuery = `${item.brand} ${item.productCode}`.trim();
         results = await executeYahooSearch(codeQuery, maxPrice, item);
     }
