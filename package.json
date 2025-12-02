@@ -21,6 +21,7 @@
     "stripe": "^14.0.0"
   },
   "devDependencies": {
-    "vercel": "^33.0.0"
+    "vercel": "^33.0.0",
+    "xlsx": "^0.18.5"
   }
 }

@@ -1587,10 +1587,23 @@ function parseCSV(text) {
         }
     });
 
-    // 価格列が見つからない場合、最後の列を価格とみなす
-    if (priceCol === -1) {
-        priceCol = headers.length - 1;
-        console.log('⚠️ 価格列が見つからないため、最終列を使用:', priceCol);
+    // 価格列が見つからない場合、データ行から数値列を探す
+    if (priceCol === -1 && lines.length > 1) {
+        const firstDataRow = lines[1].split(',');
+        for (let i = 0; i < firstDataRow.length; i++) {
+            const val = firstDataRow[i]?.trim();
+            // 数値のみの列を価格列として検出（4桁以上の数字）
+            if (val && /^\d{4,}$/.test(val.replace(/[,，]/g, ''))) {
+                priceCol = i;
+                console.log('⚠️ 価格列が見つからないため、数値列を検出:', priceCol, '(値:', val, ')');
+                break;
+            }
+        }
+        // それでも見つからない場合は3列目（インデックス2）を試す
+        if (priceCol === -1 && firstDataRow.length > 2) {
+            priceCol = 2;
+            console.log('⚠️ 価格列が見つからないため、3列目を使用:', priceCol);
+        }
     }
 
     // ブランド列が見つからない場合、最初の列をブランドとみなす
