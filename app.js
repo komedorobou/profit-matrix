@@ -1552,6 +1552,7 @@ function parseCSV(text) {
     let brandCol = -1;
     let itemCol = -1;
     let priceCol = -1;
+    let productCodeCol = -1;  // 商品番号列
 
     headers.forEach((header, index) => {
         // ブランド列を検出
@@ -1585,23 +1586,32 @@ function parseCSV(text) {
         )) {
             priceCol = index;
         }
+        // 商品番号列を検出
+        if (productCodeCol === -1 && (
+            header.includes('番号') ||
+            header.includes('code') ||
+            header.includes('型番') ||
+            header.includes('品番')
+        )) {
+            productCodeCol = index;
+        }
     });
 
-    // 価格列が見つからない場合、データ行から数値列を探す
-    if (priceCol === -1 && lines.length > 1) {
+    // 価格列・商品番号列が見つからない場合、データ行から自動検出
+    if ((priceCol === -1 || productCodeCol === -1) && lines.length > 1) {
         const firstDataRow = lines[1].split(',');
         for (let i = 0; i < firstDataRow.length; i++) {
             const val = firstDataRow[i]?.trim();
-            // ハイフン入りは商品番号の可能性が高いのでスキップ
-            if (val && val.includes('-')) {
-                console.log('📝 列', i, 'はハイフン入り（商品番号の可能性）:', val);
+            // ハイフン入りは商品番号の可能性が高い
+            if (val && val.includes('-') && productCodeCol === -1) {
+                productCodeCol = i;
+                console.log('📝 列', i, 'はハイフン入り（商品番号）:', val);
                 continue;
             }
             // 数値のみの列を価格列として検出（4桁以上の数字）
-            if (val && /^\d{4,}$/.test(val.replace(/[,，]/g, ''))) {
+            if (priceCol === -1 && val && /^\d{4,}$/.test(val.replace(/[,，]/g, ''))) {
                 priceCol = i;
                 console.log('⚠️ 価格列が見つからないため、数値列を検出:', priceCol, '(値:', val, ')');
-                break;
             }
         }
         // それでも見つからない場合は3列目（インデックス2）を試す
@@ -1624,7 +1634,7 @@ function parseCSV(text) {
         console.log('⚠️ 商品名列が見つからないため、推定:', itemCol);
     }
 
-    console.log(`📊 列マッピング: ブランド=${brandCol}, 商品名=${itemCol}, 価格=${priceCol}`);
+    console.log(`📊 列マッピング: ブランド=${brandCol}, 商品名=${itemCol}, 価格=${priceCol}, 商品番号=${productCodeCol}`);
 
     // データ行を処理
     for (let i = 1; i < lines.length; i++) {
@@ -1635,6 +1645,7 @@ function parseCSV(text) {
 
         const brand = columns[brandCol]?.trim();
         const item = itemCol >= 0 ? columns[itemCol]?.trim() : '';
+        const productCode = productCodeCol >= 0 ? columns[productCodeCol]?.trim() : '';
         const priceStr = columns[priceCol]?.trim();
 
         if (!brand || !priceStr) continue;
@@ -1647,6 +1658,7 @@ function parseCSV(text) {
         data.push({
             brand,
             item: item || brand,
+            productCode: productCode || '',
             originalPrice: price
         });
     }
@@ -1655,11 +1667,26 @@ function parseCSV(text) {
     return data;
 }
 
-// Yahoo Shopping API検索
+// Yahoo Shopping API検索（商品名 → 結果なければ商品番号で再検索）
 async function searchYahooShopping(item) {
-    const query = `${item.brand} ${item.item || ''}`.trim();
     const maxPrice = Math.floor(item.originalPrice * 0.6); // 40%利益 = 60%価格
 
+    // まず商品名で検索
+    const query = `${item.brand} ${item.item || ''}`.trim();
+    let results = await executeYahooSearch(query, maxPrice, item);
+
+    // 結果がなく、商品番号がある場合は商品番号で再検索
+    if (results.length === 0 && item.productCode) {
+        console.log(`🔄 商品名で結果なし → 商品番号で再検索: ${item.productCode}`);
+        const codeQuery = `${item.brand} ${item.productCode}`.trim();
+        results = await executeYahooSearch(codeQuery, maxPrice, item);
+    }
+
+    return results;
+}
+
+// Yahoo Shopping API実行
+async function executeYahooSearch(query, maxPrice, item) {
     const params = new URLSearchParams({
         appid: yahooApiKey,
         query: query,
@@ -1680,7 +1707,7 @@ async function searchYahooShopping(item) {
             if (response.status === 429) {
                 console.warn('Rate limit exceeded. Waiting 60 seconds...');
                 await sleep(60000);
-                return searchYahooShopping(item); // リトライ
+                return executeYahooSearch(query, maxPrice, item); // リトライ
             }
 
             return [];
