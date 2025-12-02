@@ -1592,6 +1592,11 @@ function parseCSV(text) {
         const firstDataRow = lines[1].split(',');
         for (let i = 0; i < firstDataRow.length; i++) {
             const val = firstDataRow[i]?.trim();
+            // ハイフン入りは商品番号の可能性が高いのでスキップ
+            if (val && val.includes('-')) {
+                console.log('📝 列', i, 'はハイフン入り（商品番号の可能性）:', val);
+                continue;
+            }
             // 数値のみの列を価格列として検出（4桁以上の数字）
             if (val && /^\d{4,}$/.test(val.replace(/[,，]/g, ''))) {
                 priceCol = i;
