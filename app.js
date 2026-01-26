@@ -180,6 +180,9 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     // サインアップ直後はスキップ（Stripeに飛ばす）
                     if (justSignedUp) {
                         console.log('📝 サインアップ直後のため、Stripeリダイレクトを優先')
+                        // Stripeリダイレクト前にUI更新（キャンセルボタン表示のため）
+                        updatePlanDisplay()
+                        showUserManagementButton()
                         return
                     }
 
