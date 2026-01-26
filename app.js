@@ -968,27 +968,31 @@ function updatePlanDisplay() {
     const planName = planNames[currentPlan] || 'トライアル'
 
     // トライアル期限を表示（従来のtrialまたはStripeのtrialing）
-    if ((subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') && planExpiresAt) {
-        const now = new Date()
-        const daysLeft = Math.ceil((planExpiresAt - now) / (1000 * 60 * 60 * 24))
+    if (subscriptionStatus === 'trial' || subscriptionStatus === 'trialing') {
+        if (planExpiresAt) {
+            const now = new Date()
+            const daysLeft = Math.ceil((planExpiresAt - now) / (1000 * 60 * 60 * 24))
 
-        if (daysLeft > 0) {
-            planDisplayEl.textContent = `🎉 ${planName}（残り${daysLeft}日）`
-            planDisplayEl.style.color = '#FFD700'
+            if (daysLeft > 0) {
+                planDisplayEl.textContent = `🎉 ${planName}（残り${daysLeft}日）`
+                planDisplayEl.style.color = '#FFD700'
 
-            // 次回課金日を表示
-            if (planExpiresDisplayEl) {
-                const expiresDate = new Date(planExpiresAt).toLocaleDateString('ja-JP')
-                planExpiresDisplayEl.textContent = `次回課金: ${expiresDate}`
-                planExpiresDisplayEl.style.display = 'block'
+                // 次回課金日を表示
+                if (planExpiresDisplayEl) {
+                    const expiresDate = new Date(planExpiresAt).toLocaleDateString('ja-JP')
+                    planExpiresDisplayEl.textContent = `次回課金: ${expiresDate}`
+                    planExpiresDisplayEl.style.display = 'block'
+                }
+            } else {
+                planDisplayEl.textContent = '⚠️ トライアル期限切れ'
+                planDisplayEl.style.color = '#FF6B9D'
             }
-
-            // キャンセルボタンを表示
-            if (cancelSubBtn) cancelSubBtn.style.display = 'block'
         } else {
-            planDisplayEl.textContent = '⚠️ トライアル期限切れ'
-            planDisplayEl.style.color = '#FF6B9D'
+            planDisplayEl.textContent = `🎉 ${planName}`
+            planDisplayEl.style.color = '#FFD700'
         }
+        // トライアル中はキャンセルボタンを表示
+        if (cancelSubBtn) cancelSubBtn.style.display = 'block'
     } else if (subscriptionStatus === 'active') {
         planDisplayEl.textContent = `✅ ${planName}`
         planDisplayEl.style.color = '#00FFA3'
