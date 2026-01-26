@@ -47,24 +47,10 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             return
         }
 
-        // 🚀 SIGNED_INが先に来た場合、INITIAL_SESSIONを待つ（接続が安定してから処理）
-        // ページリロード時はINITIAL_SESSIONのみ発火するので、そちらで処理
-        if (event === 'SIGNED_IN' && !uiInitialized) {
-            console.log('⏳ SIGNED_IN検出 - INITIAL_SESSIONを待機（接続安定化のため）')
-            // UI更新だけ先に行う（ユーザー体験向上）
-            const loginBtn = document.getElementById('loginBtn')
-            if (loginBtn) {
-                loginBtn.textContent = 'ログイン'
-                loginBtn.disabled = false
-            }
-            const authModal = document.getElementById('authModal')
-            if (authModal) authModal.style.display = 'none'
-            const userMenu = document.getElementById('userMenu')
-            if (userMenu) userMenu.style.display = 'block'
-            const userEmail = document.getElementById('userEmail')
-            if (userEmail) userEmail.textContent = session.user.email
-            console.log('✅ UI更新完了 - Supabaseクエリは INITIAL_SESSION で実行')
-            return
+        // 🚀 SIGNED_INでもINITIAL_SESSIONでも処理を続行
+        // 以前はSIGNED_INでreturnしていたが、INITIAL_SESSIONが来ない場合があるため修正
+        if (event === 'SIGNED_IN') {
+            console.log('🔑 SIGNED_IN検出 - 処理を続行')
         }
 
         // 🚨 重要: INITIAL_SESSIONの場合はjustSignedUpフラグをクリア
