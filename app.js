@@ -1751,7 +1751,8 @@ async function executeYahooSearch(query, maxPrice, item) {
                 image: hit.image?.medium || hit.image?.small || '',
                 url: hit.url,
                 shop: hit.seller?.name || 'ストア名不明',
-                stock: stockStatus
+                stock: stockStatus,
+                searchQuery: query
             });
 
             if (results.length >= 5) {
@@ -1808,6 +1809,9 @@ function appendResultCard(container, item, index) {
             </div>
             <div class="shop-info">
                 📍 ${item.shop} | ${item.stock}
+            </div>
+            <div class="search-query-info">
+                🔍 ${item.searchQuery || ''}
             </div>
             <a href="${item.url}" target="_blank" class="buy-link">
                 PURCHASE →
