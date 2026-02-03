@@ -614,7 +614,17 @@
         .shop-info {
             color: rgba(148, 163, 184, 0.8);
             font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .search-query-info {
+            color: rgba(0, 255, 163, 0.7);
+            font-size: 0.85em;
             margin-bottom: 15px;
+            padding: 6px 10px;
+            background: rgba(0, 255, 163, 0.08);
+            border-radius: 6px;
+            border-left: 2px solid rgba(0, 255, 163, 0.4);
         }
 
         .buy-link {
