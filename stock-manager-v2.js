@@ -515,14 +515,13 @@ async function saveStockToFile(silent = false) {
     }
 
     // CSV形式でエクスポート
-    const headers = ['ブランド', 'グループ名', '件数', '最頻値価格', '商品コード', '価格帯', '追加日時'];
+    const headers = ['ブランド名', '商品コード', '最頻値価格', 'グループ名', '件数', '価格帯', '追加日時'];
     const rows = stockList.map(item => [
         item.brandName || '',
+        item.productCode || '',
+        item.modePrice || '',
         item.groupName || '',
         item.count || '',
-        item.modePrice || '',
-        // 商品コードを出力（複数の場合はカンマ区切り）
-        item.productCode || '',
         item.priceRange || '',
         new Date(item.addedAt).toLocaleString('ja-JP')
     ]);
@@ -578,14 +577,13 @@ function exportStockList() {
     }
 
     // CSV形式でエクスポート
-    const headers = ['ブランド', 'グループ名', '件数', '最頻値価格', '商品コード', '価格帯', '追加日時'];
+    const headers = ['ブランド名', '商品コード', '最頻値価格', 'グループ名', '件数', '価格帯', '追加日時'];
     const rows = stockList.map(item => [
         item.brandName || '',
+        item.productCode || '',
+        item.modePrice || '',
         item.groupName || '',
         item.count || '',
-        item.modePrice || '',
-        // 商品コードを出力（複数の場合はカンマ区切り）
-        item.productCode || '',
         item.priceRange || '',
         new Date(item.addedAt).toLocaleString('ja-JP')
     ]);

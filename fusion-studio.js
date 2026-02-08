@@ -1690,7 +1690,7 @@ window.generateGroupSummary = function() {
     console.log(`💰 価格列: ${headerRow[priceCol]} (列${priceCol}: ${String.fromCharCode(65 + priceCol)}列)`);
 
     const summaryData = [];
-    summaryData.push(['ブランド', 'グループ名', '件数', '最頻値価格', '商品コード', '価格帯', '追加日時']);
+    summaryData.push(['ブランド名', '商品コード', '最頻値価格', 'グループ名', '件数', '価格帯', '追加日時']);
 
     // 商品コード列を特定（グループ化後のデータから直接探す）
     // グループ化後の構造: [ブランド, グループ名, (元の列...)]
@@ -1796,10 +1796,10 @@ window.generateGroupSummary = function() {
 
             summaryData.push([
                 brandName || '',
+                representativeCode || '-',  // 実際の商品コード
+                modePrice > 0 ? `¥${modePrice.toLocaleString()}` : '価格不明',
                 group.representativeName,
                 `${prices.length}件`,
-                modePrice > 0 ? `¥${modePrice.toLocaleString()}` : '価格不明',
-                representativeCode || '-',  // 実際の商品コード
                 `¥${minPrice.toLocaleString()}〜¥${maxPrice.toLocaleString()}`,
                 new Date().toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
             ]);
@@ -1807,10 +1807,10 @@ window.generateGroupSummary = function() {
             // 価格が見つからない場合でもグループは出力
             summaryData.push([
                 brandName || '',
+                representativeCode || '-',  // 実際の商品コード
+                '価格不明',
                 group.representativeName,
                 `${group.count}件`,
-                '価格不明',
-                representativeCode || '-',  // 実際の商品コード
                 '価格不明',
                 new Date().toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
             ]);
@@ -1821,8 +1821,8 @@ window.generateGroupSummary = function() {
     const header = summaryData.shift();
     summaryData.sort((a, b) => {
         // 件数列（3列目 = インデックス2）から数値を抽出して比較
-        const countA = parseInt((a[2] || '').toString().replace(/[^0-9]/g, '')) || 0;
-        const countB = parseInt((b[2] || '').toString().replace(/[^0-9]/g, '')) || 0;
+        const countA = parseInt((a[4] || '').toString().replace(/[^0-9]/g, '')) || 0;
+        const countB = parseInt((b[4] || '').toString().replace(/[^0-9]/g, '')) || 0;
         return countB - countA; // 降順（多い順）
     });
     summaryData.unshift(header);
