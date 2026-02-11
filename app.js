@@ -1825,7 +1825,6 @@ function appendResultCard(container, item, index) {
     if (isOwner) {
         const mercariPriceEl = card.querySelector('.mercari-price');
         if (mercariPriceEl) {
-            mercariPriceEl.classList.add('editable-price');
             mercariPriceEl.addEventListener('dblclick', function() {
                 startMercariPriceEdit(card, mercariPriceEl);
             });
