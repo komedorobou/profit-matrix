@@ -1821,6 +1821,17 @@ function appendResultCard(container, item, index) {
     `;
     container.appendChild(card);
 
+    // オーナーモード: メルカリ価格ダブルクリックで編集可能
+    if (isOwner) {
+        const mercariPriceEl = card.querySelector('.mercari-price');
+        if (mercariPriceEl) {
+            mercariPriceEl.classList.add('editable-price');
+            mercariPriceEl.addEventListener('dblclick', function() {
+                startMercariPriceEdit(card, mercariPriceEl);
+            });
+        }
+    }
+
     // 見送り済みかチェックして、状態を復元
     if (isProductSkipped(item.url)) {
         card.classList.add('skipped');
@@ -1830,6 +1841,66 @@ function appendResultCard(container, item, index) {
             skipBtn.style.background = 'rgba(148, 163, 184, 0.3)';
         }
     }
+}
+
+// オーナーモード: メルカリ価格インライン編集
+function startMercariPriceEdit(card, priceEl) {
+    // 既に編集中なら何もしない
+    if (priceEl.querySelector('input')) return;
+
+    const productData = JSON.parse(card.dataset.productData);
+    const currentPrice = productData.originalPrice || 0;
+
+    const originalHTML = priceEl.innerHTML;
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'mercari-price-input';
+    input.value = currentPrice;
+    input.min = '0';
+
+    priceEl.innerHTML = '';
+    priceEl.appendChild(input);
+    input.focus();
+    input.select();
+
+    function commitEdit() {
+        const newPrice = parseInt(input.value) || 0;
+        if (newPrice <= 0) {
+            priceEl.innerHTML = originalHTML;
+            return;
+        }
+
+        // 再計算
+        const yahooPrice = productData.price || 0;
+        const newProfit = newPrice - yahooPrice;
+        const newMargin = newPrice > 0 ? Math.floor(((newPrice - yahooPrice) / newPrice) * 100) : 0;
+
+        // productData更新
+        productData.originalPrice = newPrice;
+        productData.profit = newProfit;
+        productData.profitMargin = newMargin;
+        card.dataset.productData = JSON.stringify(productData);
+
+        // 表示更新
+        priceEl.textContent = `¥${newPrice.toLocaleString()}`;
+        card.querySelector('.profit-price').textContent = `¥${newProfit.toLocaleString()}`;
+        card.querySelector('.profit-badge').textContent = `利益率 ${newMargin}%`;
+
+        // 統計再計算
+        recalculateStats();
+    }
+
+    input.addEventListener('blur', commitEdit);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            input.blur();
+        }
+        if (e.key === 'Escape') {
+            input.removeEventListener('blur', commitEdit);
+            priceEl.innerHTML = originalHTML;
+        }
+    });
 }
 
 // 見送り済み商品を取得

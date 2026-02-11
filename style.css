@@ -590,6 +590,36 @@
             color: #FF6B6B;
         }
 
+        .mercari-price.editable-price {
+            cursor: pointer;
+            border-bottom: 1px dashed rgba(255, 107, 107, 0.4);
+            transition: border-color 0.2s;
+        }
+
+        .mercari-price.editable-price:hover {
+            border-bottom-color: #FF6B6B;
+        }
+
+        .mercari-price-input {
+            width: 90px;
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid #FF6B6B;
+            border-radius: 6px;
+            color: #FF6B6B;
+            font-size: inherit;
+            font-weight: inherit;
+            text-align: center;
+            padding: 2px 4px;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        .mercari-price-input::-webkit-outer-spin-button,
+        .mercari-price-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         .yahoo-price {
             color: #4ECDC4;
         }
