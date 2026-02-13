@@ -1737,7 +1737,7 @@ async function executeYahooSearch(query, maxPrice, item) {
             // 利益計算（メルカリ手数料10%を差し引き）
             const netRevenue = item.originalPrice * 0.9;
             const profitMargin = ((netRevenue - hit.price) / item.originalPrice) * 100;
-            const profit = netRevenue - hit.price;
+            const profit = Math.floor(netRevenue - hit.price);
 
             if (profitMargin < 40) {
                 continue;
@@ -1873,7 +1873,7 @@ function startMercariPriceEdit(card, priceEl) {
         // 再計算（メルカリ手数料10%を差し引き）
         const yahooPrice = productData.price || 0;
         const netRevenue = newPrice * 0.9;
-        const newProfit = netRevenue - yahooPrice;
+        const newProfit = Math.floor(netRevenue - yahooPrice);
         const newMargin = newPrice > 0 ? Math.floor(((netRevenue - yahooPrice) / newPrice) * 100) : 0;
 
         // productData更新
