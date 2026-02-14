@@ -1511,11 +1511,15 @@ async function startBatchSearch() {
             card.classList.add('completed');
         });
 
-        // 検索結果をローカルに自動保存（オーナーのみ）
+        // 検索結果の保存ボタンを表示（オーナーのみ）
         if (searchResults.length > 0) {
             const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
             if (isOwner) {
-                saveSearchResults(searchResults, csvFile ? csvFile.name : '');
+                const saveBtn = document.getElementById('saveResultsBtn');
+                if (saveBtn) {
+                    saveBtn.style.display = 'inline-block';
+                    saveBtn.setAttribute('data-filename', csvFile ? csvFile.name : '');
+                }
             }
         }
 
@@ -3437,28 +3441,30 @@ window.updateOwnerSettings = function() {
 
 
 // 検索結果をJSONファイルとしてダウンロード保存
-function saveSearchResults(results, fileName) {
+window.saveSearchResultsToFile = function() {
     try {
+        const saveBtn = document.getElementById('saveResultsBtn');
+        const csvName = saveBtn ? saveBtn.getAttribute('data-filename') : '';
+        const baseName = csvName ? csvName.replace(/\.(csv|xlsx|xls)$/i, '') : '検索';
+
         const entry = {
-            id: Date.now(),
             date: new Date().toLocaleString('ja-JP'),
-            fileName: fileName || '',
-            itemCount: results.length,
-            totalProfit: results.reduce((sum, r) => sum + (r.profit || 0), 0),
-            results: results
+            fileName: csvName,
+            itemCount: searchResults.length,
+            totalProfit: searchResults.reduce((sum, r) => sum + (r.profit || 0), 0),
+            results: searchResults
         };
 
         const json = JSON.stringify(entry, null, 2);
         const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         link.href = url;
-        link.download = `profit_results_${dateStr}_${results.length}件.json`;
+        link.download = `${baseName}_検索結果.json`;
         link.click();
         URL.revokeObjectURL(url);
 
-        console.log(`💾 検索結果をファイル保存しました (${results.length}件)`);
+        console.log(`💾 検索結果をファイル保存しました (${searchResults.length}件)`);
     } catch (e) {
         console.error('検索結果の保存エラー:', e);
     }
