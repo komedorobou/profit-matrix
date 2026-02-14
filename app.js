@@ -1516,7 +1516,7 @@ async function startBatchSearch() {
         if (searchResults.length > 0) {
             const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
             if (isOwner) {
-                saveSearchResults(searchResults);
+                saveSearchResults(searchResults, csvFile ? csvFile.name : '');
             }
         }
 
@@ -3440,12 +3440,13 @@ const SAVED_RESULTS_KEY = 'ownerSavedSearchResults';
 const MAX_SAVED_RESULTS = 10; // 最大保存数
 
 // 検索結果をlocalStorageに保存
-function saveSearchResults(results) {
+function saveSearchResults(results, fileName) {
     try {
         const savedList = getSavedResultsList();
         const entry = {
             id: Date.now(),
             date: new Date().toLocaleString('ja-JP'),
+            fileName: fileName || '',
             itemCount: results.length,
             totalProfit: results.reduce((sum, r) => sum + (r.profit || 0), 0),
             results: results
@@ -3570,6 +3571,7 @@ function renderSavedResultsList() {
         <div class="saved-result-item" onclick="restoreSearchResults(${entry.id})">
             <div class="saved-result-info">
                 <div class="saved-result-date">📅 ${entry.date}</div>
+                ${entry.fileName ? `<div class="saved-result-filename">📄 ${entry.fileName}</div>` : ''}
                 <div class="saved-result-stats">
                     <span>💎 ${entry.itemCount}件</span>
                     <span>💰 ¥${entry.totalProfit.toLocaleString()}</span>
