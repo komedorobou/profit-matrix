@@ -360,8 +360,11 @@
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
                 <button id="settingsBtn" class="settings-btn">⚙️ API設定</button>
                 <button id="partnersBtn" class="settings-btn" onclick="openPartnersModal()" style="display: none;">👥 外注先管理</button>
-                <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none; position: relative;">
-                    📂 結果復元
+                <button id="saveResultsBtn" class="settings-btn" onclick="saveSearchResultsToFile()" style="display: none;">
+                    💾 検索結果を保存
+                </button>
+                <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none;">
+                    📂 保存したファイルから復元
                 </button>
             </div>
         </header>
