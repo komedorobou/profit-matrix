@@ -2000,3 +2000,103 @@
         font-size: 36px;
     }
 }
+
+/* === 検索結果復元機能（オーナー専用） === */
+
+.restore-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: linear-gradient(135deg, #FF6B9D, #FF3366);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-shadow: 0 2px 8px rgba(255, 51, 102, 0.5);
+}
+
+.saved-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 163, 0.15);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.saved-result-item:hover {
+    background: rgba(0, 255, 163, 0.1);
+    border-color: rgba(0, 255, 163, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 255, 163, 0.15);
+}
+
+.saved-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.saved-result-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.saved-result-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: rgba(148, 163, 184, 0.9);
+}
+
+.saved-result-stats span {
+    white-space: nowrap;
+}
+
+.saved-result-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.saved-result-restore-btn {
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%);
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.saved-result-restore-btn:hover {
+    opacity: 0.85;
+}
+
+.saved-result-delete-btn {
+    padding: 6px 10px;
+    background: rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    border-radius: 6px;
+    color: #FF6B9D;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.saved-result-delete-btn:hover {
+    background: rgba(255, 107, 157, 0.3);
+}
