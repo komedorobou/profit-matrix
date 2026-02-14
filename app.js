@@ -247,6 +247,13 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
             loadOwnerSettings()
 
+            // 結果復元ボタンを表示＋バッジ更新
+            const restoreBtn = document.getElementById('restoreResultsBtn')
+            if (restoreBtn) {
+                restoreBtn.style.display = 'inline-block'
+            }
+            updateRestoreBadge()
+
             // SIGNED_INイベント（実際のログイン操作）の場合のみオーナー設定モーダルを表示
             // INITIAL_SESSION（ページリロード時）の場合はスキップ
             if (event === 'SIGNED_IN') {
@@ -278,6 +285,12 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             const partnersBtn = document.getElementById('partnersBtn')
             if (partnersBtn) {
                 partnersBtn.style.display = 'none'
+            }
+
+            // 結果復元ボタンを非表示
+            const restoreBtn = document.getElementById('restoreResultsBtn')
+            if (restoreBtn) {
+                restoreBtn.style.display = 'none'
             }
 
             // 選択UIを非表示
@@ -1498,6 +1511,14 @@ async function startBatchSearch() {
             card.classList.remove('searching');
             card.classList.add('completed');
         });
+
+        // 検索結果をローカルに自動保存（オーナーのみ）
+        if (searchResults.length > 0) {
+            const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
+            if (isOwner) {
+                saveSearchResults(searchResults);
+            }
+        }
 
         // 完了メッセージ
         if (searchResults.length === 0) {
@@ -3410,6 +3431,170 @@ window.updateOwnerSettings = function() {
 
     console.log('✅ オーナー設定を更新:', { showPartnersBtn, showUserEmail, showSelectionUI });
 };
+
+// ============================================================================
+// 検索結果の保存・復元機能（オーナー専用）
+// ============================================================================
+
+const SAVED_RESULTS_KEY = 'ownerSavedSearchResults';
+const MAX_SAVED_RESULTS = 10; // 最大保存数
+
+// 検索結果をlocalStorageに保存
+function saveSearchResults(results) {
+    try {
+        const savedList = getSavedResultsList();
+        const entry = {
+            id: Date.now(),
+            date: new Date().toLocaleString('ja-JP'),
+            itemCount: results.length,
+            totalProfit: results.reduce((sum, r) => sum + (r.profit || 0), 0),
+            results: results
+        };
+
+        savedList.unshift(entry); // 先頭に追加
+
+        // 最大保存数を超えたら古いものを削除
+        if (savedList.length > MAX_SAVED_RESULTS) {
+            savedList.length = MAX_SAVED_RESULTS;
+        }
+
+        localStorage.setItem(SAVED_RESULTS_KEY, JSON.stringify(savedList));
+        console.log(`💾 検索結果を保存しました (${results.length}件)`);
+
+        // 復元ボタンのバッジを更新
+        updateRestoreBadge();
+    } catch (e) {
+        console.error('検索結果の保存エラー:', e);
+    }
+}
+
+// 保存済み結果リストを取得
+function getSavedResultsList() {
+    try {
+        const data = localStorage.getItem(SAVED_RESULTS_KEY);
+        return data ? JSON.parse(data) : [];
+    } catch (e) {
+        console.error('保存データの読み込みエラー:', e);
+        return [];
+    }
+}
+
+// 保存済み結果を復元
+window.restoreSearchResults = function(entryId) {
+    const savedList = getSavedResultsList();
+    const entry = savedList.find(e => e.id === entryId);
+    if (!entry) {
+        alert('保存データが見つかりません');
+        return;
+    }
+
+    // 現在の結果をクリアして復元
+    searchResults = entry.results;
+
+    const resultsDiv = document.getElementById('searchResults');
+    const resultsContainer = document.createElement('div');
+    resultsContainer.className = 'results-container';
+    resultsDiv.innerHTML = '';
+    resultsDiv.appendChild(resultsContainer);
+
+    searchResults.forEach((result, index) => {
+        appendResultCard(resultsContainer, result, index);
+    });
+
+    // 統計を表示・更新
+    document.getElementById('stats').style.display = 'grid';
+    updateStats(searchResults.length, searchResults.length);
+
+    // 統計カードを完了状態にする
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('searching');
+        card.classList.add('completed');
+    });
+
+    // モーダルを閉じる
+    closeSavedResultsModal();
+
+    console.log(`🔄 検索結果を復元しました (${searchResults.length}件)`);
+}
+
+// 保存済み結果を削除
+window.deleteSavedResult = function(entryId, event) {
+    event.stopPropagation();
+    if (!confirm('この保存データを削除しますか？')) return;
+
+    let savedList = getSavedResultsList();
+    savedList = savedList.filter(e => e.id !== entryId);
+    localStorage.setItem(SAVED_RESULTS_KEY, JSON.stringify(savedList));
+
+    // リスト再描画
+    renderSavedResultsList();
+    updateRestoreBadge();
+    console.log('🗑️ 保存データを削除しました');
+}
+
+// 保存済み結果一覧モーダルを開く
+window.openSavedResultsModal = function() {
+    const modal = document.getElementById('savedResultsModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        renderSavedResultsList();
+    }
+}
+
+// 保存済み結果一覧モーダルを閉じる
+window.closeSavedResultsModal = function() {
+    const modal = document.getElementById('savedResultsModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// 保存済み結果一覧を描画
+function renderSavedResultsList() {
+    const listContainer = document.getElementById('savedResultsList');
+    if (!listContainer) return;
+
+    const savedList = getSavedResultsList();
+
+    if (savedList.length === 0) {
+        listContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: rgba(148, 163, 184, 0.7);">
+                <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+                <div>保存された検索結果はありません</div>
+            </div>
+        `;
+        return;
+    }
+
+    listContainer.innerHTML = savedList.map(entry => `
+        <div class="saved-result-item" onclick="restoreSearchResults(${entry.id})">
+            <div class="saved-result-info">
+                <div class="saved-result-date">📅 ${entry.date}</div>
+                <div class="saved-result-stats">
+                    <span>💎 ${entry.itemCount}件</span>
+                    <span>💰 ¥${entry.totalProfit.toLocaleString()}</span>
+                </div>
+            </div>
+            <div class="saved-result-actions">
+                <button class="saved-result-restore-btn">復元</button>
+                <button class="saved-result-delete-btn" onclick="deleteSavedResult(${entry.id}, event)">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 復元ボタンのバッジを更新
+function updateRestoreBadge() {
+    const badge = document.getElementById('restoreBadge');
+    if (!badge) return;
+    const count = getSavedResultsList().length;
+    if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
 
 // ============================================================================
 // ユーザー管理機能（オーナー専用）
