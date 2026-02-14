@@ -1523,6 +1523,14 @@ async function startBatchSearch() {
             }
         }
 
+        // 検索完了後、結果セクションへ自動スクロール
+        setTimeout(() => {
+            document.getElementById('searchResults').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 300);
+
         // 完了メッセージ
         if (searchResults.length === 0) {
             resultsDiv.innerHTML = `
