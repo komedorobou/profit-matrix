@@ -2052,6 +2052,16 @@
     color: #e2e8f0;
 }
 
+.saved-result-filename {
+    font-size: 12px;
+    color: #00FFA3;
+    opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+}
+
 .saved-result-stats {
     display: flex;
     gap: 16px;
