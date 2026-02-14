@@ -665,6 +665,26 @@
             background: linear-gradient(135deg, #00B8D9 0%, #007BFF 100%);
         }
 
+        .mercari-check-link {
+            display: block;
+            text-align: center;
+            background: linear-gradient(135deg, #FF6B9D 0%, #E91E63 100%);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mercari-check-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.4);
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+        }
+
         /* ローディング */
         .loading-container {
             text-align: center;
@@ -1509,7 +1529,7 @@
                 font-size: 0.85em;
             }
 
-            .buy-link {
+            .buy-link, .mercari-check-link {
                 padding: 10px;
                 font-size: 0.95em;
             }
@@ -1758,6 +1778,15 @@
         body.fusion-mode .buy-link:hover {
             box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
             background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+        }
+
+        body.fusion-mode .mercari-check-link {
+            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+        }
+
+        body.fusion-mode .mercari-check-link:hover {
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
         }
 
         /* ローディング */

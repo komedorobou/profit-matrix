@@ -1817,6 +1817,9 @@ function appendResultCard(container, item, index) {
             <a href="${item.url}" target="_blank" class="buy-link">
                 PURCHASE →
             </a>
+            <a href="https://jp.mercari.com/search?keyword=${encodeURIComponent(item.searchQuery || item.productName || '')}&status=sold_out" target="_blank" class="mercari-check-link">
+                🔍 メルカリで相場確認
+            </a>
             <button class="skip-btn" onclick="toggleSkip(this)">見送り</button>
         </div>
     `;
