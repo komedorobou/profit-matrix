@@ -413,9 +413,6 @@
                 <button id="batchSearchBtn" class="start-button" disabled style="margin-top: 0;">
                     EXECUTE ANALYSIS
                 </button>
-                <button id="saveResultsBtn" class="settings-btn" onclick="saveSearchResultsToFile()" style="display: none;" title="現在表示されている検索結果をJSONファイルとしてダウンロードします">
-                    💾 検索結果を保存
-                </button>
                 <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none;" title="以前保存したJSONファイルを読み込んで検索結果を復元します">
                     📂 保存した結果を読み込み
                 </button>
@@ -483,6 +480,10 @@
                     <!-- 見送りクリアボタン -->
                     <button onclick="clearSkippedProducts()" style="padding: 10px 20px; background: rgba(255, 107, 157, 0.2); border: 1px solid rgba(255, 107, 157, 0.4); border-radius: 8px; color: #FF6B9D; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 107, 157, 0.3)'" onmouseout="this.style.background='rgba(255, 107, 157, 0.2)'">
                         🗑️ 見送りクリア
+                    </button>
+                    <!-- 検索結果保存ボタン -->
+                    <button id="saveResultsBtn" onclick="saveSearchResultsToFile()" style="display: none; padding: 10px 20px; background: rgba(0, 184, 217, 0.2); border: 1px solid rgba(0, 184, 217, 0.4); border-radius: 8px; color: #00B8D9; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(0, 184, 217, 0.3)'" onmouseout="this.style.background='rgba(0, 184, 217, 0.2)'" title="検索結果をJSONファイルとして保存">
+                        💾 保存
                     </button>
                 </div>
             </div>

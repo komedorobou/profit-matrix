@@ -1523,9 +1523,9 @@ async function startBatchSearch() {
             }
         }
 
-        // 検索完了後、結果セクションへ自動スクロール
+        // 検索完了後、統計カードセクションへ自動スクロール
         setTimeout(() => {
-            document.getElementById('searchResults').scrollIntoView({
+            document.getElementById('stats').scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
