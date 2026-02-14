@@ -314,31 +314,7 @@
         </div>
     </div>
 
-    <!-- 保存済み検索結果モーダル（オーナー専用） -->
-    <div id="savedResultsModal" class="api-modal" style="display: none;">
-        <div class="api-modal-content" style="max-width: 560px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="margin: 0;">💾 保存済み検索結果</h2>
-                <button onclick="closeSavedResultsModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">✕</button>
-            </div>
-
-            <div style="background: rgba(0, 255, 163, 0.05); border: 1px solid rgba(0, 255, 163, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
-                <p style="margin: 0; color: rgba(148, 163, 184, 0.9); font-size: 13px;">
-                    検索完了時に自動保存されます（最大10件）。<br>タップで結果を復元できます。
-                </p>
-            </div>
-
-            <div id="savedResultsList" style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto;">
-                <!-- JS で動的に描画 -->
-            </div>
-
-            <div style="margin-top: 25px; text-align: center;">
-                <button onclick="closeSavedResultsModal()" style="padding: 12px 30px; background: linear-gradient(135deg, #00FFA3 0%, #00B8D9 100%); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer;">
-                    閉じる
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- 保存済み検索結果モーダル削除済み: JSONファイル方式に変更 -->
 
     <!-- ユーザーメニュー（ログアウトボタン） -->
     <div style="position: fixed; top: 20px; right: 20px; z-index: 1000; display: none;" id="userMenu">
@@ -384,9 +360,8 @@
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
                 <button id="settingsBtn" class="settings-btn">⚙️ API設定</button>
                 <button id="partnersBtn" class="settings-btn" onclick="openPartnersModal()" style="display: none;">👥 外注先管理</button>
-                <button id="restoreResultsBtn" class="settings-btn" onclick="openSavedResultsModal()" style="display: none; position: relative;">
-                    💾 結果復元
-                    <span id="restoreBadge" class="restore-badge" style="display: none;">0</span>
+                <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none; position: relative;">
+                    📂 結果復元
                 </button>
             </div>
         </header>
