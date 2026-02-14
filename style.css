@@ -455,6 +455,36 @@
             }
         }
 
+        /* 保存ボタン グロウ */
+        .save-btn-glow {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 163, 0.25) 0%, rgba(0, 184, 217, 0.25) 100%);
+            border: 1px solid rgba(0, 184, 217, 0.8);
+            border-radius: 8px;
+            color: #00FFA3;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 184, 217, 0.6), 0 0 30px rgba(0, 184, 217, 0.3);
+            animation: save-btn-pulse 2s ease-in-out infinite;
+        }
+
+        .save-btn-glow:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 163, 0.4) 0%, rgba(0, 184, 217, 0.4) 100%);
+            box-shadow: 0 0 25px rgba(0, 184, 217, 0.9), 0 0 50px rgba(0, 184, 217, 0.5), 0 0 80px rgba(0, 255, 163, 0.3);
+            transform: scale(1.05);
+        }
+
+        @keyframes save-btn-pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(0, 184, 217, 0.6), 0 0 30px rgba(0, 184, 217, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(0, 184, 217, 0.9), 0 0 50px rgba(0, 184, 217, 0.5);
+            }
+        }
+
         .stat-icon {
             font-size: 2.5em;
             margin-bottom: 15px;
