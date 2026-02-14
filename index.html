@@ -360,14 +360,6 @@
             <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
                 <button id="settingsBtn" class="settings-btn">⚙️ API設定</button>
                 <button id="partnersBtn" class="settings-btn" onclick="openPartnersModal()" style="display: none;">👥 外注先管理</button>
-                <button id="saveResultsBtn" class="settings-btn" onclick="saveSearchResultsToFile()" style="display: none;" title="現在表示されている検索結果をJSONファイルとしてダウンロードします">
-                    💾 検索結果を保存
-                    <span style="display: block; font-size: 10px; opacity: 0.7; margin-top: 2px;">※表示中の結果をファイルに書き出し</span>
-                </button>
-                <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none;" title="以前保存したJSONファイルを読み込んで検索結果を復元します">
-                    📂 保存した結果を読み込み
-                    <span style="display: block; font-size: 10px; opacity: 0.7; margin-top: 2px;">※以前保存したファイルから復元</span>
-                </button>
             </div>
         </header>
 
@@ -417,9 +409,17 @@
                 </label>
             </div>
 
-            <button id="batchSearchBtn" class="start-button" disabled>
-                EXECUTE ANALYSIS
-            </button>
+            <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 30px;">
+                <button id="batchSearchBtn" class="start-button" disabled style="margin-top: 0;">
+                    EXECUTE ANALYSIS
+                </button>
+                <button id="saveResultsBtn" class="settings-btn" onclick="saveSearchResultsToFile()" style="display: none;" title="現在表示されている検索結果をJSONファイルとしてダウンロードします">
+                    💾 検索結果を保存
+                </button>
+                <button id="restoreResultsBtn" class="settings-btn" onclick="restoreFromFile()" style="display: none;" title="以前保存したJSONファイルを読み込んで検索結果を復元します">
+                    📂 保存した結果を読み込み
+                </button>
+            </div>
         </div>
 
         <!-- 検索中表示 -->
