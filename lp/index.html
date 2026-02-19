@@ -177,7 +177,7 @@
         }
 
         .header-content {
-            max-width: 1140px;
+            max-width: 1280px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -205,7 +205,7 @@
 
         .logo-text {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             letter-spacing: 2px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
@@ -219,7 +219,7 @@
             border-radius: 10px;
             text-decoration: none;
             font-weight: 700;
-            font-size: .85rem;
+            font-size: .95rem;
             transition: all .3s;
             display: inline-flex;
             align-items: center;
@@ -235,26 +235,26 @@
         }
         
         /* ====== セクション共通 ====== */
-        .sec { padding: 100px 24px; }
-        .mx { max-width: 1140px; margin: 0 auto; }
+        .sec { padding: 120px 32px; }
+        .mx { max-width: 1280px; margin: 0 auto; }
 
         .section-label {
-            font-size: 12px; font-weight: 600; letter-spacing: .08em;
-            text-transform: uppercase; text-align: center; margin-bottom: 16px;
+            font-size: 14px; font-weight: 600; letter-spacing: .08em;
+            text-transform: uppercase; text-align: center; margin-bottom: 20px;
             color: var(--primary);
         }
 
         .section-title {
-            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            font-size: clamp(1.8rem, 4.5vw, 3.2rem);
             text-align: center; font-weight: 800; letter-spacing: -.02em;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         .section-subtitle {
             text-align: center; color: var(--text-muted);
-            font-size: 15px; margin-bottom: 48px;
+            font-size: 17px; margin-bottom: 56px;
         }
 
         .crd { transition: all .4s; cursor: pointer; }
@@ -273,7 +273,7 @@
 
         /* ====== ファーストビュー ====== */
         .hero {
-            position: relative; padding-top: 160px; padding-bottom: 80px;
+            position: relative; padding-top: 180px; padding-bottom: 100px;
             overflow: hidden; text-align: center;
             background: radial-gradient(ellipse 70% 50% at 30% 0%, rgba(0,255,240,.07), transparent 60%),
                         radial-gradient(ellipse 50% 40% at 80% 100%, rgba(255,0,255,.04), transparent 60%),
@@ -283,8 +283,8 @@
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0,255,240,.06); border: 1px solid rgba(0,255,240,.15);
-            border-radius: 100px; padding: 7px 18px; font-size: 13px;
-            font-weight: 600; color: var(--primary); margin-bottom: 32px;
+            border-radius: 100px; padding: 8px 22px; font-size: 15px;
+            font-weight: 600; color: var(--primary); margin-bottom: 36px;
         }
         .hero-badge-dot {
             width: 7px; height: 7px; border-radius: 50%;
@@ -305,8 +305,8 @@
         }
         .cta-main {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #000; padding: 16px 36px; border-radius: 12px;
-            font-weight: 700; font-size: 16px; text-decoration: none;
+            color: #000; padding: 18px 44px; border-radius: 14px;
+            font-weight: 700; font-size: 18px; text-decoration: none;
             display: inline-flex; align-items: center; gap: 10px;
             transition: all .4s; box-shadow: 0 0 30px rgba(0,255,240,.4); cursor: pointer;
         }
@@ -319,25 +319,25 @@
             text-decoration: none; transition: all .3s;
         }
         .cta-secondary:hover { border-color: var(--primary); background: rgba(0,255,240,.05); }
-        .hero-note { font-size: 13px; color: var(--text-dim); }
+        .hero-note { font-size: 14px; color: var(--text-dim); }
 
         .hero-stats {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 1px; margin-top: 64px; border-radius: 16px; overflow: hidden;
             border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.06);
         }
-        .hero-stat { background: #111620; padding: 28px 16px; text-align: center; }
-        .hero-stat-value { font-weight: 800; font-size: clamp(1.5rem, 3vw, 2rem); color: #fafafa; line-height: 1; }
-        .hero-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+        .hero-stat { background: #111620; padding: 36px 20px; text-align: center; }
+        .hero-stat-value { font-weight: 800; font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: #fafafa; line-height: 1; }
+        .hero-stat-label { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
         /* ====== Social Proof Bar ====== */
         .social-proof {
             border-bottom: 1px solid rgba(255,255,255,.06);
-            padding: 18px 24px; background: var(--dark);
+            padding: 22px 32px; background: var(--dark);
         }
         .social-proof-inner {
-            max-width: 1140px; margin: 0 auto;
-            display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
-            font-size: 13px; color: var(--text-dim);
+            max-width: 1280px; margin: 0 auto;
+            display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+            font-size: 15px; color: var(--text-dim);
         }
         .social-proof-item { display: inline-flex; align-items: center; gap: 6px; }
         .sp-check { color: var(--primary); }
@@ -381,88 +381,88 @@
 
         /* ====== How it Works ====== */
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.06); }
-        .step-card { background: #111620; padding: 40px 36px; position: relative; }
-        .step-number { position: absolute; top: 24px; right: 28px; font-weight: 800; font-size: 56px; color: rgba(0,255,240,.04); line-height: 1; }
-        .step-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
-        .step-title { font-weight: 700; font-size: 18px; margin-bottom: 10px; color: #fafafa; }
-        .step-desc { color: var(--text-muted); font-size: 14px; line-height: 1.75; }
+        .step-card { background: #111620; padding: 48px 40px; position: relative; }
+        .step-number { position: absolute; top: 24px; right: 28px; font-weight: 800; font-size: 64px; color: rgba(0,255,240,.04); line-height: 1; }
+        .step-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; font-size: 26px; }
+        .step-title { font-weight: 700; font-size: 21px; margin-bottom: 12px; color: #fafafa; }
+        .step-desc { color: var(--text-muted); font-size: 16px; line-height: 1.8; }
         
         /* ====== Features Grid ====== */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-        .feature-card { background: #111620; border-radius: 16px; padding: 32px; border: 1px solid rgba(255,255,255,.06); height: 100%; }
+        .feature-card { background: #111620; border-radius: 18px; padding: 36px; border: 1px solid rgba(255,255,255,.06); height: 100%; }
         .feature-card.hi { background: linear-gradient(135deg, rgba(0,255,240,.06), rgba(255,0,255,.03)); border-color: rgba(0,255,240,.12); }
-        .feature-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 22px; }
+        .feature-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
         .fi-hi { background: rgba(0,255,240,.1); }
         .fi-lo { background: rgba(255,255,255,.04); }
-        .feature-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; color: #fafafa; }
-        .feature-desc { color: var(--text-muted); font-size: 14px; line-height: 1.75; }
+        .feature-title { font-weight: 700; font-size: 20px; margin-bottom: 10px; color: #fafafa; }
+        .feature-desc { color: var(--text-muted); font-size: 16px; line-height: 1.8; }
         
         /* ====== Comparison ====== */
-        .comp-wrap { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); max-width: 860px; margin: 0 auto; }
-        .comp-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
-        .comp-table th { padding: 16px 24px; text-align: left; font-weight: 600; font-size: 12px; background: #111620; }
+        .comp-wrap { border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); max-width: 960px; margin: 0 auto; }
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 16px; min-width: 520px; }
+        .comp-table th { padding: 18px 28px; text-align: left; font-weight: 600; font-size: 14px; background: #111620; }
         .comp-table th:nth-child(2) { color: var(--text-dim); }
         .comp-table th:nth-child(3) { color: var(--primary); }
-        .comp-table td { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,.06); font-size: 13px; }
+        .comp-table td { padding: 16px 28px; border-top: 1px solid rgba(255,255,255,.06); font-size: 15px; }
         .comp-table td:first-child { font-weight: 600; color: #d4d4d8; }
         .cb { color: var(--text-dim); }
         .cg { color: var(--primary); font-weight: 600; }
         
         /* ====== Testimonials ====== */
         .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-        .test-card { background: #111620; border-radius: 16px; padding: 28px; border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; height: 100%; }
-        .test-metric { display: inline-flex; align-self: flex-start; border-radius: 8px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-bottom: 16px; }
-        .test-stars { display: flex; gap: 2px; margin-bottom: 12px; font-size: 12px; }
-        .test-text { color: #a1a1aa; font-size: 14px; line-height: 1.75; flex: 1; margin-bottom: 20px; }
-        .test-author { display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); padding-top: 16px; }
-        .test-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
-        .test-name { font-weight: 600; font-size: 13px; color: #fafafa; }
-        .test-role { font-size: 12px; color: var(--text-dim); }
+        .test-card { background: #111620; border-radius: 18px; padding: 32px; border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; height: 100%; }
+        .test-metric { display: inline-flex; align-self: flex-start; border-radius: 8px; padding: 6px 14px; font-size: 14px; font-weight: 700; margin-bottom: 18px; }
+        .test-stars { display: flex; gap: 2px; margin-bottom: 14px; font-size: 14px; }
+        .test-text { color: #a1a1aa; font-size: 16px; line-height: 1.8; flex: 1; margin-bottom: 22px; }
+        .test-author { display: flex; align-items: center; gap: 14px; border-top: 1px solid rgba(255,255,255,.06); padding-top: 18px; }
+        .test-avatar { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; }
+        .test-name { font-weight: 600; font-size: 15px; color: #fafafa; }
+        .test-role { font-size: 13px; color: var(--text-dim); }
         
         /* ====== Pricing ====== */
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
-        .price-card { background: #111620; border-radius: 20px; padding: 36px; border: 1px solid rgba(255,255,255,.06); position: relative; text-align: center; }
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1080px; margin: 0 auto; }
+        .price-card { background: #111620; border-radius: 22px; padding: 44px; border: 1px solid rgba(255,255,255,.06); position: relative; text-align: center; }
         .price-card.pop { background: linear-gradient(135deg, rgba(0,255,240,.06), rgba(255,0,255,.03)); border-color: rgba(0,255,240,.2); }
-        .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; font-size: 11px; font-weight: 700; padding: 5px 18px; border-radius: 100px; }
-        .price-name { font-weight: 700; font-size: 20px; margin-bottom: 6px; color: #fafafa; }
-        .price-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 12px; }
-        .price-amount { margin-bottom: 28px; font-weight: 800; font-size: clamp(2rem, 4vw, 2.8rem); color: #fafafa; }
-        .price-period { color: var(--text-dim); font-size: 14px; font-weight: 400; }
-        .price-features { text-align: left; margin-bottom: 28px; }
-        .price-feat { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: #a1a1aa; }
+        .price-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; font-size: 13px; font-weight: 700; padding: 6px 22px; border-radius: 100px; }
+        .price-name { font-weight: 700; font-size: 24px; margin-bottom: 6px; color: #fafafa; }
+        .price-sub { font-size: 15px; color: var(--text-dim); margin-bottom: 14px; }
+        .price-amount { margin-bottom: 32px; font-weight: 800; font-size: clamp(2.2rem, 4.5vw, 3.2rem); color: #fafafa; }
+        .price-period { color: var(--text-dim); font-size: 15px; font-weight: 400; }
+        .price-features { text-align: left; margin-bottom: 32px; }
+        .price-feat { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 15px; color: #a1a1aa; }
         .pf-check { color: var(--primary); }
-        .price-cta { display: block; text-align: center; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: all .3s; cursor: pointer; }
+        .price-cta { display: block; text-align: center; padding: 16px 32px; border-radius: 14px; font-weight: 700; font-size: 16px; text-decoration: none; transition: all .3s; cursor: pointer; }
         .price-cta.pri { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 0 20px rgba(0,255,240,.3); }
         .price-cta.pri:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,255,240,.5); }
         .price-cta.sec2 { background: rgba(255,255,255,.04); color: #d4d4d8; border: 1px solid rgba(255,255,255,.06); }
         .price-cta.sec2:hover { border-color: var(--primary); }
 
         /* ====== FAQ ====== */
-        .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
-        .faq-item { background: #111620; border-radius: 14px; border: 1px solid rgba(255,255,255,.06); overflow: hidden; transition: border-color .3s; }
+        .faq-list { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+        .faq-item { background: #111620; border-radius: 16px; border: 1px solid rgba(255,255,255,.06); overflow: hidden; transition: border-color .3s; }
         .faq-item.active { border-color: rgba(0,255,240,.15); }
-        .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 14px; color: #d4d4d8; text-align: left; font-family: inherit; }
+        .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 17px; color: #d4d4d8; text-align: left; font-family: inherit; }
         .faq-item.active .faq-question { color: var(--primary); }
-        .faq-toggle { font-size: 18px; color: var(--primary); flex-shrink: 0; margin-left: 12px; transition: transform .3s; }
+        .faq-toggle { font-size: 20px; color: var(--primary); flex-shrink: 0; margin-left: 12px; transition: transform .3s; }
         .faq-item.active .faq-toggle { transform: rotate(45deg); }
-        .faq-answer { max-height: 0; overflow: hidden; padding: 0 28px; transition: max-height .45s cubic-bezier(.22,1,.36,1), padding .4s; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
-        .faq-item.active .faq-answer { max-height: 300px; padding: 0 28px 24px; }
+        .faq-answer { max-height: 0; overflow: hidden; padding: 0 32px; transition: max-height .45s cubic-bezier(.22,1,.36,1), padding .4s; color: var(--text-muted); font-size: 16px; line-height: 1.8; }
+        .faq-item.active .faq-answer { max-height: 300px; padding: 0 32px 28px; }
 
         /* ====== Final CTA ====== */
         .final-cta { padding: 120px 24px; text-align: center; position: relative; overflow: hidden; background: var(--dark); }
         .final-cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, rgba(0,255,240,.08), transparent 60%); pointer-events: none; }
 
         /* ====== Footer ====== */
-        .footer { padding: 48px 24px 32px; border-top: 1px solid rgba(255,255,255,.06); background: #050810; }
-        .footer-grid { max-width: 1140px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; margin-bottom: 32px; }
-        .footer-brand p { color: #3f3f46; font-size: 13px; max-width: 280px; line-height: 1.7; margin-top: 12px; }
-        .footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
-        .footer-col h4 { font-weight: 600; font-size: 12px; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .06em; }
-        .footer-col a { display: inline-flex; align-items: center; font-size: 13px; color: var(--text-dim); min-height: 44px; padding: 4px 0; text-decoration: none; transition: color .3s; cursor: pointer; }
+        .footer { padding: 56px 32px 36px; border-top: 1px solid rgba(255,255,255,.06); background: #050810; }
+        .footer-grid { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 36px; margin-bottom: 36px; }
+        .footer-brand p { color: #3f3f46; font-size: 14px; max-width: 320px; line-height: 1.7; margin-top: 12px; }
+        .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+        .footer-col h4 { font-weight: 600; font-size: 13px; color: var(--text-dim); margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em; }
+        .footer-col a { display: inline-flex; align-items: center; font-size: 14px; color: var(--text-dim); min-height: 44px; padding: 4px 0; text-decoration: none; transition: color .3s; cursor: pointer; }
         .footer-col a:hover { color: var(--primary); }
-        .footer-bottom { max-width: 1140px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.04); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-        .footer-bottom p { color: #27272a; font-size: 12px; }
-        .footer-bottom a { color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+        .footer-bottom { max-width: 1280px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.04); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .footer-bottom p { color: #27272a; font-size: 13px; }
+        .footer-bottom a { color: var(--primary); font-size: 14px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         
         /* ====== モバイルスティッキーCTA ====== */
         .sticky-cta-bar {
@@ -585,16 +585,16 @@
 
     <!-- ファーストビュー -->
     <section class="hero">
-        <div class="hero-content" style="position:relative;z-index:1;text-align:center;max-width:1140px;margin:0 auto;padding:0 2rem">
+        <div class="hero-content" style="position:relative;z-index:1;text-align:center;max-width:1280px;margin:0 auto;padding:0 2rem">
             <div class="reveal">
                 <span class="hero-badge"><span class="hero-badge-dot" aria-hidden="true"></span>7日間無料トライアル実施中</span>
             </div>
             <h1 style="font-weight:800;letter-spacing:-.05em;max-width:800px;margin:0 auto 28px;line-height:1.1">
-                <span class="hero-word" style="animation-delay:.15s;font-size:clamp(2.2rem,5.5vw,4rem);display:block;color:#fafafa">リサーチ3時間が</span>
-                <span class="hero-word" style="animation-delay:.35s;font-size:clamp(2.8rem,7vw,5.2rem);display:block;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">15分に。</span>
-                <span class="hero-word" style="animation-delay:.55s;font-size:clamp(1.4rem,3.5vw,2rem);display:block;color:#a1a1aa">利益商品だけ、自動で見つかる。</span>
+                <span class="hero-word" style="animation-delay:.15s;font-size:clamp(2.6rem,6vw,4.8rem);display:block;color:#fafafa">リサーチ3時間が</span>
+                <span class="hero-word" style="animation-delay:.35s;font-size:clamp(3.2rem,8vw,6.2rem);display:block;margin-bottom:20px;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">15分に。</span>
+                <span class="hero-word" style="animation-delay:.55s;font-size:clamp(1.6rem,3.8vw,2.4rem);display:block;color:#a1a1aa">利益商品だけ、自動で見つかる。</span>
             </h1>
-            <p class="reveal" style="font-size:clamp(1rem,1.8vw,1.1rem);color:var(--text-muted);line-height:1.8;max-width:560px;margin:0 auto 40px">メルカリ落札商品の価格差をYahoo!から自動検出。<br>CSVアップロードだけで利益率40%超の商品を一覧表示。</p>
+            <p class="reveal" style="font-size:clamp(1.05rem,2vw,1.3rem);color:var(--text-muted);line-height:1.8;max-width:640px;margin:0 auto 48px">メルカリ落札商品の価格差をYahoo!から自動検出。<br>CSVアップロードだけで利益率40%超の商品を一覧表示。</p>
             <div class="reveal" style="margin-bottom:12px;font-size:14px;font-weight:700;color:var(--primary)">＼ 今なら7日間完全無料 ／</div>
             <div class="hero-cta-group reveal">
                 <a href="https://profit-matrix.jp?mode=signup" class="cta-main">7日間無料で始める <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
@@ -624,17 +624,17 @@
             <div class="reveal"><h2 class="section-title">こんなお悩みありませんか？</h2></div>
             <div class="reveal">
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:960px;margin:0 auto">
-                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                    <div style="background:#111620;border-radius:18px;padding:32px 28px;border:1px solid rgba(255,255,255,.06);display:flex;gap:18px;align-items:flex-start">
                         <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x23F0;</span>
-                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">リサーチに毎日3時間以上</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">メルカリとYahoo!を交互に見比べて、1つずつ手動で価格差を確認…</p></div>
+                        <div><div style="font-weight:700;font-size:18px;color:#fafafa;margin-bottom:8px">リサーチに毎日3時間以上</div><p style="color:var(--text-muted);font-size:16px;line-height:1.8">メルカリとYahoo!を交互に見比べて、1つずつ手動で価格差を確認…</p></div>
                     </div>
-                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                    <div style="background:#111620;border-radius:18px;padding:32px 28px;border:1px solid rgba(255,255,255,.06);display:flex;gap:18px;align-items:flex-start">
                         <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x1F4B8;</span>
-                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">利益が出る商品が見つからない</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">時間をかけても利益率の高い商品に当たらず、薄利多売になりがち。</p></div>
+                        <div><div style="font-weight:700;font-size:18px;color:#fafafa;margin-bottom:8px">利益が出る商品が見つからない</div><p style="color:var(--text-muted);font-size:16px;line-height:1.8">時間をかけても利益率の高い商品に当たらず、薄利多売になりがち。</p></div>
                     </div>
-                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                    <div style="background:#111620;border-radius:18px;padding:32px 28px;border:1px solid rgba(255,255,255,.06);display:flex;gap:18px;align-items:flex-start">
                         <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x26A0;&#xFE0F;</span>
-                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">ツール使用でメルカリBANが怖い</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">他ツールはメルカリにアクセスするため、アカウント停止リスクが常につきまとう。</p></div>
+                        <div><div style="font-weight:700;font-size:18px;color:#fafafa;margin-bottom:8px">ツール使用でメルカリBANが怖い</div><p style="color:var(--text-muted);font-size:16px;line-height:1.8">他ツールはメルカリにアクセスするため、アカウント停止リスクが常につきまとう。</p></div>
                     </div>
                 </div>
             </div>
