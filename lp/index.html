@@ -78,1315 +78,615 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--primary);
+            border-bottom: 1px solid rgba(255,255,255,.06);
             padding: 1rem 2rem;
+            transition: all .5s ease;
         }
-        
+
+        .header.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary);
+            padding: .75rem 2rem;
+        }
+
         .header-content {
-            max-width: 1400px;
+            max-width: 1140px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: nowrap;
-            gap: 1rem;
-            width: 100%;
         }
-        
-        @media (min-width: 1920px) {
-            .header-content {
-                max-width: 1600px;
-            }
-        }
-        
-        @media (min-width: 2560px) {
-            .header-content {
-                max-width: 2000px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .header-cta {
-                font-size: 1.2rem;
-                padding: 1rem 2.5rem;
-            }
-        }
-        
+
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            color: #000;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
         }
-        
+
         .header-cta {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
+            color: #000;
+            padding: .6rem 1.5rem;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: bold;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 20px rgba(0, 255, 240, 0.5);
+            font-weight: 700;
+            font-size: .85rem;
+            transition: all .3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 20px rgba(0, 255, 240, 0.3);
         }
-        
+
         .header-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 255, 240, 0.8);
+            box-shadow: 0 0 30px rgba(0, 255, 240, 0.6);
         }
         
         /* ====== セクション共通 ====== */
-        section {
-            padding: 5rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            position: relative;
+        .sec { padding: 100px 24px; }
+        .mx { max-width: 1140px; margin: 0 auto; }
+
+        .section-label {
+            font-size: 12px; font-weight: 600; letter-spacing: .08em;
+            text-transform: uppercase; text-align: center; margin-bottom: 16px;
+            color: var(--primary);
         }
-        
+
         .section-title {
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 1rem;
+            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            text-align: center; font-weight: 800; letter-spacing: -.02em;
+            margin-bottom: 12px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        
+
         .section-subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
+            text-align: center; color: var(--text-muted);
+            font-size: 15px; margin-bottom: 48px;
         }
-        
+
+        .crd { transition: all .4s; }
+        .crd:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0,255,240,.3) !important;
+            box-shadow: 0 20px 60px rgba(0,255,240,.1);
+        }
+
+        /* ====== スクロールリビール ====== */
+        .reveal {
+            opacity: 0; transform: translateY(40px);
+            transition: all .85s cubic-bezier(.22,1,.36,1);
+        }
+        .reveal.visible { opacity: 1; transform: none; }
+
         /* ====== ファーストビュー ====== */
         .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: var(--dark);
-            position: relative;
-            overflow: hidden;
-            padding-top: 80px;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .hero-video-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 40px rgba(0, 255, 240, 0.5);
-            background: rgba(0, 0, 0, 0.5);
-            aspect-ratio: 16 / 9;
-            position: relative;
-        }
-        
-        .hero-video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .hero-video-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, rgba(0, 255, 240, 0.1), rgba(255, 0, 255, 0.1));
-            color: var(--text-muted);
-            font-size: 1.2rem;
-        }
-        
-        .hero-left,
-        .hero-right {
-            /* デフォルトでは通常のフロー */
-        }
-        
-        .hero-right {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .hero-title {
-            font-size: 4rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            text-shadow: 0 0 20px rgba(0, 255, 240, 0.5);
-        }
-        
-        .hero-title .highlight {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.8rem;
-            color: var(--text-muted);
-            margin-bottom: 3rem;
-        }
-        
-        .hero-cta {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            padding: 1.5rem 4rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.3rem;
-            transition: all 0.3s;
-            box-shadow: 0 0 30px rgba(0, 255, 240, 0.5);
-            margin-bottom: 1rem;
-            min-height: 60px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-tap-highlight-color: rgba(0, 255, 240, 0.1);
-        }
-        
-        .hero-cta:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px rgba(0, 255, 240, 0.8);
-        }
-        
-        .hero-note {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
-        
-        /* ====== 痛み・共感セクション ====== */
-        .pain-section {
-            background: var(--dark);
-        }
-        
-        .pain-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .pain-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(255, 0, 255, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.3s;
-        }
-        
-        .pain-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--secondary);
-            box-shadow: 0 10px 30px rgba(255, 0, 255, 0.3);
-        }
-        
-        .pain-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .pain-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .pain-description {
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-        
-        /* ====== 解決策セクション ====== */
-        .solutions-section {
-            background: var(--dark);
-        }
-        
-        .solutions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-        
-        .solution-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 20px;
-            padding: 2.5rem;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .solution-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0, 255, 240, 0.1) 0%, transparent 70%);
-            transform: scale(0);
-            transition: transform 0.5s;
-        }
-        
-        .solution-card:hover::before {
-            transform: scale(1);
-        }
-        
-        .solution-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(0, 255, 240, 0.3);
-        }
-        
-        .solution-number {
-            font-size: 3rem;
-            font-weight: bold;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-        
-        .solution-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .solution-description {
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-        
-        /* ====== 機能紹介セクション ====== */
-        .features-section {
-            background: var(--dark);
-        }
-        
-        .feature-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-        
-        .feature-tab {
-            padding: 1rem 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--text-muted);
-        }
-        
-        .feature-tab:hover {
-            border-color: var(--primary);
-            color: var(--text);
-        }
-        
-        .feature-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-color: transparent;
-            color: var(--dark);
-            font-weight: bold;
-        }
-        
-        .feature-accordion {
-            max-width: 900px;
-            margin: 3rem auto;
-        }
-        
-        .feature-accordion-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        .feature-accordion-item:hover {
-            border-color: var(--primary);
-        }
-        
-        .feature-accordion-header {
-            padding: 1.5rem;
-            cursor: pointer;
-            font-weight: bold;
-            color: var(--primary);
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .feature-accordion-icon {
-            font-size: 1.5rem;
-            min-width: 40px;
-        }
-        
-        .feature-accordion-header::after {
-            content: '+';
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            transition: transform 0.3s;
-        }
-        
-        .feature-accordion-item.active .feature-accordion-header::after {
-            content: '−';
-        }
-        
-        .feature-accordion-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s, padding 0.3s;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-        
-        .feature-accordion-item.active .feature-accordion-body {
-            max-height: 2000px;
-            padding: 0 1.5rem 1.5rem;
-        }
-        
-        .feature-image {
-            width: 100%;
-            max-width: 800px;
-            margin: 1.5rem auto;
-            border-radius: 10px;
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            display: block;
-        }
-        
-        .feature-description {
-            margin-bottom: 1rem;
-        }
-        
-        .feature-content {
-            display: none;
-        }
-        
-        .feature-content.active {
-            display: block;
-        }
-        
-        .feature-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .feature-item {
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 15px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .feature-item h4 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-item p {
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-        
-        /* ====== 差別化セクション ====== */
-        .comparison-section {
-            background: var(--dark);
-        }
-        
-        .comparison-table {
-            max-width: 1000px;
-            margin: 3rem auto;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 0, 0.3);
-        }
-        
-        .comparison-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .comparison-table th,
-        .comparison-table td {
-            padding: 1.5rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .comparison-table th {
-            background: rgba(255, 255, 0, 0.1);
-            color: var(--accent);
-            font-weight: bold;
-        }
-        
-        .comparison-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .comparison-highlight {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
-        }
-        
-        .comparison-note {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 1.3rem;
-            color: var(--text-muted);
-        }
-        
-        .comparison-note .highlight {
-            color: var(--accent);
-            font-weight: bold;
-        }
-        
-        /* ====== 実績・数字セクション ====== */
-        .results-section {
-            background: var(--dark);
-        }
-        
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .result-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 20px;
-            padding: 2.5rem;
-            transition: all 0.3s;
-        }
-        
-        .result-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(0, 255, 240, 0.3);
-        }
-        
-        .result-quote {
-            font-size: 1.2rem;
-            font-style: italic;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-            line-height: 1.8;
-        }
-        
-        .result-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .result-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .result-info {
-            color: var(--text-muted);
-        }
-        
-        .result-info strong {
-            color: var(--text);
-        }
-        
-        /* ====== 料金プランセクション ====== */
-        .pricing-section {
-            background: var(--dark);
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 20px;
-            padding: 2.5rem;
-            transition: all 0.3s;
-            position: relative;
-            text-align: center;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(0, 255, 240, 0.3);
-        }
-        
-        .pricing-card.featured {
-            border-color: var(--secondary);
-            background: rgba(255, 0, 255, 0.05);
-        }
-        
-        .pricing-badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        .pricing-plan {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .pricing-price {
-            font-size: 3rem;
-            font-weight: bold;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .pricing-period {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
-        
-        .pricing-features {
-            list-style: none;
-            margin: 2rem 0;
-            text-align: left;
-        }
-        
-        .pricing-features li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-        }
-        
-        .pricing-features li::before {
-            content: '✓';
-            color: var(--primary);
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        .pricing-cta {
-            display: block;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            margin-top: 2rem;
-        }
-        
-        .pricing-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 255, 240, 0.5);
-        }
-        
-        /* ====== FAQセクション ====== */
-        .faq-section {
-            background: var(--dark);
-        }
-        
-        .faq-list {
-            max-width: 900px;
-            margin: 3rem auto;
-        }
-        
-        .faq-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(0, 255, 240, 0.3);
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        
-        .faq-item:hover {
-            border-color: var(--primary);
-        }
-        
-        .faq-question {
-            padding: 1.5rem;
-            cursor: pointer;
-            font-weight: bold;
-            color: var(--primary);
-            position: relative;
-        }
-        
-        .faq-question::after {
-            content: '+';
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            transition: transform 0.3s;
-        }
-        
-        .faq-item.active .faq-question::after {
-            content: '−';
-        }
-        
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s, padding 0.3s;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-        
-        .faq-item.active .faq-answer {
-            max-height: 500px;
-            padding: 0 1.5rem 1.5rem;
-        }
-        
-        /* ====== 最終CTAセクション ====== */
-        .final-cta-section {
-            text-align: center;
-            padding: 8rem 2rem;
-            background: var(--dark);
-        }
-        
-        .final-cta-title {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 2rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .final-cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            padding: 2rem 5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.5rem;
-            transition: all 0.3s;
-            box-shadow: 0 0 40px rgba(0, 255, 240, 0.5);
-            margin-top: 2rem;
-        }
-        
-        .final-cta-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 60px rgba(0, 255, 240, 0.8);
-        }
-        
-        .final-cta-notes {
-            margin-top: 2rem;
-            color: var(--text-muted);
-        }
-        
-        .final-cta-notes p {
-            margin: 0.5rem 0;
-        }
-        
-        /* ====== フッター ====== */
-        .footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: var(--dark);
-            border-top: 2px solid var(--primary);
-            color: var(--text-muted);
+            position: relative; padding-top: 160px; padding-bottom: 80px;
+            overflow: hidden; text-align: center;
+            background: radial-gradient(ellipse 70% 50% at 30% 0%, rgba(0,255,240,.07), transparent 60%),
+                        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(255,0,255,.04), transparent 60%),
+                        var(--dark);
         }
 
-        .footer a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin: 0 1rem;
-            transition: color 0.3s;
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(0,255,240,.06); border: 1px solid rgba(0,255,240,.15);
+            border-radius: 100px; padding: 7px 18px; font-size: 13px;
+            font-weight: 600; color: var(--primary); margin-bottom: 32px;
+        }
+        .hero-badge-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--primary); box-shadow: 0 0 8px rgba(0,255,240,.6);
         }
 
-        .footer a:hover {
-            color: var(--primary) !important;
+        @keyframes heroWordIn {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: none; }
+        }
+        .hero-word {
+            display: inline-block; opacity: 0;
+            animation: heroWordIn .9s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        .hero-cta-group {
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;
+        }
+        .cta-main {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000; padding: 16px 36px; border-radius: 12px;
+            font-weight: 700; font-size: 16px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all .4s; box-shadow: 0 0 30px rgba(0,255,240,.4);
+        }
+        .cta-main:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,255,240,.6); }
+        .cta-secondary {
+            padding: 16px 28px; border-radius: 12px; font-weight: 600;
+            font-size: 15px; border: 1px solid rgba(255,255,255,.08);
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,.03); color: var(--text);
+            text-decoration: none; transition: all .3s;
+        }
+        .cta-secondary:hover { border-color: var(--primary); background: rgba(0,255,240,.05); }
+        .hero-note { font-size: 13px; color: #52525b; }
+
+        .hero-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1px; margin-top: 64px; border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.06);
+        }
+        .hero-stat { background: #111620; padding: 28px 16px; text-align: center; }
+        .hero-stat-value { font-weight: 800; font-size: clamp(1.5rem, 3vw, 2rem); color: #fafafa; line-height: 1; }
+        .hero-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+        /* ====== Social Proof Bar ====== */
+        .social-proof {
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            padding: 18px 24px; background: var(--dark);
+        }
+        .social-proof-inner {
+            max-width: 1140px; margin: 0 auto;
+            display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+            font-size: 13px; color: #52525b;
+        }
+        .social-proof-item { display: inline-flex; align-items: center; gap: 6px; }
+        .sp-check { color: var(--primary); }
+
+        /* ====== Live Demo ====== */
+        .demo-screen { background: #0a0f18; border-radius: 24px; border: 1px solid rgba(0,255,240,.12); overflow: hidden; }
+        .demo-hdr { padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; justify-content: space-between; }
+        .demo-badge { background: rgba(0,255,240,.15); border: 1px solid rgba(0,255,240,.3); border-radius: 6px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: .06em; }
+        .demo-dots { display: flex; gap: 6px; }
+        .demo-dot { width: 10px; height: 10px; border-radius: 50%; opacity: .6; }
+        .demo-body { padding: 32px 24px 36px; min-height: 300px; }
+        .demo-dropzone { border: 2px dashed rgba(0,255,240,.25); border-radius: 20px; padding: 48px 24px; text-align: center; cursor: pointer; background: rgba(0,255,240,.02); transition: all .3s; }
+        .demo-dropzone:hover { border-color: rgba(0,255,240,.6); background: rgba(0,255,240,.06); }
+        .demo-dz-title { font-weight: 800; font-size: 22px; color: #e4e4e7; margin: 16px 0 8px; letter-spacing: .04em; }
+        .demo-dz-sub { color: #71717a; font-size: 14px; }
+        .demo-dz-fmt { margin-top: 20px; background: rgba(0,255,240,.08); border: 1px solid rgba(0,255,240,.15); border-radius: 12px; padding: 10px 16px; display: inline-block; font-size: 12px; color: #71717a; }
+        .demo-file { text-align: center; padding: 40px 0; }
+        .demo-file-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,255,240,.1); border: 1px solid rgba(0,255,240,.2); border-radius: 10px; padding: 10px 20px; font-size: 14px; color: var(--primary); font-weight: 600; }
+        .demo-progress { text-align: center; padding: 40px 0; }
+        .demo-prog-file { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,255,240,.08); border-radius: 10px; padding: 8px 16px; font-size: 13px; color: var(--primary); margin-bottom: 20px; }
+        .demo-prog-title { font-weight: 700; font-size: 18px; color: #e4e4e7; margin-bottom: 16px; }
+        .demo-prog-track { max-width: 400px; margin: 0 auto; height: 6px; border-radius: 3px; background: rgba(255,255,255,.06); overflow: hidden; }
+        .demo-prog-fill { height: 100%; border-radius: 3px; width: 0; background: linear-gradient(90deg, var(--primary), #06b6d4); transition: width .1s linear; box-shadow: 0 0 12px rgba(0,255,240,.4); }
+        .demo-prog-text { font-size: 13px; color: #52525b; margin-top: 10px; }
+        .demo-res-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .demo-res-title { font-weight: 700; font-size: 16px; color: #e4e4e7; }
+        .demo-reset { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #71717a; cursor: pointer; font-weight: 600; transition: all .3s; font-family: inherit; }
+        .demo-reset:hover { border-color: var(--primary); color: var(--primary); }
+        .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        @keyframes cardPop { from { opacity: 0; transform: translateY(24px) scale(.95); } to { opacity: 1; transform: none; } }
+        .demo-card { background: #111318; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); animation: cardPop .6s cubic-bezier(.22,1,.36,1); }
+        .demo-card-img { height: 80px; background: linear-gradient(135deg, rgba(0,255,240,.08), rgba(255,0,255,.05)); display: flex; align-items: center; justify-content: center; }
+        .demo-card-body { padding: 12px 14px; }
+        .demo-card-name { font-size: 10px; color: #a1a1aa; line-height: 1.4; margin-bottom: 8px; height: 28px; overflow: hidden; }
+        .demo-card-profit { background: linear-gradient(90deg, var(--primary), #06b6d4); border-radius: 100px; padding: 5px 0; text-align: center; font-weight: 800; font-size: 13px; color: #000; margin-bottom: 10px; }
+        .demo-card-prices { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; font-size: 9px; text-align: center; margin-bottom: 8px; }
+        .demo-card-prices .lbl { color: #52525b; }
+        .demo-card-prices .val { font-weight: 700; color: #e4e4e7; }
+        .demo-card-prices .pval { font-weight: 700; color: var(--primary); }
+        .demo-card-shop { font-size: 9px; color: #52525b; }
+
+        /* ====== How it Works ====== */
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.06); }
+        .step-card { background: #111620; padding: 40px 36px; position: relative; }
+        .step-number { position: absolute; top: 24px; right: 28px; font-weight: 800; font-size: 56px; color: rgba(0,255,240,.04); line-height: 1; }
+        .step-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
+        .step-title { font-weight: 700; font-size: 18px; margin-bottom: 10px; color: #fafafa; }
+        .step-desc { color: var(--text-muted); font-size: 14px; line-height: 1.75; }
+        
+        /* ====== Features Grid ====== */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .feature-card { background: #111620; border-radius: 16px; padding: 32px; border: 1px solid rgba(255,255,255,.06); height: 100%; }
+        .feature-card.hi { background: linear-gradient(135deg, rgba(0,255,240,.06), rgba(255,0,255,.03)); border-color: rgba(0,255,240,.12); }
+        .feature-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 22px; }
+        .fi-hi { background: rgba(0,255,240,.1); }
+        .fi-lo { background: rgba(255,255,255,.04); }
+        .feature-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; color: #fafafa; }
+        .feature-desc { color: var(--text-muted); font-size: 14px; line-height: 1.75; }
+        
+        /* ====== Comparison ====== */
+        .comp-wrap { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); max-width: 860px; margin: 0 auto; }
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
+        .comp-table th { padding: 16px 24px; text-align: left; font-weight: 600; font-size: 12px; background: #111620; }
+        .comp-table th:nth-child(2) { color: #52525b; }
+        .comp-table th:nth-child(3) { color: var(--primary); }
+        .comp-table td { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,.06); font-size: 13px; }
+        .comp-table td:first-child { font-weight: 600; color: #d4d4d8; }
+        .cb { color: #52525b; }
+        .cg { color: var(--primary); font-weight: 600; }
+        
+        /* ====== Testimonials ====== */
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .test-card { background: #111620; border-radius: 16px; padding: 28px; border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; height: 100%; }
+        .test-metric { display: inline-flex; align-self: flex-start; border-radius: 8px; padding: 4px 12px; font-size: 12px; font-weight: 700; margin-bottom: 16px; }
+        .test-stars { display: flex; gap: 2px; margin-bottom: 12px; font-size: 12px; }
+        .test-text { color: #a1a1aa; font-size: 14px; line-height: 1.75; flex: 1; margin-bottom: 20px; }
+        .test-author { display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); padding-top: 16px; }
+        .test-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+        .test-name { font-weight: 600; font-size: 13px; color: #fafafa; }
+        .test-role { font-size: 12px; color: #52525b; }
+        
+        /* ====== Pricing ====== */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
+        .price-card { background: #111620; border-radius: 20px; padding: 36px; border: 1px solid rgba(255,255,255,.06); position: relative; text-align: center; }
+        .price-card.pop { background: linear-gradient(135deg, rgba(0,255,240,.06), rgba(255,0,255,.03)); border-color: rgba(0,255,240,.2); }
+        .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; font-size: 11px; font-weight: 700; padding: 5px 18px; border-radius: 100px; }
+        .price-name { font-weight: 700; font-size: 20px; margin-bottom: 6px; color: #fafafa; }
+        .price-sub { font-size: 13px; color: #52525b; margin-bottom: 12px; }
+        .price-amount { margin-bottom: 28px; font-weight: 800; font-size: clamp(2rem, 4vw, 2.8rem); color: #fafafa; }
+        .price-period { color: #52525b; font-size: 14px; font-weight: 400; }
+        .price-features { text-align: left; margin-bottom: 28px; }
+        .price-feat { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: #a1a1aa; }
+        .pf-check { color: var(--primary); }
+        .price-cta { display: block; text-align: center; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: all .3s; }
+        .price-cta.pri { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 0 20px rgba(0,255,240,.3); }
+        .price-cta.pri:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,255,240,.5); }
+        .price-cta.sec2 { background: rgba(255,255,255,.04); color: #d4d4d8; border: 1px solid rgba(255,255,255,.06); }
+        .price-cta.sec2:hover { border-color: var(--primary); }
+
+        /* ====== FAQ ====== */
+        .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+        .faq-item { background: #111620; border-radius: 14px; border: 1px solid rgba(255,255,255,.06); overflow: hidden; transition: border-color .3s; }
+        .faq-item.active { border-color: rgba(0,255,240,.15); }
+        .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 14px; color: #d4d4d8; text-align: left; font-family: inherit; }
+        .faq-item.active .faq-question { color: var(--primary); }
+        .faq-toggle { font-size: 18px; color: var(--primary); flex-shrink: 0; margin-left: 12px; transition: transform .3s; }
+        .faq-item.active .faq-toggle { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; padding: 0 28px; transition: max-height .45s cubic-bezier(.22,1,.36,1), padding .4s; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
+        .faq-item.active .faq-answer { max-height: 300px; padding: 0 28px 24px; }
+
+        /* ====== Final CTA ====== */
+        .final-cta { padding: 120px 24px; text-align: center; position: relative; overflow: hidden; background: var(--dark); }
+        .final-cta-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, rgba(0,255,240,.08), transparent 60%); pointer-events: none; }
+
+        /* ====== Footer ====== */
+        .footer { padding: 48px 24px 32px; border-top: 1px solid rgba(255,255,255,.06); background: #050810; }
+        .footer-grid { max-width: 1140px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; margin-bottom: 32px; }
+        .footer-brand p { color: #3f3f46; font-size: 13px; max-width: 280px; line-height: 1.7; margin-top: 12px; }
+        .footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
+        .footer-col h4 { font-weight: 600; font-size: 12px; color: #52525b; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .06em; }
+        .footer-col a { display: block; font-size: 13px; color: #52525b; padding: 4px 0; text-decoration: none; transition: color .3s; }
+        .footer-col a:hover { color: var(--primary); }
+        .footer-bottom { max-width: 1140px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.04); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .footer-bottom p { color: #27272a; font-size: 12px; }
+        .footer-bottom a { color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         }
         
         /* ====== レスポンシブ ====== */
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-            
-            .hero-video-container {
-                margin: 2rem auto;
-                border-width: 2px;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .pain-grid,
-            .solutions-grid,
-            .results-grid,
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .comparison-table {
-                overflow-x: auto;
-            }
-            
-            .feature-tabs {
-                flex-direction: column;
-            }
-            
-            .header-content {
-                padding: 0 1rem;
-            }
-            
-            .logo {
-                font-size: 1.2rem;
-            }
-            
-            .header-cta {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.9rem;
-            }
-            
-            section {
-                padding: 3rem 1rem;
-            }
-
-            .footer a {
-                display: block;
-                margin: 0.5rem 0;
-            }
-
-            .hero-cta {
-                font-size: 1rem;
-                padding: 1rem 2rem;
-            }
-
-            .feature-image {
-                max-width: 100%;
-                height: auto;
-            }
+            .hero .hero-word { font-size: 2rem; }
+            .section-title { font-size: 1.8rem; }
+            .hero-stats { flex-direction: column; gap: .75rem; }
+            .hero-cta-group { flex-direction: column; }
+            .social-proof-inner { flex-direction: column; gap: .75rem; }
+            .steps-grid, .features-grid, .test-grid, .price-grid, .demo-grid { grid-template-columns: 1fr; }
+            .comp-wrap { overflow-x: auto; }
+            .header-content { padding: 0 1rem; }
+            .header-cta { padding: .6rem 1.2rem; font-size: .85rem; }
+            .sec { padding: 3rem 0; }
+            .mx { padding: 0 1rem; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-links { grid-template-columns: 1fr; }
         }
 
-        /* 小さいスマホ対応 */
         @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-            }
-
-            .section-subtitle {
-                font-size: 1rem;
-            }
-
-            .header-cta,
-            .hero-cta,
-            .final-cta-button {
-                font-size: 0.9rem;
-                padding: 0.8rem 1.5rem;
-            }
-
-            .logo {
-                font-size: 1rem;
-            }
-
-            .footer a {
-                font-size: 0.9rem;
-            }
+            .hero .hero-word { font-size: 1.5rem; }
+            .section-title { font-size: 1.4rem; }
+            .section-subtitle { font-size: .9rem; }
+            .header-cta { font-size: .8rem; padding: .5rem 1rem; }
+            .cta-main { font-size: .95rem; padding: .8rem 1.5rem; }
+            .demo-card-prices { flex-direction: column; gap: .3rem; }
         }
     </style>
 </head>
 <body>
     <!-- ヘッダー -->
-    <header class="header">
+    <header class="header" id="siteHeader">
         <div class="header-content">
-            <div class="logo">PROFIT MATRIX</div>
-            <a href="https://profit-matrix.jp?mode=signup" class="header-cta">7日間無料で試す</a>
+            <div class="logo">
+                <span class="logo-icon">P</span>
+                <span class="logo-text">PROFIT MATRIX</span>
+            </div>
+            <a href="https://profit-matrix.jp?mode=signup" class="header-cta">無料で試す &#8594;</a>
         </div>
     </header>
 
     <!-- ファーストビュー -->
     <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                せどりのリサーチ、<br>
-                <span class="highlight">ラクにしませんか？</span>
+        <div class="hero-content" style="position:relative;z-index:1;text-align:center;max-width:1140px;margin:0 auto;padding:0 2rem">
+            <div class="reveal">
+                <span class="hero-badge"><span class="hero-badge-dot"></span>7日間無料トライアル実施中</span>
+            </div>
+            <h1 style="font-weight:800;letter-spacing:-.05em;max-width:800px;margin:0 auto 28px;line-height:1.1">
+                <span class="hero-word" style="animation-delay:.15s;font-size:clamp(2.2rem,5.5vw,4rem);display:block;color:#fafafa">リサーチ3時間が</span>
+                <span class="hero-word" style="animation-delay:.35s;font-size:clamp(2.8rem,7vw,5.2rem);display:block;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent">15分に。</span>
+                <span class="hero-word" style="animation-delay:.55s;font-size:clamp(1.4rem,3.5vw,2rem);display:block;color:#a1a1aa">利益商品だけ、自動で見つかる。</span>
             </h1>
-            
-            <!-- 動画サムネイル -->
-            <div style="margin: 2rem auto; text-align: center; max-width: 800px;">
-                <a href="https://youtu.be/NXRsy-1n_lc" target="_blank" rel="noopener noreferrer" style="display: block; position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(0, 255, 240, 0.5); transition: all 0.3s;">
-                    <img src="/lp/thumbnail.jpg" alt="PROFIT MATRIX デモ動画" style="width: 100%; min-height: 450px; object-fit: cover; display: block; transition: transform 0.3s;">
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 255, 240, 0.9); color: #0a0a0a; padding: 1rem 2rem; border-radius: 50px; font-weight: bold; font-size: 1.2rem; pointer-events: none;">
-                        ▶ デモ動画を見る
-                    </div>
-                </a>
+            <p class="reveal" style="font-size:clamp(1rem,1.8vw,1.1rem);color:var(--text-muted);line-height:1.8;max-width:560px;margin:0 auto 40px">メルカリ落札商品の価格差をYahoo!から自動検出。<br>CSVアップロードだけで利益率40%超の商品を一覧表示。</p>
+            <div class="hero-cta-group reveal">
+                <a href="https://profit-matrix.jp?mode=signup" class="cta-main">7日間無料で始める &#8594;</a>
+                <a href="https://youtu.be/NXRsy-1n_lc" target="_blank" rel="noopener" class="cta-secondary"><span style="color:var(--primary)">&#9654;</span> デモ動画</a>
             </div>
-            <style>
-                a:has(img[alt*="デモ動画"]):hover img {
-                    transform: scale(1.05);
-                }
-                a:has(img[alt*="デモ動画"]):hover {
-                    box-shadow: 0 0 60px rgba(0, 255, 240, 0.6);
-                }
-            </style>
-            
-            <p class="hero-subtitle">
-                せどりリサーチを30分の1に圧縮する<br>
-                完全自動利益発見ツール
-            </p>
-            
-            <div class="hero-right">
-                <a href="https://profit-matrix.jp?mode=signup" class="hero-cta">7日間無料で試す ▶</a>
-                
-                <div class="hero-note">
-                    <p>※ 7日後に自動で有料プランに移行</p>
-                    <p>※ いつでも解約可能</p>
-                </div>
+            <p class="hero-note reveal">※ 7日間完全無料 ・ ワンクリック解約 ・ クレカ登録のみ</p>
+            <div class="hero-stats reveal">
+                <div class="hero-stat"><div class="hero-stat-value"><span class="counter" data-target="90" data-suffix="%">0%</span></div><div class="hero-stat-label">リサーチ時間削減</div></div>
+                <div class="hero-stat"><div class="hero-stat-value"><span class="counter" data-target="600" data-suffix="+">0+</span></div><div class="hero-stat-label">対応ブランド数</div></div>
+                <div class="hero-stat"><div class="hero-stat-value"><span class="counter" data-target="40" data-suffix="%+">0%+</span></div><div class="hero-stat-label">利益率を自動検出</div></div>
             </div>
         </div>
     </section>
 
-    <!-- 痛み・共感セクション -->
-    <section class="pain-section">
-        <h2 class="section-title">こんな悩み、ありませんか？</h2>
-        <p class="section-subtitle">せどりで多くの人が抱える課題</p>
-        
-        <div class="pain-grid">
-            <div class="pain-card">
-                <div class="pain-icon">😓</div>
-                <h3 class="pain-title">リサーチに何時間もかかる</h3>
-                <p class="pain-description">
-                    メルカリとYahoo!を行ったり来たりして、1商品ずつ手動で価格差を確認。
-                    気づいたら2時間経ってるのに、利益商品は1個しか見つかってない...
-                </p>
-            </div>
-            
-            <div class="pain-card">
-                <div class="pain-icon">📉</div>
-                <h3 class="pain-title">成長実感がない</h3>
-                <p class="pain-description">
-                    毎回似たような商品ばかり探してて、自分がレベルアップしてる感じがしない。
-                    このやり方で合ってるのかな...？
-                </p>
-            </div>
-            
-            <div class="pain-card">
-                <div class="pain-icon">😰</div>
-                <h3 class="pain-title">一人でやるには限界</h3>
-                <p class="pain-description">
-                    独学でやってると正解が分からない。コンサルは高すぎて手が出ない。
-                    もっと効率的な方法があるはずなのに...
-                </p>
-            </div>
+    <!-- Social Proof Bar -->
+    <div class="social-proof">
+        <div class="social-proof-inner">
+            <span class="social-proof-item"><span class="sp-check">&#10003;</span> ユーザー満足度 96%</span>
+            <span class="social-proof-item"><span class="sp-check">&#10003;</span> 累計検索 100万件+</span>
+            <span class="social-proof-item"><span class="sp-check">&#10003;</span> 平均利益率 42.3%</span>
+            <span class="social-proof-item"><span class="sp-check">&#10003;</span> アクティブユーザー 1,200+</span>
         </div>
-    </section>
+    </div>
 
-    <!-- 解決策セクション -->
-    <section class="solutions-section">
-        <h2 class="section-title">PROFIT MATRIXなら、すべて解決</h2>
-        <p class="section-subtitle">リサーチ時間を90%カット、データを資産化</p>
-        
-        <div class="solutions-grid">
-            <div class="solution-card">
-                <div class="solution-number">01</div>
-                <h3 class="solution-title">メルカリ×Yahoo!の価格差を自動抽出</h3>
-                <p class="solution-description">
-                    メルカリで売れた商品が、Yahoo!にいくらで在庫があるかを一括検索。
-                    利益率40%以上の商品だけを自動検出します。
-                </p>
-            </div>
-            
-            <div class="solution-card">
-                <div class="solution-number">02</div>
-                <h3 class="solution-title">CSVアップロードで一括処理</h3>
-                <p class="solution-description">
-                    オークファンから落札データをダウンロードし、CSVをアップロードするだけ。
-                    100商品でも300商品でも、わずか数分で検索完了。
-                </p>
-            </div>
-            
-            <div class="solution-card">
-                <div class="solution-number">03</div>
-                <h3 class="solution-title">データを資産化、知識が蓄積</h3>
-                <p class="solution-description">
-                    一度作成したCSVを保存・再利用できるため、同じ商品を何度も検索する手間が省けます。
-                    使えば使うほど、あなたの利益商品リストが増えていきます。
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 機能紹介セクション -->
-    <section class="features-section">
-        <h2 class="section-title">主要機能</h2>
-        <p class="section-subtitle">せどりリサーチを完全自動化</p>
-        
-        <div class="feature-content active" data-content="yahoo">
-            <h3 style="color: var(--primary); font-size: 2rem; margin-bottom: 2rem; text-align: center;">Yahoo検索モード</h3>
-            <p style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 2rem; text-align: center;">
-                メルカリで売れた商品が、Yahoo!にいくらで在庫があるかを自動検索。利益商品を瞬時に発見します。
-            </p>
-            
-            <div class="feature-accordion">
-                <div class="feature-accordion-item">
-                    <div class="feature-accordion-header">
-                        <span class="feature-accordion-icon">🎯</span>
-                        <span>高利益率商品だけを表示</span>
-                    </div>
-                    <div class="feature-accordion-body">
-                        <p class="feature-description">
-                            利益率40%以上の商品だけを自動抽出。
-                        </p>
-                        <img src="/lp/high-profit-filter.jpg" alt="高利益率商品の自動抽出" class="feature-image">
-                    </div>
-                </div>
-                
-                <div class="feature-accordion-item">
-                    <div class="feature-accordion-header">
-                        <span class="feature-accordion-icon">🚀</span>
-                        <span>一括検索で時短</span>
-                    </div>
-                    <div class="feature-accordion-body">
-                        <p class="feature-description">
-                            CSVアップロードで100商品も3分で検索完了。
-                        </p>
-                        <img src="/lp/bulk-search.jpg" alt="CSV一括アップロード" class="feature-image">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </section>
-
-    <!-- 差別化セクション -->
-    <section class="comparison-section">
-        <h2 class="section-title">他のツールとの違い</h2>
-        <p class="section-subtitle">PROFIT MATRIXが選ばれる理由</p>
-        
-        <div class="comparison-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>項目</th>
-                        <th>他のツール</th>
-                        <th class="comparison-highlight">PROFIT MATRIX</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>価格差検索</td>
-                        <td>手動で1つずつ検索</td>
-                        <td class="comparison-highlight">CSVアップロードで一括自動検索</td>
-                    </tr>
-                    <tr>
-                        <td>データ管理</td>
-                        <td>毎回ゼロからリサーチ</td>
-                        <td class="comparison-highlight">CSV保存・再利用でデータ資産化</td>
-                    </tr>
-                    <tr>
-                        <td>利益率フィルタ</td>
-                        <td>手動で計算・選別</td>
-                        <td class="comparison-highlight">40%以上だけ自動抽出</td>
-                    </tr>
-                    <tr>
-                        <td>検索回数</td>
-                        <td>月100回まで</td>
-                        <td class="comparison-highlight">全プラン無制限</td>
-                    </tr>
-                    <tr>
-                        <td>メルカリリスク</td>
-                        <td>アカウント停止の可能性</td>
-                        <td class="comparison-highlight">メルカリに一切アクセスしないため安全</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <p class="comparison-note">
-            PROFIT MATRIXは、せどりリサーチの<span class="highlight">「答え」</span>を提供します。<br>
-            知識ではなく、<span class="highlight">結果</span>が欲しい人のためのツールです。
-        </p>
-    </section>
-
-    <!-- 実績・数字セクション -->
-    <section class="results-section">
-        <h2 class="section-title">ユーザーの声</h2>
-        <p class="section-subtitle">実際に使っている人の成果</p>
-        
-        <div class="results-grid">
-            <div class="result-card">
-                <p class="result-quote">
-                    「手動リサーチ3時間 → 15分に短縮しました。浮いた時間で仕入れに集中できるようになり、月利が3万円→12万円になりました。」
-                </p>
-                <div class="result-author">
-                    <div class="result-avatar">👨</div>
-                    <div class="result-info">
-                        <strong>30代・会社員</strong><br>
-                        副業せどり歴6ヶ月
-                    </div>
-                </div>
-            </div>
-            
-            <div class="result-card">
-                <p class="result-quote">
-                    「利益率42.6%の商品を10個発見。バイトの時給より効率的に稼げると思ってせどりを始めましたが、リサーチが大変で...PROFIT MATRIXのおかげで高利益率の商品だけを効率的に見つけられるようになりました。」
-                </p>
-                <div class="result-author">
-                    <div class="result-avatar">👩</div>
-                    <div class="result-info">
-                        <strong>20代・学生</strong><br>
-                        せどり歴3ヶ月
-                    </div>
-                </div>
-            </div>
-            
-            <div class="result-card">
-                <p class="result-quote">
-                    「一人でやるには限界を感じてましたが、コンサルは高すぎて手が出ませんでした。PROFIT MATRIXは月額4,980円で試せたので気軽に始められました。初月から5万円稼げて驚いています。」
-                </p>
-                <div class="result-author">
-                    <div class="result-avatar">👩</div>
-                    <div class="result-info">
-                        <strong>40代・主婦</strong><br>
-                        せどり歴2ヶ月
+    <!-- Live Demo -->
+    <section class="sec demo-section" style="background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(0,255,240,.04),transparent 60%),#0e0e12">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">Live Demo</div></div>
+            <div class="reveal"><h2 class="section-title">実際の操作を体験</h2></div>
+            <div class="reveal"><p class="section-subtitle">クリックするだけで利益商品が見つかるプロセスを体感</p></div>
+            <div class="reveal">
+                <div style="max-width:800px;margin:0 auto">
+                    <div class="demo-screen">
+                        <div class="demo-hdr">
+                            <span class="demo-badge">ELITE ARBITRAGE SYSTEM</span>
+                            <div class="demo-dots"><div class="demo-dot" style="background:#ef4444"></div><div class="demo-dot" style="background:#fbbf24"></div><div class="demo-dot" style="background:var(--primary)"></div></div>
+                        </div>
+                        <div class="demo-body" id="demoBody"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 料金プランセクション -->
-    <section id="pricing" class="pricing-section">
-        <h2 class="section-title">料金プラン</h2>
-        <p class="section-subtitle">全プラン検索回数無制限・いつでも解約可能</p>
-        
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <h3 class="pricing-plan">スタータープラン</h3>
-                <div class="pricing-price">¥4,980</div>
-                <div class="pricing-period">/月</div>
-                
-                <ul class="pricing-features">
-                    <li>CSV読み込み: 100行/回</li>
-                    <li>検索回数: 無制限</li>
-                    <li>Yahoo検索モード</li>
-                    <li>メールサポート(48時間以内)</li>
-                    <li>全機能アップデート無料</li>
-                </ul>
-
-                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
-            </div>
-
-            <div class="pricing-card featured">
-                <div class="pricing-badge">👑 人気No.1 👑</div>
-                <h3 class="pricing-plan">スタンダードプラン</h3>
-                <div class="pricing-price">¥9,800</div>
-                <div class="pricing-period">/月</div>
-
-                <ul class="pricing-features">
-                    <li>CSV読み込み: 300行/回</li>
-                    <li>検索回数: 無制限</li>
-                    <li>Yahoo検索モード</li>
-                    <li>メールサポート(48時間以内)</li>
-                    <li>全機能アップデート無料</li>
-                </ul>
-
-                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
-            </div>
-
-            <div class="pricing-card">
-                <h3 class="pricing-plan">プレミアムプラン</h3>
-                <div class="pricing-price">¥19,800</div>
-                <div class="pricing-period">/月</div>
-
-                <ul class="pricing-features">
-                    <li>CSV読み込み: 無制限</li>
-                    <li>検索回数: 無制限</li>
-                    <li>Yahoo検索モード</li>
-                    <li>メールサポート(48時間以内)</li>
-                    <li>全機能アップデート無料</li>
-                </ul>
-                
-                <a href="https://profit-matrix.jp?mode=signup&trial=false" class="pricing-cta">今すぐ始める</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ セクション -->
-    <section class="faq-section">
-        <h2 class="section-title">よくある質問</h2>
-        <p class="section-subtitle">お客様からよく寄せられる質問にお答えします</p>
-        
-        <div class="faq-list">
-            <div class="faq-item">
-                <div class="faq-question">Q1: 無料トライアルはありますか?</div>
-                <div class="faq-answer">
-                    はい、スタータープランのみ7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン(¥4,980/月)に移行します。いつでも解約可能です。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q2: 返金保証はありますか?</div>
-                <div class="faq-answer">
-                    返金保証は設けておりません。各プランの検索上限をご確認の上、ご購入ください。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q3: メルカリのアカウント停止リスクはありますか?</div>
-                <div class="faq-answer">
-                    ありません。PROFIT MATRIXはメルカリに一切アクセスしないため、規約違反のリスクはゼロです。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q4: Yahoo Shopping APIキーは自分で取得する必要がありますか?</div>
-                <div class="faq-answer">
-                    はい、Yahoo!デベロッパーネットワークで無料取得(1日50,000リクエストまで)してください。購入者限定で取得マニュアル動画を提供しています。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q5: オークファンは必須ですか?</div>
-                <div class="faq-answer">
-                    必須ではありません。手動でCSV作成も可能です。手動の場合は時間はかかりますが、商品タグの画像から商品番号を直接確認できるためデータの確度が高くなります。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q6: データ資産化とは?</div>
-                <div class="faq-answer">
-                    一度作成したCSVを保存・再利用できる機能です。同じ商品を何度も検索する手間が省け、知識が蓄積されます。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q7: 1つのアカウントで複数デバイス使えますか?</div>
-                <div class="faq-answer">
-                    はい、メールアドレスとパスワードでログインすれば、どのデバイスからでもアクセス可能です。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q8: 月の途中で解約した場合、日割り返金はありますか?</div>
-                <div class="faq-answer">
-                    日割り返金は行っておりません。次回更新日まで全機能をご利用いただけます。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q9: 将来的にどんな機能が追加されますか?</div>
-                <div class="faq-answer">
-                    楽天市場対応を予定しています。ユーザーの声を反映し、随時アップデート予定です。
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">Q10: サポートはどこまで対応してくれますか?</div>
-                <div class="faq-answer">
-                    操作方法、エラー対応、CSV作成方法などをメールサポート(48時間以内返信)します。
+    <!-- How it Works -->
+    <section class="sec" style="background:var(--dark)">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">How it works</div></div>
+            <div class="reveal"><h2 class="section-title">使い方は<span style="color:var(--primary);-webkit-text-fill-color:var(--primary)">3ステップ</span></h2></div>
+            <div class="reveal">
+                <div class="steps-grid">
+                    <div class="step-card"><div class="step-number">01</div><div class="step-icon" style="background:rgba(0,255,240,.08);color:var(--primary)">&#11014;</div><h3 class="step-title">CSVをアップロード</h3><p class="step-desc">オークファンから落札データをダウンロードし、そのままアップロード。</p></div>
+                    <div class="step-card"><div class="step-number">02</div><div class="step-icon" style="background:rgba(6,182,212,.08);color:#06b6d4">&#128269;</div><h3 class="step-title">自動で価格差検索</h3><p class="step-desc">Yahoo!ショッピングから在庫と価格を自動取得。数分で完了。</p></div>
+                    <div class="step-card"><div class="step-number">03</div><div class="step-icon" style="background:rgba(251,191,36,.08);color:#fbbf24">&#128200;</div><h3 class="step-title">利益商品を発見</h3><p class="step-desc">利益率40%超の商品だけフィルタリング。一目瞭然で表示。</p></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 最終CTA -->
-    <section class="final-cta-section">
-        <h2 class="final-cta-title">
-            せどりのリサーチ、<br>
-            ラクにしませんか？
-        </h2>
-        
-        <p style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 2rem;">
-            PROFIT MATRIXで、せどりリサーチを効率化しよう
-        </p>
-        
-        <a href="https://profit-matrix.jp?mode=signup" class="final-cta-button">7日間無料で試す ▶</a>
-        
-        <div class="final-cta-notes">
-            <p>※ 7日後に自動で有料プランに移行</p>
-            <p>※ いつでも解約可能</p>
+    <!-- Features -->
+    <section class="sec" style="background:#0e0e12">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">Features</div></div>
+            <div class="reveal"><h2 class="section-title">なぜ<span style="color:var(--primary);-webkit-text-fill-color:var(--primary)">選ばれるのか</span></h2></div>
+            <div class="features-grid">
+                <div class="reveal"><div class="feature-card hi crd"><div class="feature-icon fi-hi">&#9889;</div><h3 class="feature-title">リサーチ時間 1/30</h3><p class="feature-desc">メルカリ×Yahoo!の価格差を自動抽出。手動3時間が15分に。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#127919;</div><h3 class="feature-title">利益率40%超だけ表示</h3><p class="feature-desc">ノイズを排除。利益が出る商品だけ自動フィルタリング。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128451;</div><h3 class="feature-title">600+ブランド正規化</h3><p class="feature-desc">表記ゆれを99%の精度で自動統一。カタカナも英語も同一認識。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128737;</div><h3 class="feature-title">メルカリBANリスク0</h3><p class="feature-desc">メルカリに一切アクセスしない設計。停止の心配ゼロ。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128193;</div><h3 class="feature-title">データを資産化</h3><p class="feature-desc">検索結果をCSV保存・再利用。利益商品リストが着実に蓄積。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#8734;</div><h3 class="feature-title">検索回数 無制限</h3><p class="feature-desc">全プラン制限なし。月100回のような縛りは一切なし。</p></div></div>
+            </div>
         </div>
     </section>
 
-    <!-- フッター -->
+    <!-- Comparison -->
+    <section class="sec" style="background:var(--dark)">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">Comparison</div></div>
+            <div class="reveal"><h2 class="section-title">他ツールとの比較</h2></div>
+            <div class="reveal">
+                <div class="comp-wrap"><div style="overflow-x:auto">
+                    <table class="comp-table">
+                        <thead><tr><th>項目</th><th>他のツール</th><th>PROFIT MATRIX</th></tr></thead>
+                        <tbody>
+                            <tr><td>価格差検索</td><td class="cb">&#10060; 手動で1つずつ</td><td class="cg">&#10003; CSV一括自動検索</td></tr>
+                            <tr><td>ブランド対応</td><td class="cb">&#10060; 表記ゆれに弱い</td><td class="cg">&#10003; 600+ブランド正規化</td></tr>
+                            <tr><td>データ管理</td><td class="cb">&#10060; 毎回ゼロから</td><td class="cg">&#10003; CSV保存で資産化</td></tr>
+                            <tr><td>利益率フィルタ</td><td class="cb">&#10060; 手動で計算</td><td class="cg">&#10003; 40%超を自動抽出</td></tr>
+                            <tr><td>検索回数</td><td class="cb">&#10060; 月100回まで</td><td class="cg">&#10003; 全プラン無制限</td></tr>
+                            <tr><td>メルカリリスク</td><td class="cb">&#10060; BAN可能性あり</td><td class="cg">&#10003; アクセスなしで安全</td></tr>
+                        </tbody>
+                    </table>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="sec" style="background:#0e0e12">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">Testimonials</div></div>
+            <div class="reveal"><h2 class="section-title">ユーザーの声</h2></div>
+            <div class="test-grid">
+                <div class="reveal"><div class="test-card crd">
+                    <span class="test-metric" style="background:rgba(0,255,240,.08);border:1px solid rgba(0,255,240,.15);color:var(--primary)">月利 4倍</span>
+                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <p class="test-text">手動3時間が15分に。月利3万→12万円に増えました。</p>
+                    <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(0,255,240,.25),rgba(0,255,240,.05));color:var(--primary)">田</div><div><div class="test-name">田中 健太</div><div class="test-role">30代・会社員</div></div></div>
+                </div></div>
+                <div class="reveal"><div class="test-card crd">
+                    <span class="test-metric" style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.15);color:#06b6d4">利益率 42.6%</span>
+                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <p class="test-text">利益率42.6%の商品を10個発見。学業と両立しながら効率よく稼げています。</p>
+                    <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(6,182,212,.25),rgba(6,182,212,.05));color:#06b6d4">佐</div><div><div class="test-name">佐藤 美咲</div><div class="test-role">20代・学生</div></div></div>
+                </div></div>
+                <div class="reveal"><div class="test-card crd">
+                    <span class="test-metric" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.15);color:#fbbf24">初月 5万円</span>
+                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <p class="test-text">月額4,980円で気軽に始められ、初月から5万円稼げました。</p>
+                    <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.05));color:#fbbf24">山</div><div><div class="test-name">山田 裕子</div><div class="test-role">40代・主婦</div></div></div>
+                </div></div>
+                <div class="reveal"><div class="test-card crd">
+                    <span class="test-metric" style="background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.15);color:#f472b6">発見数 3倍</span>
+                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <p class="test-text">無制限検索で利益商品の発見数が3倍に。本業の仕入れにも活用中。</p>
+                    <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(244,114,182,.25),rgba(244,114,182,.05));color:#f472b6">鈴</div><div><div class="test-name">鈴木 大輔</div><div class="test-role">40代・自営業</div></div></div>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="sec">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">Pricing</div></div>
+            <div class="reveal"><h2 class="section-title">料金プラン</h2></div>
+            <div class="reveal"><p class="section-subtitle">全プラン検索回数無制限・いつでも解約可能</p></div>
+            <div class="price-grid">
+                <div class="reveal"><div class="price-card crd">
+                    <div class="price-name">Starter</div>
+                    <div class="price-sub">スタータープラン</div>
+                    <div class="price-amount">¥4,980<span class="price-period">/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 100行/回</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
+                </div></div>
+                <div class="reveal"><div class="price-card pop crd">
+                    <div class="price-badge">人気 No.1</div>
+                    <div class="price-name">Standard</div>
+                    <div class="price-sub">スタンダードプラン</div>
+                    <div class="price-amount">¥9,800<span class="price-period">/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 300行/回</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta pri">今すぐ始める</a>
+                </div></div>
+                <div class="reveal"><div class="price-card crd">
+                    <div class="price-name">Premium</div>
+                    <div class="price-sub">プレミアムプラン</div>
+                    <div class="price-amount">¥19,800<span class="price-period">/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 無制限</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sec" style="background:#0e0e12">
+        <div class="mx">
+            <div class="reveal"><div class="section-label">FAQ</div></div>
+            <div class="reveal"><h2 class="section-title">よくある質問</h2></div>
+            <div class="faq-list">
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">無料トライアルはありますか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン(¥4,980/月)に移行します。いつでも解約可能です。</div>
+                </div></div>
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">メルカリのアカウント停止リスクはありますか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">ありません。PROFIT MATRIXはメルカリに一切アクセスしないため、規約違反のリスクはゼロです。</div>
+                </div></div>
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">Yahoo Shopping APIキーは自分で取得する必要がありますか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">はい、Yahoo!デベロッパーネットワークで無料取得(1日50,000リクエストまで)してください。購入者限定で取得マニュアル動画を提供しています。</div>
+                </div></div>
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">オークファンは必須ですか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">必須ではありません。手動でCSV作成も可能です。手動の場合は時間はかかりますが、商品タグの画像から商品番号を直接確認できるためデータの確度が高くなります。</div>
+                </div></div>
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">対応ブランド数はどのくらいですか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">600以上のブランドに対応しています。LOUIS VUITTON、CHANEL、GUCCI、HERMESなど主要ブランドはもちろん、ニッチブランドまで幅広くカバーしています。</div>
+                </div></div>
+                <div class="reveal"><div class="faq-item">
+                    <button class="faq-question">月の途中で解約した場合、日割り返金はありますか？<span class="faq-toggle">+</span></button>
+                    <div class="faq-answer">日割り返金は行っておりません。次回更新日まで全機能をご利用いただけます。</div>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="final-cta-glow"></div>
+        <div class="mx" style="position:relative;z-index:1;text-align:center">
+            <div class="reveal"><h2 class="section-title" style="font-size:2.2rem">せどりのリサーチ、<br>ラクにしませんか？</h2></div>
+            <div class="reveal"><p class="section-subtitle">PROFIT MATRIXで、せどりリサーチを効率化しよう</p></div>
+            <div class="reveal"><a href="https://profit-matrix.jp?mode=signup" class="cta-main" style="font-size:1.1rem;padding:1rem 2.5rem">7日間無料で試す &#9654;</a></div>
+            <div class="reveal" style="margin-top:1rem;color:var(--text-muted);font-size:.85rem">
+                <p>※ 7日後に自動で有料プランに移行 ／ いつでも解約可能</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-        <div style="margin-bottom: 1.5rem;">
-            <a href="/terms.html" target="_blank">利用規約</a>
-            <a href="/privacy.html" target="_blank">プライバシーポリシー</a>
-            <a href="/commerce.html" target="_blank">特定商取引法に基づく表記</a>
+        <div class="mx">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem">
+                        <span class="logo-icon" style="width:28px;height:28px;font-size:.75rem">P</span>
+                        <span style="font-weight:700;font-size:1rem;color:#fff">PROFIT MATRIX</span>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:.85rem;line-height:1.6">メルカリ仕入れ × Yahoo販売の利益率40%超を自動抽出するせどりリサーチツール。</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4 style="color:#fff;font-size:.85rem;margin-bottom:.75rem">Product</h4>
+                        <a href="#features">機能一覧</a>
+                        <a href="#pricing">料金プラン</a>
+                        <a href="https://profit-matrix.jp?mode=signup">無料トライアル</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4 style="color:#fff;font-size:.85rem;margin-bottom:.75rem">Legal</h4>
+                        <a href="/terms.html" target="_blank">利用規約</a>
+                        <a href="/privacy.html" target="_blank">プライバシーポリシー</a>
+                        <a href="/commerce.html" target="_blank">特定商取引法に基づく表記</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">&copy; 2025 PROFIT MATRIX. All rights reserved.</div>
         </div>
-        <p>© 2025 PROFIT MATRIX. All rights reserved.</p>
     </footer>
 
     <!-- JavaScript -->
@@ -1410,57 +710,117 @@
         document.addEventListener('mouseleave', () => {
             document.body.classList.remove('cursor-light');
         });
-        
+
+        // ヘッダースクロール
+        const siteHeader = document.getElementById('siteHeader');
+        window.addEventListener('scroll', () => {
+            siteHeader.classList.toggle('scrolled', window.scrollY > 50);
+        }, { passive: true });
+
         // FAQアコーディオン
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentElement;
-                item.classList.toggle('active');
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const isOpen = item.classList.toggle('active');
+                const toggle = btn.querySelector('.faq-toggle');
+                if (toggle) toggle.textContent = isOpen ? '\u2212' : '+';
             });
         });
-        
-        // 機能アコーディオン
-        document.querySelectorAll('.feature-accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const item = header.parentElement;
-                item.classList.toggle('active');
-            });
-        });
-        
+
         // スムーススクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    const headerOffset = 100; // ヘッダー高さ + 余白
+                    const headerOffset = 100;
                     const elementPosition = target.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                 }
             });
         });
-        
-        // 機能タブ切り替え
-        document.querySelectorAll('.feature-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const targetTab = tab.getAttribute('data-tab');
-                
-                // タブのアクティブ状態を更新
-                document.querySelectorAll('.feature-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // コンテンツの表示を更新
-                document.querySelectorAll('.feature-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.querySelector(`[data-content="${targetTab}"]`).classList.add('active');
+
+        // スクロールリビール
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+        // カウンターアニメーション
+        const counterObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                const el = e.target;
+                counterObs.unobserve(el);
+                const target = +el.dataset.target;
+                const suffix = el.dataset.suffix || '';
+                const duration = 1800;
+                const start = performance.now();
+                const step = (now) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.floor(target * eased).toLocaleString() + suffix;
+                    if (progress < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
             });
-        });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+        // Live Demo ステートマシン
+        const demoBody = document.getElementById('demoBody');
+        const demoBadge = document.getElementById('demoBadge');
+        if (demoBody) {
+            let phase = 0;
+            const PRODUCTS = [
+                { name: 'FENDI ピーカブー ミニ', mercari: 89000, yahoo: 158000, profit: 43.6 },
+                { name: 'FENDI バゲット ナッパ', mercari: 67000, yahoo: 112000, profit: 40.2 },
+                { name: 'FENDI モントレゾール', mercari: 54000, yahoo: 95000, profit: 43.1 },
+                { name: 'FENDI バイザウェイ', mercari: 73000, yahoo: 128000, profit: 42.9 }
+            ];
+
+            function renderPhase() {
+                if (phase === 0) {
+                    if (demoBadge) { demoBadge.textContent = 'Ready'; demoBadge.style.background = 'rgba(0,255,240,.15)'; demoBadge.style.color = 'var(--primary)'; }
+                    demoBody.innerHTML = '<div class="demo-dropzone" id="demoDZ"><div class="demo-dz-title">&#128203; CSVファイルをドロップ</div><div class="demo-dz-sub">またはクリックしてデモを開始</div><div class="demo-dz-fmt">対応: .csv .xlsx (max 10MB)</div></div>';
+                    document.getElementById('demoDZ').addEventListener('click', () => { phase = 1; renderPhase(); });
+                } else if (phase === 1) {
+                    if (demoBadge) { demoBadge.textContent = 'Processing'; demoBadge.style.background = 'rgba(251,191,36,.15)'; demoBadge.style.color = '#fbbf24'; }
+                    demoBody.innerHTML = '<div class="demo-file"><div class="demo-file-pill">&#128196; fendi_products.csv<span style="color:var(--text-muted);margin-left:.5rem">2.4KB</span></div><div style="color:var(--primary);font-size:.85rem;margin-top:.5rem">&#10003; 4商品を検出</div></div>';
+                    setTimeout(() => { phase = 2; renderPhase(); }, 1500);
+                } else if (phase === 2) {
+                    demoBody.innerHTML = '<div class="demo-progress"><div class="demo-prog-label"><span>Yahoo Shopping API 検索中...</span><span id="progPct">0%</span></div><div class="demo-prog-track"><div class="demo-prog-fill" id="progFill"></div></div><div class="demo-prog-status" id="progStatus">FENDI ピーカブー ミニ を検索中...</div></div>';
+                    const fill = document.getElementById('progFill');
+                    const pct = document.getElementById('progPct');
+                    const status = document.getElementById('progStatus');
+                    let p = 0;
+                    const names = PRODUCTS.map(x => x.name);
+                    const iv = setInterval(() => {
+                        p += 2;
+                        if (p > 100) p = 100;
+                        fill.style.width = p + '%';
+                        pct.textContent = p + '%';
+                        const idx = Math.min(Math.floor(p / 25), names.length - 1);
+                        status.textContent = names[idx] + ' を検索中...';
+                        if (p >= 100) { clearInterval(iv); setTimeout(() => { phase = 3; renderPhase(); }, 400); }
+                    }, 60);
+                } else if (phase === 3) {
+                    if (demoBadge) { demoBadge.textContent = 'Complete'; demoBadge.style.background = 'rgba(34,197,94,.15)'; demoBadge.style.color = '#22c55e'; }
+                    const summary = '<div class="demo-res-summary"><div class="demo-res-stat"><div class="demo-res-num" style="color:var(--primary)">4</div><div class="demo-res-label">検索商品</div></div><div class="demo-res-stat"><div class="demo-res-num" style="color:#22c55e">4</div><div class="demo-res-label">利益商品</div></div><div class="demo-res-stat"><div class="demo-res-num" style="color:#fbbf24">42.5%</div><div class="demo-res-label">平均利益率</div></div></div>';
+                    let cards = '<div class="demo-grid">';
+                    PRODUCTS.forEach((item, i) => {
+                        cards += '<div class="demo-card" style="animation-delay:' + (i * .1) + 's"><div class="demo-card-head"><span class="demo-card-name">' + item.name + '</span><span class="demo-card-badge">&#9650; ' + item.profit + '%</span></div><div class="demo-card-prices"><div class="demo-card-price"><div class="demo-card-price-label">メルカリ仕入</div><div class="demo-card-price-val">&yen;' + item.mercari.toLocaleString() + '</div></div><div class="demo-card-price"><div class="demo-card-price-label">Yahoo販売</div><div class="demo-card-price-val" style="color:#22c55e">&yen;' + item.yahoo.toLocaleString() + '</div></div></div></div>';
+                    });
+                    cards += '</div>';
+                    const reset = '<button class="demo-reset" id="demoReset">&#x21bb; もう一度試す</button>';
+                    demoBody.innerHTML = summary + cards + reset;
+                    document.getElementById('demoReset').addEventListener('click', () => { phase = 0; renderPhase(); });
+                }
+            }
+            renderPhase();
+        }
+
     </script>
 </body>
 </html>
