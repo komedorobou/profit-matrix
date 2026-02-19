@@ -49,6 +49,13 @@
       "env": {
         "VERCEL_API_TOKEN": "YOUR_VERCEL_API_TOKEN"
       }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
     }
   }
 }
