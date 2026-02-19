@@ -37,7 +37,9 @@
             --dark-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%);
             --text: #ffffff;
             --text-muted: #b0b0b0;
-            
+            --text-dim: #71717a;
+            --z-cursor-light: 9999;
+            --z-header: 1000;
         }
         
         body {
@@ -62,7 +64,7 @@
                 transparent 100%
             );
             pointer-events: none;
-            z-index: 9999;
+            z-index: var(--z-cursor-light);
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -77,7 +79,7 @@
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
+            z-index: var(--z-header);
             background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,.06);
@@ -141,6 +143,8 @@
             align-items: center;
             gap: 6px;
             box-shadow: 0 0 20px rgba(0, 255, 240, 0.3);
+            cursor: pointer;
+            min-height: 44px;
         }
 
         .header-cta:hover {
@@ -171,7 +175,7 @@
             font-size: 15px; margin-bottom: 48px;
         }
 
-        .crd { transition: all .4s; }
+        .crd { transition: all .4s; cursor: pointer; }
         .crd:hover {
             transform: translateY(-6px);
             border-color: rgba(0,255,240,.3) !important;
@@ -181,7 +185,7 @@
         /* ====== スクロールリビール ====== */
         .reveal {
             opacity: 0; transform: translateY(40px);
-            transition: all .85s cubic-bezier(.22,1,.36,1);
+            transition: opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1);
         }
         .reveal.visible { opacity: 1; transform: none; }
 
@@ -222,7 +226,7 @@
             color: #000; padding: 16px 36px; border-radius: 12px;
             font-weight: 700; font-size: 16px; text-decoration: none;
             display: inline-flex; align-items: center; gap: 10px;
-            transition: all .4s; box-shadow: 0 0 30px rgba(0,255,240,.4);
+            transition: all .4s; box-shadow: 0 0 30px rgba(0,255,240,.4); cursor: pointer;
         }
         .cta-main:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,255,240,.6); }
         .cta-secondary {
@@ -233,7 +237,7 @@
             text-decoration: none; transition: all .3s;
         }
         .cta-secondary:hover { border-color: var(--primary); background: rgba(0,255,240,.05); }
-        .hero-note { font-size: 13px; color: #52525b; }
+        .hero-note { font-size: 13px; color: var(--text-dim); }
 
         .hero-stats {
             display: grid; grid-template-columns: repeat(2, 1fr);
@@ -251,7 +255,7 @@
         .social-proof-inner {
             max-width: 1140px; margin: 0 auto;
             display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
-            font-size: 13px; color: #52525b;
+            font-size: 13px; color: var(--text-dim);
         }
         .social-proof-item { display: inline-flex; align-items: center; gap: 6px; }
         .sp-check { color: var(--primary); }
@@ -275,7 +279,7 @@
         .demo-prog-title { font-weight: 700; font-size: 18px; color: #e4e4e7; margin-bottom: 16px; }
         .demo-prog-track { max-width: 400px; margin: 0 auto; height: 6px; border-radius: 3px; background: rgba(255,255,255,.06); overflow: hidden; }
         .demo-prog-fill { height: 100%; border-radius: 3px; width: 0; background: linear-gradient(90deg, var(--primary), #06b6d4); transition: width .1s linear; box-shadow: 0 0 12px rgba(0,255,240,.4); }
-        .demo-prog-text { font-size: 13px; color: #52525b; margin-top: 10px; }
+        .demo-prog-text { font-size: 13px; color: var(--text-dim); margin-top: 10px; }
         .demo-res-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .demo-res-title { font-weight: 700; font-size: 16px; color: #e4e4e7; }
         .demo-reset { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 6px 14px; font-size: 12px; color: #71717a; cursor: pointer; font-weight: 600; transition: all .3s; font-family: inherit; }
@@ -288,10 +292,10 @@
         .demo-card-name { font-size: 10px; color: #a1a1aa; line-height: 1.4; margin-bottom: 8px; height: 28px; overflow: hidden; }
         .demo-card-profit { background: linear-gradient(90deg, var(--primary), #06b6d4); border-radius: 100px; padding: 5px 0; text-align: center; font-weight: 800; font-size: 13px; color: #000; margin-bottom: 10px; }
         .demo-card-prices { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; font-size: 9px; text-align: center; margin-bottom: 8px; }
-        .demo-card-prices .lbl { color: #52525b; }
+        .demo-card-prices .lbl { color: var(--text-dim); }
         .demo-card-prices .val { font-weight: 700; color: #e4e4e7; }
         .demo-card-prices .pval { font-weight: 700; color: var(--primary); }
-        .demo-card-shop { font-size: 9px; color: #52525b; }
+        .demo-card-shop { font-size: 9px; color: var(--text-dim); }
 
         /* ====== How it Works ====== */
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.06); }
@@ -315,11 +319,11 @@
         .comp-wrap { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); max-width: 860px; margin: 0 auto; }
         .comp-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
         .comp-table th { padding: 16px 24px; text-align: left; font-weight: 600; font-size: 12px; background: #111620; }
-        .comp-table th:nth-child(2) { color: #52525b; }
+        .comp-table th:nth-child(2) { color: var(--text-dim); }
         .comp-table th:nth-child(3) { color: var(--primary); }
         .comp-table td { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,.06); font-size: 13px; }
         .comp-table td:first-child { font-weight: 600; color: #d4d4d8; }
-        .cb { color: #52525b; }
+        .cb { color: var(--text-dim); }
         .cg { color: var(--primary); font-weight: 600; }
         
         /* ====== Testimonials ====== */
@@ -331,7 +335,7 @@
         .test-author { display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,.06); padding-top: 16px; }
         .test-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
         .test-name { font-weight: 600; font-size: 13px; color: #fafafa; }
-        .test-role { font-size: 12px; color: #52525b; }
+        .test-role { font-size: 12px; color: var(--text-dim); }
         
         /* ====== Pricing ====== */
         .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
@@ -339,13 +343,13 @@
         .price-card.pop { background: linear-gradient(135deg, rgba(0,255,240,.06), rgba(255,0,255,.03)); border-color: rgba(0,255,240,.2); }
         .price-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; font-size: 11px; font-weight: 700; padding: 5px 18px; border-radius: 100px; }
         .price-name { font-weight: 700; font-size: 20px; margin-bottom: 6px; color: #fafafa; }
-        .price-sub { font-size: 13px; color: #52525b; margin-bottom: 12px; }
+        .price-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 12px; }
         .price-amount { margin-bottom: 28px; font-weight: 800; font-size: clamp(2rem, 4vw, 2.8rem); color: #fafafa; }
-        .price-period { color: #52525b; font-size: 14px; font-weight: 400; }
+        .price-period { color: var(--text-dim); font-size: 14px; font-weight: 400; }
         .price-features { text-align: left; margin-bottom: 28px; }
         .price-feat { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: #a1a1aa; }
         .pf-check { color: var(--primary); }
-        .price-cta { display: block; text-align: center; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: all .3s; }
+        .price-cta { display: block; text-align: center; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: all .3s; cursor: pointer; }
         .price-cta.pri { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; box-shadow: 0 0 20px rgba(0,255,240,.3); }
         .price-cta.pri:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,255,240,.5); }
         .price-cta.sec2 { background: rgba(255,255,255,.04); color: #d4d4d8; border: 1px solid rgba(255,255,255,.06); }
@@ -371,14 +375,51 @@
         .footer-grid { max-width: 1140px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; margin-bottom: 32px; }
         .footer-brand p { color: #3f3f46; font-size: 13px; max-width: 280px; line-height: 1.7; margin-top: 12px; }
         .footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
-        .footer-col h4 { font-weight: 600; font-size: 12px; color: #52525b; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .06em; }
-        .footer-col a { display: block; font-size: 13px; color: #52525b; padding: 4px 0; text-decoration: none; transition: color .3s; }
+        .footer-col h4 { font-weight: 600; font-size: 12px; color: var(--text-dim); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .06em; }
+        .footer-col a { display: inline-flex; align-items: center; font-size: 13px; color: var(--text-dim); min-height: 44px; padding: 4px 0; text-decoration: none; transition: color .3s; cursor: pointer; }
         .footer-col a:hover { color: var(--primary); }
         .footer-bottom { max-width: 1140px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.04); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         .footer-bottom p { color: #27272a; font-size: 12px; }
         .footer-bottom a { color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-        }
         
+        /* ====== Focus Visible ====== */
+        :focus { outline: none; }
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+        .header-cta:focus-visible,
+        .cta-main:focus-visible,
+        .price-cta:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 4px rgba(0, 255, 240, 0.2);
+        }
+        .faq-question:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+        }
+        .demo-reset:focus-visible,
+        .footer-col a:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* ====== Reduced Motion ====== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .hero-word { opacity: 1; animation: none; }
+            body::before { display: none; }
+            .demo-prog-fill { transition: none; }
+        }
+
         /* ====== レスポンシブ ====== */
         @media (max-width: 768px) {
             .hero .hero-word { font-size: 2rem; }
@@ -414,7 +455,7 @@
                 <span class="logo-icon">P</span>
                 <span class="logo-text">PROFIT MATRIX</span>
             </div>
-            <a href="https://profit-matrix.jp?mode=signup" class="header-cta">無料で試す &#8594;</a>
+            <a href="https://profit-matrix.jp?mode=signup" class="header-cta">無料で試す <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
         </div>
     </header>
 
@@ -422,7 +463,7 @@
     <section class="hero">
         <div class="hero-content" style="position:relative;z-index:1;text-align:center;max-width:1140px;margin:0 auto;padding:0 2rem">
             <div class="reveal">
-                <span class="hero-badge"><span class="hero-badge-dot"></span>7日間無料トライアル実施中</span>
+                <span class="hero-badge"><span class="hero-badge-dot" aria-hidden="true"></span>7日間無料トライアル実施中</span>
             </div>
             <h1 style="font-weight:800;letter-spacing:-.05em;max-width:800px;margin:0 auto 28px;line-height:1.1">
                 <span class="hero-word" style="animation-delay:.15s;font-size:clamp(2.2rem,5.5vw,4rem);display:block;color:#fafafa">リサーチ3時間が</span>
@@ -431,7 +472,7 @@
             </h1>
             <p class="reveal" style="font-size:clamp(1rem,1.8vw,1.1rem);color:var(--text-muted);line-height:1.8;max-width:560px;margin:0 auto 40px">メルカリ落札商品の価格差をYahoo!から自動検出。<br>CSVアップロードだけで利益率40%超の商品を一覧表示。</p>
             <div class="hero-cta-group reveal">
-                <a href="https://profit-matrix.jp?mode=signup" class="cta-main">7日間無料で始める &#8594;</a>
+                <a href="https://profit-matrix.jp?mode=signup" class="cta-main">7日間無料で始める <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
             </div>
             <p class="hero-note reveal">※ 7日間完全無料 ・ ワンクリック解約 ・ クレカ登録のみ</p>
             <div class="hero-stats reveal">
@@ -444,17 +485,17 @@
     <!-- Social Proof Bar -->
     <div class="social-proof">
         <div class="social-proof-inner">
-            <span class="social-proof-item"><span class="sp-check">&#10003;</span> ユーザー満足度 96%</span>
-            <span class="social-proof-item"><span class="sp-check">&#10003;</span> 累計検索 100万件+</span>
-            <span class="social-proof-item"><span class="sp-check">&#10003;</span> 平均利益率 42.3%</span>
-            <span class="social-proof-item"><span class="sp-check">&#10003;</span> アクティブユーザー 1,200+</span>
+            <span class="social-proof-item"><span class="sp-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> ユーザー満足度 96%</span>
+            <span class="social-proof-item"><span class="sp-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> 累計検索 100万件+</span>
+            <span class="social-proof-item"><span class="sp-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> 平均利益率 42.3%</span>
+            <span class="social-proof-item"><span class="sp-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> アクティブユーザー 1,200+</span>
         </div>
     </div>
 
     <!-- Live Demo -->
     <section class="sec demo-section" style="background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(0,255,240,.04),transparent 60%),#0e0e12">
         <div class="mx">
-            <div class="reveal"><div class="section-label">Live Demo</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">Live Demo</span></div></div>
             <div class="reveal"><h2 class="section-title">実際の操作を体験</h2></div>
             <div class="reveal"><p class="section-subtitle">クリックするだけで利益商品が見つかるプロセスを体感</p></div>
             <div class="reveal">
@@ -462,7 +503,7 @@
                     <div class="demo-screen">
                         <div class="demo-hdr">
                             <span class="demo-badge">ELITE ARBITRAGE SYSTEM</span>
-                            <div class="demo-dots"><div class="demo-dot" style="background:#ef4444"></div><div class="demo-dot" style="background:#fbbf24"></div><div class="demo-dot" style="background:var(--primary)"></div></div>
+                            <div class="demo-dots" aria-hidden="true"><div class="demo-dot" style="background:#ef4444"></div><div class="demo-dot" style="background:#fbbf24"></div><div class="demo-dot" style="background:var(--primary)"></div></div>
                         </div>
                         <div class="demo-body" id="demoBody"></div>
                     </div>
@@ -474,13 +515,13 @@
     <!-- How it Works -->
     <section class="sec" style="background:var(--dark)">
         <div class="mx">
-            <div class="reveal"><div class="section-label">How it works</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">How it works</span></div></div>
             <div class="reveal"><h2 class="section-title">使い方は<span style="color:var(--primary);-webkit-text-fill-color:var(--primary)">3ステップ</span></h2></div>
             <div class="reveal">
                 <div class="steps-grid">
-                    <div class="step-card"><div class="step-number">01</div><div class="step-icon" style="background:rgba(0,255,240,.08);color:var(--primary)">&#11014;</div><h3 class="step-title">CSVをアップロード</h3><p class="step-desc">オークファンから落札データをダウンロードし、そのままアップロード。</p></div>
-                    <div class="step-card"><div class="step-number">02</div><div class="step-icon" style="background:rgba(6,182,212,.08);color:#06b6d4">&#128269;</div><h3 class="step-title">自動で価格差検索</h3><p class="step-desc">Yahoo!ショッピングから在庫と価格を自動取得。数分で完了。</p></div>
-                    <div class="step-card"><div class="step-number">03</div><div class="step-icon" style="background:rgba(251,191,36,.08);color:#fbbf24">&#128200;</div><h3 class="step-title">利益商品を発見</h3><p class="step-desc">利益率40%超の商品だけフィルタリング。一目瞭然で表示。</p></div>
+                    <div class="step-card"><div class="step-number" aria-hidden="true">01</div><div class="step-icon" style="background:rgba(0,255,240,.08);color:var(--primary)"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><h3 class="step-title">CSVをアップロード</h3><p class="step-desc">オークファンから落札データをダウンロードし、そのままアップロード。</p></div>
+                    <div class="step-card"><div class="step-number" aria-hidden="true">02</div><div class="step-icon" style="background:rgba(6,182,212,.08);color:#06b6d4"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h3 class="step-title">自動で価格差検索</h3><p class="step-desc">Yahoo!ショッピングから在庫と価格を自動取得。数分で完了。</p></div>
+                    <div class="step-card"><div class="step-number" aria-hidden="true">03</div><div class="step-icon" style="background:rgba(251,191,36,.08);color:#fbbf24"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><h3 class="step-title">利益商品を発見</h3><p class="step-desc">利益率40%超の商品だけフィルタリング。一目瞭然で表示。</p></div>
                 </div>
             </div>
         </div>
@@ -489,15 +530,15 @@
     <!-- Features -->
     <section class="sec" style="background:#0e0e12">
         <div class="mx">
-            <div class="reveal"><div class="section-label">Features</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">Features</span></div></div>
             <div class="reveal"><h2 class="section-title">なぜ<span style="color:var(--primary);-webkit-text-fill-color:var(--primary)">選ばれるのか</span></h2></div>
             <div class="features-grid">
-                <div class="reveal"><div class="feature-card hi crd"><div class="feature-icon fi-hi">&#9889;</div><h3 class="feature-title">リサーチ時間 1/30</h3><p class="feature-desc">メルカリ×Yahoo!の価格差を自動抽出。手動3時間が15分に。</p></div></div>
-                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#127919;</div><h3 class="feature-title">利益率40%超だけ表示</h3><p class="feature-desc">ノイズを排除。利益が出る商品だけ自動フィルタリング。</p></div></div>
-                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128451;</div><h3 class="feature-title">600+ブランド正規化</h3><p class="feature-desc">表記ゆれを99%の精度で自動統一。カタカナも英語も同一認識。</p></div></div>
-                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128737;</div><h3 class="feature-title">メルカリBANリスク0</h3><p class="feature-desc">メルカリに一切アクセスしない設計。停止の心配ゼロ。</p></div></div>
-                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#128193;</div><h3 class="feature-title">データを資産化</h3><p class="feature-desc">検索結果をCSV保存・再利用。利益商品リストが着実に蓄積。</p></div></div>
-                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo">&#8734;</div><h3 class="feature-title">検索回数 無制限</h3><p class="feature-desc">全プラン制限なし。月100回のような縛りは一切なし。</p></div></div>
+                <div class="reveal"><div class="feature-card hi crd"><div class="feature-icon fi-hi"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h3 class="feature-title">リサーチ時間 1/30</h3><p class="feature-desc">メルカリ×Yahoo!の価格差を自動抽出。手動3時間が15分に。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h3 class="feature-title">利益率40%超だけ表示</h3><p class="feature-desc">ノイズを排除。利益が出る商品だけ自動フィルタリング。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div><h3 class="feature-title">600+ブランド正規化</h3><p class="feature-desc">表記ゆれを99%の精度で自動統一。カタカナも英語も同一認識。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3 class="feature-title">メルカリBANリスク0</h3><p class="feature-desc">メルカリに一切アクセスしない設計。停止の心配ゼロ。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><h3 class="feature-title">データを資産化</h3><p class="feature-desc">検索結果をCSV保存・再利用。利益商品リストが着実に蓄積。</p></div></div>
+                <div class="reveal"><div class="feature-card crd"><div class="feature-icon fi-lo"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"/></svg></div><h3 class="feature-title">検索回数 無制限</h3><p class="feature-desc">全プラン制限なし。月100回のような縛りは一切なし。</p></div></div>
             </div>
         </div>
     </section>
@@ -505,19 +546,19 @@
     <!-- Comparison -->
     <section class="sec" style="background:var(--dark)">
         <div class="mx">
-            <div class="reveal"><div class="section-label">Comparison</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">Comparison</span></div></div>
             <div class="reveal"><h2 class="section-title">他ツールとの比較</h2></div>
             <div class="reveal">
                 <div class="comp-wrap"><div style="overflow-x:auto">
                     <table class="comp-table">
                         <thead><tr><th>項目</th><th>他のツール</th><th>PROFIT MATRIX</th></tr></thead>
                         <tbody>
-                            <tr><td>価格差検索</td><td class="cb">&#10060; 手動で1つずつ</td><td class="cg">&#10003; CSV一括自動検索</td></tr>
-                            <tr><td>ブランド対応</td><td class="cb">&#10060; 表記ゆれに弱い</td><td class="cg">&#10003; 600+ブランド正規化</td></tr>
-                            <tr><td>データ管理</td><td class="cb">&#10060; 毎回ゼロから</td><td class="cg">&#10003; CSV保存で資産化</td></tr>
-                            <tr><td>利益率フィルタ</td><td class="cb">&#10060; 手動で計算</td><td class="cg">&#10003; 40%超を自動抽出</td></tr>
-                            <tr><td>検索回数</td><td class="cb">&#10060; 月100回まで</td><td class="cg">&#10003; 全プラン無制限</td></tr>
-                            <tr><td>メルカリリスク</td><td class="cb">&#10060; BAN可能性あり</td><td class="cg">&#10003; アクセスなしで安全</td></tr>
+                            <tr><td>価格差検索</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 手動で1つずつ</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> CSV一括自動検索</td></tr>
+                            <tr><td>ブランド対応</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 表記ゆれに弱い</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 600+ブランド正規化</td></tr>
+                            <tr><td>データ管理</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 毎回ゼロから</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> CSV保存で資産化</td></tr>
+                            <tr><td>利益率フィルタ</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 手動で計算</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 40%超を自動抽出</td></tr>
+                            <tr><td>検索回数</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 月100回まで</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 全プラン無制限</td></tr>
+                            <tr><td>メルカリリスク</td><td class="cb"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> BAN可能性あり</td><td class="cg"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> アクセスなしで安全</td></tr>
                         </tbody>
                     </table>
                 </div></div>
@@ -528,30 +569,30 @@
     <!-- Testimonials -->
     <section class="sec" style="background:#0e0e12">
         <div class="mx">
-            <div class="reveal"><div class="section-label">Testimonials</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">Testimonials</span></div></div>
             <div class="reveal"><h2 class="section-title">ユーザーの声</h2></div>
             <div class="test-grid">
                 <div class="reveal"><div class="test-card crd">
                     <span class="test-metric" style="background:rgba(0,255,240,.08);border:1px solid rgba(0,255,240,.15);color:var(--primary)">月利 4倍</span>
-                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <div class="test-stars" role="img" aria-label="5つ星中5つ星"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <p class="test-text">手動3時間が15分に。月利3万→12万円に増えました。</p>
                     <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(0,255,240,.25),rgba(0,255,240,.05));color:var(--primary)">田</div><div><div class="test-name">田中 健太</div><div class="test-role">30代・会社員</div></div></div>
                 </div></div>
                 <div class="reveal"><div class="test-card crd">
                     <span class="test-metric" style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.15);color:#06b6d4">利益率 42.6%</span>
-                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <div class="test-stars" role="img" aria-label="5つ星中5つ星"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <p class="test-text">利益率42.6%の商品を10個発見。学業と両立しながら効率よく稼げています。</p>
                     <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(6,182,212,.25),rgba(6,182,212,.05));color:#06b6d4">佐</div><div><div class="test-name">佐藤 美咲</div><div class="test-role">20代・学生</div></div></div>
                 </div></div>
                 <div class="reveal"><div class="test-card crd">
                     <span class="test-metric" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.15);color:#fbbf24">初月 5万円</span>
-                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <div class="test-stars" role="img" aria-label="5つ星中5つ星"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <p class="test-text">月額4,980円で気軽に始められ、初月から5万円稼げました。</p>
                     <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.05));color:#fbbf24">山</div><div><div class="test-name">山田 裕子</div><div class="test-role">40代・主婦</div></div></div>
                 </div></div>
                 <div class="reveal"><div class="test-card crd">
                     <span class="test-metric" style="background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.15);color:#f472b6">発見数 3倍</span>
-                    <div class="test-stars">&#11088;&#11088;&#11088;&#11088;&#11088;</div>
+                    <div class="test-stars" role="img" aria-label="5つ星中5つ星"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                     <p class="test-text">無制限検索で利益商品の発見数が3倍に。本業の仕入れにも活用中。</p>
                     <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(244,114,182,.25),rgba(244,114,182,.05));color:#f472b6">鈴</div><div><div class="test-name">鈴木 大輔</div><div class="test-role">40代・自営業</div></div></div>
                 </div></div>
@@ -562,7 +603,7 @@
     <!-- Pricing -->
     <section id="pricing" class="sec">
         <div class="mx">
-            <div class="reveal"><div class="section-label">Pricing</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">Pricing</span></div></div>
             <div class="reveal"><h2 class="section-title">料金プラン</h2></div>
             <div class="reveal"><p class="section-subtitle">全プラン検索回数無制限・いつでも解約可能</p></div>
             <div class="price-grid">
@@ -571,11 +612,11 @@
                     <div class="price-sub">スタータープラン</div>
                     <div class="price-amount">¥4,980<span class="price-period">/月</span></div>
                     <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 100行/回</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 100行/回</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
                     </ul>
                     <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
                 </div></div>
@@ -585,11 +626,11 @@
                     <div class="price-sub">スタンダードプラン</div>
                     <div class="price-amount">¥9,800<span class="price-period">/月</span></div>
                     <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 300行/回</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 300行/回</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
                     </ul>
                     <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta pri">今すぐ始める</a>
                 </div></div>
@@ -598,11 +639,11 @@
                     <div class="price-sub">プレミアムプラン</div>
                     <div class="price-amount">¥19,800<span class="price-period">/月</span></div>
                     <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>CSV読み込み: 無制限</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check">&#10003;</span>全機能アップデート無料</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
                     </ul>
                     <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
                 </div></div>
@@ -613,32 +654,32 @@
     <!-- FAQ -->
     <section class="sec" style="background:#0e0e12">
         <div class="mx">
-            <div class="reveal"><div class="section-label">FAQ</div></div>
+            <div class="reveal"><div class="section-label"><span lang="en">FAQ</span></div></div>
             <div class="reveal"><h2 class="section-title">よくある質問</h2></div>
             <div class="faq-list">
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">無料トライアルはありますか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン(¥4,980/月)に移行します。いつでも解約可能です。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">無料トライアルはありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-1" role="region">はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン(¥4,980/月)に移行します。いつでも解約可能です。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">メルカリのアカウント停止リスクはありますか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">ありません。PROFIT MATRIXはメルカリに一切アクセスしないため、規約違反のリスクはゼロです。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">メルカリのアカウント停止リスクはありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-2" role="region">ありません。PROFIT MATRIXはメルカリに一切アクセスしないため、規約違反のリスクはゼロです。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">Yahoo Shopping APIキーは自分で取得する必要がありますか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">はい、Yahoo!デベロッパーネットワークで無料取得(1日50,000リクエストまで)してください。購入者限定で取得マニュアル動画を提供しています。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">Yahoo Shopping APIキーは自分で取得する必要がありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-3" role="region">はい、Yahoo!デベロッパーネットワークで無料取得(1日50,000リクエストまで)してください。購入者限定で取得マニュアル動画を提供しています。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">オークファンは必須ですか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">必須ではありません。手動でCSV作成も可能です。手動の場合は時間はかかりますが、商品タグの画像から商品番号を直接確認できるためデータの確度が高くなります。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">オークファンは必須ですか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-4" role="region">必須ではありません。手動でCSV作成も可能です。手動の場合は時間はかかりますが、商品タグの画像から商品番号を直接確認できるためデータの確度が高くなります。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">対応ブランド数はどのくらいですか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">600以上のブランドに対応しています。LOUIS VUITTON、CHANEL、GUCCI、HERMESなど主要ブランドはもちろん、ニッチブランドまで幅広くカバーしています。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">対応ブランド数はどのくらいですか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-5" role="region">600以上のブランドに対応しています。LOUIS VUITTON、CHANEL、GUCCI、HERMESなど主要ブランドはもちろん、ニッチブランドまで幅広くカバーしています。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
-                    <button class="faq-question">月の途中で解約した場合、日割り返金はありますか？<span class="faq-toggle">+</span></button>
-                    <div class="faq-answer">日割り返金は行っておりません。次回更新日まで全機能をご利用いただけます。</div>
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6">月の途中で解約した場合、日割り返金はありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
+                    <div class="faq-answer" id="faq-answer-6" role="region">日割り返金は行っておりません。次回更新日まで全機能をご利用いただけます。</div>
                 </div></div>
             </div>
         </div>
@@ -650,7 +691,7 @@
         <div class="mx" style="position:relative;z-index:1;text-align:center">
             <div class="reveal"><h2 class="section-title" style="font-size:2.2rem">せどりのリサーチ、<br>ラクにしませんか？</h2></div>
             <div class="reveal"><p class="section-subtitle">PROFIT MATRIXで、せどりリサーチを効率化しよう</p></div>
-            <div class="reveal"><a href="https://profit-matrix.jp?mode=signup" class="cta-main" style="font-size:1.1rem;padding:1rem 2.5rem">7日間無料で試す &#9654;</a></div>
+            <div class="reveal"><a href="https://profit-matrix.jp?mode=signup" class="cta-main" style="font-size:1.1rem;padding:1rem 2.5rem">7日間無料で試す <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
             <div class="reveal" style="margin-top:1rem;color:var(--text-muted);font-size:.85rem">
                 <p>※ 7日後に自動で有料プランに移行 ／ いつでも解約可能</p>
             </div>
@@ -689,25 +730,27 @@
 
     <!-- JavaScript -->
     <script>
-        // カーソル追従ライト
-        document.addEventListener('mousemove', (e) => {
-            document.body.classList.add('cursor-light');
-            document.body.style.setProperty('--mouse-x', e.clientX + 'px');
-            document.body.style.setProperty('--mouse-y', e.clientY + 'px');
-            
-            const light = document.body;
-            light.style.setProperty('--mouse-x', e.clientX + 'px');
-            light.style.setProperty('--mouse-y', e.clientY + 'px');
-            
-            // body::beforeの位置を更新
-            document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
-            document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
-        });
-        
-        // マウスが画面外に出たら光を消す
-        document.addEventListener('mouseleave', () => {
-            document.body.classList.remove('cursor-light');
-        });
+        // ユーザー設定の検出
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        // SVGアイコン定数
+        const SVG_CLIPBOARD = '<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>';
+        const SVG_FILE = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+        const SVG_CHECK_SM = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        const SVG_TRENDING = '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';
+
+        // カーソル追従ライト（マウスデバイスのみ、reduced-motion非該当時）
+        if (!prefersReducedMotion.matches && !isTouchDevice) {
+            document.addEventListener('mousemove', (e) => {
+                document.body.classList.add('cursor-light');
+                document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+                document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+            });
+            document.addEventListener('mouseleave', () => {
+                document.body.classList.remove('cursor-light');
+            });
+        }
 
         // ヘッダースクロール
         const siteHeader = document.getElementById('siteHeader');
@@ -715,17 +758,18 @@
             siteHeader.classList.toggle('scrolled', window.scrollY > 50);
         }, { passive: true });
 
-        // FAQアコーディオン
+        // FAQアコーディオン（aria-expanded対応）
         document.querySelectorAll('.faq-question').forEach(btn => {
             btn.addEventListener('click', () => {
                 const item = btn.closest('.faq-item');
                 const isOpen = item.classList.toggle('active');
                 const toggle = btn.querySelector('.faq-toggle');
                 if (toggle) toggle.textContent = isOpen ? '\u2212' : '+';
+                btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
         });
 
-        // スムーススクロール
+        // スムーススクロール（reduced-motion対応）
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -734,7 +778,10 @@
                     const headerOffset = 100;
                     const elementPosition = target.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
+                    });
                 }
             });
         });
@@ -745,7 +792,7 @@
         }, { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-        // カウンターアニメーション
+        // カウンターアニメーション（reduced-motion対応）
         const counterObs = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (!e.isIntersecting) return;
@@ -753,6 +800,10 @@
                 counterObs.unobserve(el);
                 const target = +el.dataset.target;
                 const suffix = el.dataset.suffix || '';
+                if (prefersReducedMotion.matches) {
+                    el.textContent = target.toLocaleString() + suffix;
+                    return;
+                }
                 const duration = 1800;
                 const start = performance.now();
                 const step = (now) => {
@@ -781,11 +832,11 @@
             function renderPhase() {
                 if (phase === 0) {
                     if (demoBadge) { demoBadge.textContent = 'Ready'; demoBadge.style.background = 'rgba(0,255,240,.15)'; demoBadge.style.color = 'var(--primary)'; }
-                    demoBody.innerHTML = '<div class="demo-dropzone" id="demoDZ"><div class="demo-dz-title">&#128203; CSVファイルをドロップ</div><div class="demo-dz-sub">またはクリックしてデモを開始</div><div class="demo-dz-fmt">対応: .csv .xlsx (max 10MB)</div></div>';
+                    demoBody.innerHTML = '<div class="demo-dropzone" id="demoDZ"><div class="demo-dz-title">' + SVG_CLIPBOARD + ' CSVファイルをドロップ</div><div class="demo-dz-sub">またはクリックしてデモを開始</div><div class="demo-dz-fmt">対応: .csv .xlsx (max 10MB)</div></div>';
                     document.getElementById('demoDZ').addEventListener('click', () => { phase = 1; renderPhase(); });
                 } else if (phase === 1) {
                     if (demoBadge) { demoBadge.textContent = 'Processing'; demoBadge.style.background = 'rgba(251,191,36,.15)'; demoBadge.style.color = '#fbbf24'; }
-                    demoBody.innerHTML = '<div class="demo-file"><div class="demo-file-pill">&#128196; fendi_products.csv<span style="color:var(--text-muted);margin-left:.5rem">2.4KB</span></div><div style="color:var(--primary);font-size:.85rem;margin-top:.5rem">&#10003; 4商品を検出</div></div>';
+                    demoBody.innerHTML = '<div class="demo-file"><div class="demo-file-pill">' + SVG_FILE + ' fendi_products.csv<span style="color:var(--text-muted);margin-left:.5rem">2.4KB</span></div><div style="color:var(--primary);font-size:.85rem;margin-top:.5rem">' + SVG_CHECK_SM + ' 4商品を検出</div></div>';
                     setTimeout(() => { phase = 2; renderPhase(); }, 1500);
                 } else if (phase === 2) {
                     demoBody.innerHTML = '<div class="demo-progress"><div class="demo-prog-label"><span>Yahoo Shopping API 検索中...</span><span id="progPct">0%</span></div><div class="demo-prog-track"><div class="demo-prog-fill" id="progFill"></div></div><div class="demo-prog-status" id="progStatus">FENDI ピーカブー ミニ を検索中...</div></div>';
@@ -808,10 +859,10 @@
                     const summary = '<div class="demo-res-summary"><div class="demo-res-stat"><div class="demo-res-num" style="color:var(--primary)">4</div><div class="demo-res-label">検索商品</div></div><div class="demo-res-stat"><div class="demo-res-num" style="color:#22c55e">4</div><div class="demo-res-label">利益商品</div></div><div class="demo-res-stat"><div class="demo-res-num" style="color:#fbbf24">42.5%</div><div class="demo-res-label">平均利益率</div></div></div>';
                     let cards = '<div class="demo-grid">';
                     PRODUCTS.forEach((item, i) => {
-                        cards += '<div class="demo-card" style="animation-delay:' + (i * .1) + 's"><div class="demo-card-head"><span class="demo-card-name">' + item.name + '</span><span class="demo-card-badge">&#9650; ' + item.profit + '%</span></div><div class="demo-card-prices"><div class="demo-card-price"><div class="demo-card-price-label">メルカリ仕入</div><div class="demo-card-price-val">&yen;' + item.mercari.toLocaleString() + '</div></div><div class="demo-card-price"><div class="demo-card-price-label">Yahoo販売</div><div class="demo-card-price-val" style="color:#22c55e">&yen;' + item.yahoo.toLocaleString() + '</div></div></div></div>';
+                        cards += '<div class="demo-card" style="animation-delay:' + (i * .1) + 's"><div class="demo-card-head"><span class="demo-card-name">' + item.name + '</span><span class="demo-card-badge">' + SVG_TRENDING + ' ' + item.profit + '%</span></div><div class="demo-card-prices"><div class="demo-card-price"><div class="demo-card-price-label">メルカリ仕入</div><div class="demo-card-price-val">&yen;' + item.mercari.toLocaleString() + '</div></div><div class="demo-card-price"><div class="demo-card-price-label">Yahoo販売</div><div class="demo-card-price-val" style="color:#22c55e">&yen;' + item.yahoo.toLocaleString() + '</div></div></div></div>';
                     });
                     cards += '</div>';
-                    const reset = '<button class="demo-reset" id="demoReset">&#x21bb; もう一度試す</button>';
+                    const reset = '<button class="demo-reset" id="demoReset"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> もう一度試す</button>';
                     demoBody.innerHTML = summary + cards + reset;
                     document.getElementById('demoReset').addEventListener('click', () => { phase = 0; renderPhase(); });
                 }
