@@ -732,7 +732,6 @@
     <script>
         // ユーザー設定の検出
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         // SVGアイコン定数
         const SVG_CLIPBOARD = '<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>';
@@ -740,8 +739,8 @@
         const SVG_CHECK_SM = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
         const SVG_TRENDING = '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';
 
-        // カーソル追従ライト（マウスデバイスのみ、reduced-motion非該当時）
-        if (!prefersReducedMotion.matches && !isTouchDevice) {
+        // カーソル追従ライト（reduced-motion非該当時）
+        if (!prefersReducedMotion.matches) {
             document.addEventListener('mousemove', (e) => {
                 document.body.classList.add('cursor-light');
                 document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
