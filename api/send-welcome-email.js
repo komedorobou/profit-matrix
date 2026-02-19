@@ -133,10 +133,6 @@ function getSignupEmailHTML() {
             <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">メルカリCSVから利益商品を自動発見</p>
           </div>
 
-          <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #00B8D9;">
-            <strong style="color: #1a1a1a;">📊 CSV統合モード</strong>
-            <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">複数CSV結合・クリーニング・グループ化</p>
-          </div>
 
           <div style="margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #FFD700;">
             <strong style="color: #1a1a1a;">👥 外注先管理</strong>

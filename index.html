@@ -6,9 +6,6 @@
     <title>PROFIT MATRIX | Advanced Arbitrage System</title>
     <!-- Auth System v2.0 -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="fusion-studio.css">
-    <!-- SheetJS for Excel support -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- 認証モーダル -->
@@ -363,18 +360,8 @@
             </div>
         </header>
 
-        <!-- モード切替タブ -->
-        <div class="mode-tabs">
-            <button class="mode-tab active" data-mode="yahoo" onclick="switchMode('yahoo')">
-                💰 Yahoo検索モード
-            </button>
-            <button class="mode-tab" data-mode="fusion" onclick="switchMode('fusion')">
-                📊 CSV統合モード
-            </button>
-        </div>
-
         <!-- Yahoo検索モード -->
-        <div id="yahooMode" class="mode-content active">
+        <div id="yahooMode">
             <!-- CSVアップロードセクション -->
         <div class="upload-section">
             <div class="upload-container" id="yahooUploadArea" onclick="document.getElementById('csvFile').click()">
@@ -494,356 +481,7 @@
             </div>
         </div>
         </div>
-        <!-- Yahoo検索モード ここまで -->
 
-        <!-- CSV統合モード -->
-        <div id="fusionMode" class="mode-content">
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon-container">
-                    <div class="upload-circles">
-                        <div class="upload-circle"></div>
-                        <div class="upload-circle"></div>
-                        <div class="upload-circle"></div>
-                    </div>
-                    <div class="upload-icon">📊</div>
-                </div>
-                <h2>Drop Your Data</h2>
-                <p>ドラッグ&ドロップまたはクリックでファイルを選択</p>
-                <div class="upload-hint">複数のCSV/Excelファイルを一度に処理可能</div>
-                <div class="supported-formats">
-                    <div class="format-badge">CSV</div>
-                    <div class="format-badge">Excel (.xlsx/.xls)</div>
-                    <div class="format-badge">UTF-8</div>
-                    <div class="format-badge">Shift-JIS</div>
-                </div>
-                <div class="wave-container">
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                </div>
-                <input type="file" id="fileInput" class="file-input" multiple accept=".csv,.xlsx,.xls">
-            </div>
-
-            <div class="file-list" id="fileList"></div>
-
-            <div class="fusion-options" id="optionsSection" style="display: none;">
-                <h3 style="font-size: 1.5em; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 30px; text-align: center;">結合オプション</h3>
-
-                <div class="fusion-option-group">
-                    <label for="encoding" style="font-weight: 600; color: rgba(255, 255, 255, 0.9); display: block; margin-bottom: 10px;">文字エンコーディング:</label>
-                    <select id="encoding" style="padding: 12px 16px; border: 2px solid rgba(102, 126, 234, 0.3); border-radius: 10px; font-size: 15px; background: rgba(102, 126, 234, 0.05); color: white; width: 100%; max-width: 500px;">
-                        <option value="auto" style="background: #1a1a2e; color: white;">自動検出</option>
-                        <option value="utf-8" style="background: #1a1a2e; color: white;">UTF-8</option>
-                        <option value="shift-jis" style="background: #1a1a2e; color: white;">Shift-JIS（Windows日本語）</option>
-                    </select>
-                    <small style="color: rgba(255, 255, 255, 0.6); display: block; margin-top: 8px;">
-                        ※文字化けする場合は「Shift-JIS」を選択してください
-                    </small>
-                </div>
-
-                <div class="fusion-option-group" style="margin-bottom: 25px;">
-                    <label for="mergeType" style="font-weight: 600; color: rgba(255, 255, 255, 0.9); display: block; margin-bottom: 10px;">結合方法:</label>
-                    <select id="mergeType" style="padding: 12px 16px; border: 2px solid rgba(102, 126, 234, 0.3); border-radius: 10px; font-size: 15px; background: rgba(102, 126, 234, 0.05); color: white; width: 100%; max-width: 500px;">
-                        <option value="vertical" style="background: #1a1a2e; color: white;">縦結合（行を追加）</option>
-                        <option value="horizontal" style="background: #1a1a2e; color: white;">横結合（列を追加）</option>
-                    </select>
-                </div>
-
-                <div class="fusion-option-group" style="margin-bottom: 25px;">
-                    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                        <input type="checkbox" id="includeHeaders" checked style="width: 20px; height: 20px; cursor: pointer;">
-                        <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9);">ヘッダー行を含める（最初のファイルのみ）</span>
-                    </label>
-                </div>
-
-                <div class="fusion-option-group" style="margin-bottom: 25px;">
-                    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                        <input type="checkbox" id="removeDuplicates" style="width: 20px; height: 20px; cursor: pointer;">
-                        <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9);">重複行を削除</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="action-buttons" id="actionButtons" style="display: none;">
-                <button class="btn btn-secondary" onclick="clearAll()">クリア</button>
-                <button class="btn btn-primary" onclick="mergeCSV()" id="mergeBtn">CSVを結合</button>
-            </div>
-
-            <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
-
-            <div class="preview-section" id="previewSection">
-                <div class="preview-header">
-                    <h3>結合結果プレビュー</h3>
-                    <div class="preview-header-buttons">
-                        <button class="btn btn-cleaning" onclick="showCleaningModal()">
-                            🧹 B列クリーニング
-                        </button>
-                        <button class="btn btn-brand" onclick="processBrands()">
-                            🏷️ ブランド処理
-                        </button>
-                        <button class="btn btn-group" onclick="showGroupingModal()">
-                            📦 商品グループ化
-                        </button>
-                        <!-- グループ集計ボタン（グループ化後に表示） -->
-                        <button class="btn btn-summary" onclick="generateGroupSummary()" id="summaryBtn" style="display: none;">
-                            📊 グループ集計
-                        </button>
-                        <button class="btn btn-primary" onclick="downloadCSV()">CSVをダウンロード</button>
-                    </div>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-card">
-                        <div class="stat-value" id="rowCount">0</div>
-                        <div class="stat-label">行数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="colCount">0</div>
-                        <div class="stat-label">列数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="fileCount">0</div>
-                        <div class="stat-label">ファイル数</div>
-                    </div>
-                    <div class="stat-card" id="groupCountCard" style="display: none;">
-                        <div class="stat-value" id="groupCount">0</div>
-                        <div class="stat-label">グループ数</div>
-                    </div>
-                </div>
-
-                <div class="preview-table">
-                    <table id="previewTable"></table>
-                </div>
-            </div>
-        </div>
-        <!-- CSV統合モード ここまで -->
-
-    </div>
-
-    <!-- クリーニングモーダル -->
-    <div id="cleaningModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🧹 B列商品名クリーニング</h2>
-                <span class="close" onclick="closeCleaningModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="debug-info" id="debugInfo"></div>
-
-                <div class="cleaning-options">
-                    <h3 style="color: rgba(255, 255, 255, 0.95); font-weight: 600;">削除するパターンを選択：</h3>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeExclusive" checked>
-                            <span>「〇〇様専用」パターンを削除</span>
-                        </label>
-                        <small>例：田中様専用、山田さま専用、佐藤様用など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removePrice" checked>
-                            <span>価格情報を削除</span>
-                        </label>
-                        <small>例：定価3000円、¥5,000、1万円、送料込み、送料無料など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeCondition" checked>
-                            <span>商品状態の表記を削除</span>
-                        </label>
-                        <small>例：美品、新品、未使用、極美品、ジャンク、難ありなど</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeMarketing" checked>
-                            <span>宣伝文句を削除</span>
-                        </label>
-                        <small>例：人気、激安、お買い得、限定、レア、希少、大特価など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeSymbols" checked>
-                            <span>過剰な記号・装飾を削除</span>
-                        </label>
-                        <small>例：★☆♪◆◇■□●○、!!!、【】、≪≫など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeGarbage" checked>
-                            <span>意味不明な文字列を削除</span>
-                        </label>
-                        <small>例：あああああ、！！！！！、ーーーーー、...など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeNumbers" checked>
-                            <span>商品番号・管理番号を削除</span>
-                        </label>
-                        <small>例：No.12345、#001、管理番号:ABC123など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeStore" checked>
-                            <span>購入場所・店舗名を削除</span>
-                        </label>
-                        <small>例：Amazon購入、楽天で購入、メルカリ購入、店舗購入など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="removeModel" checked>
-                            <span>着用者・モデル情報を削除</span>
-                        </label>
-                        <small>例：〇〇着用、〇〇モデル、芸能人着用、モデル使用など</small>
-                    </div>
-
-                    <div class="cleaning-option">
-                        <label>
-                            <input type="checkbox" id="normalizeSpaces" checked>
-                            <span>余分なスペースを整理</span>
-                        </label>
-                        <small>連続する空白を1つに、前後の空白を削除</small>
-                    </div>
-                </div>
-
-                <div class="custom-patterns">
-                    <h4>カスタムパターン（上級者向け）</h4>
-                    <textarea id="customPatterns" placeholder="削除したい文字列を改行で区切って入力&#10;例：&#10;在庫処分&#10;早い者勝ち&#10;最終値下げ"></textarea>
-                </div>
-
-                <div class="preview-changes" id="previewChanges" style="display: none;">
-                    <h4>変更プレビュー（最初の10件）</h4>
-                    <div id="changesList"></div>
-                </div>
-
-                <div class="cleaning-stats" id="cleaningStats" style="display: none;">
-                    <div class="cleaning-stat">
-                        <div class="cleaning-stat-value" id="totalProcessed">0</div>
-                        <div class="cleaning-stat-label">処理対象</div>
-                    </div>
-                    <div class="cleaning-stat">
-                        <div class="cleaning-stat-value" id="totalChanged">0</div>
-                        <div class="cleaning-stat-label">変更済み</div>
-                    </div>
-                    <div class="cleaning-stat">
-                        <div class="cleaning-stat-value" id="changeRate">0%</div>
-                        <div class="cleaning-stat-label">変更率</div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="previewCleaning()">プレビュー</button>
-                <button class="btn btn-secondary" onclick="closeCleaningModal()">キャンセル</button>
-                <button class="btn btn-primary" onclick="applyCleaning()">クリーニング実行</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- グループ化モーダル -->
-    <div id="groupingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header group-modal">
-                <h2>📦 商品グループ化設定</h2>
-                <span class="close" onclick="closeGroupingModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="grouping-options">
-                    <h3 style="color: rgba(255, 255, 255, 0.95); font-weight: 600;">グループ化設定：</h3>
-
-                    <div class="grouping-option">
-                        <label style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">類似度の閾値</label>
-                        <div class="slider-container">
-                            <input type="range" id="similarityThreshold" class="slider" min="30" max="100" value="80">
-                            <span class="slider-value" id="similarityValue">80%</span>
-                        </div>
-                        <small style="color: rgba(255, 255, 255, 0.7);">商品名がどれくらい似ていれば同じグループにするか（高いほど厳密）</small>
-                    </div>
-
-                    <div class="grouping-option">
-                        <label class="checkbox-label" style="color: rgba(255, 255, 255, 0.9);">
-                            <input type="checkbox" id="ignoreColors" checked>
-                            <span>色名を無視してグループ化</span>
-                        </label>
-                        <small style="color: rgba(255, 255, 255, 0.7);">Black, Navy, Gray等の色表記を無視して同一商品として扱います</small>
-                    </div>
-
-                    <div class="grouping-option">
-                        <label class="checkbox-label" style="color: rgba(255, 255, 255, 0.9);">
-                            <input type="checkbox" id="ignoreSizes" checked>
-                            <span>サイズ表記を無視してグループ化</span>
-                        </label>
-                        <small style="color: rgba(255, 255, 255, 0.7);">S, M, L, XL等のサイズ表記を無視して同一商品として扱います</small>
-                    </div>
-
-                    <div class="grouping-option">
-                        <label class="checkbox-label" style="color: rgba(255, 255, 255, 0.9);">
-                            <input type="checkbox" id="ignoreYears" checked>
-                            <span>年代表記を無視してグループ化</span>
-                        </label>
-                        <small style="color: rgba(255, 255, 255, 0.7);">2023, 2024等の年代表記を無視して同一商品として扱います</small>
-                    </div>
-
-                    <div class="grouping-option">
-                        <label class="checkbox-label" style="color: rgba(255, 255, 255, 0.9);">
-                            <input type="checkbox" id="useProductCode">
-                            <span>商品コードのみでグループ化</span>
-                        </label>
-                        <small style="color: rgba(255, 255, 255, 0.7);">商品名の類似度を無視し、商品コード列のみでグループ化します</small>
-                    </div>
-
-                    <div class="grouping-option">
-                        <label for="sortOrder" style="color: rgba(255, 255, 255, 0.9); font-weight: 600;">グループの並び順:</label>
-                        <select id="sortOrder" style="width: 100%; padding: 8px; background: rgba(102, 126, 234, 0.1); border: 2px solid rgba(102, 126, 234, 0.3); border-radius: 5px; color: white;">
-                            <option value="count" style="background: #1a1a2e; color: white;">アイテム数が多い順</option>
-                            <option value="name" style="background: #1a1a2e; color: white;">商品名順（アルファベット）</option>
-                            <option value="price" style="background: #1a1a2e; color: white;">価格順（高い順）</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="group-preview" id="groupPreview" style="display: none;">
-                    <h4 style="color: rgba(255, 255, 255, 0.95);">グループ化プレビュー
-                        <select id="previewCount" onchange="updatePreviewCount()" style="margin-left: 10px; padding: 5px; background: rgba(102, 126, 234, 0.1); border: 2px solid rgba(102, 126, 234, 0.3); border-radius: 5px; color: white;">
-                            <option value="5" style="background: #1a1a2e; color: white;">最初の5グループ</option>
-                            <option value="10" style="background: #1a1a2e; color: white;">最初の10グループ</option>
-                            <option value="20" style="background: #1a1a2e; color: white;">最初の20グループ</option>
-                            <option value="50" style="background: #1a1a2e; color: white;">最初の50グループ</option>
-                            <option value="100" style="background: #1a1a2e; color: white;">最初の100グループ</option>
-                            <option value="all" style="background: #1a1a2e; color: white;">全グループを表示</option>
-                        </select>
-                    </h4>
-                    <div id="groupsList" style="max-height: 500px; overflow-y: auto;"></div>
-                </div>
-
-                <div class="grouping-stats" id="groupingStats" style="display: none;">
-                    <div class="grouping-stat">
-                        <div class="grouping-stat-value" id="totalItems">0</div>
-                        <div class="grouping-stat-label">総アイテム数</div>
-                    </div>
-                    <div class="grouping-stat">
-                        <div class="grouping-stat-value" id="totalGroups">0</div>
-                        <div class="grouping-stat-label">グループ数</div>
-                    </div>
-                    <div class="grouping-stat">
-                        <div class="grouping-stat-value" id="avgGroupSize">0</div>
-                        <div class="grouping-stat-label">平均グループサイズ</div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="previewGrouping()">プレビュー</button>
-                <button class="btn btn-secondary" onclick="closeGroupingModal()">キャンセル</button>
-                <button class="btn btn-primary" onclick="applyGrouping()">グループ化実行</button>
-            </div>
-        </div>
     </div>
 
     <!-- プラン選択モーダル -->
@@ -867,7 +505,6 @@
                     <div class="plan-features">
                         <div class="feature-item">✅ 100行/回まで検索</div>
                         <div class="feature-item">✅ 検索回数無制限</div>
-                        <div class="feature-item">✅ CSV統合モード</div>
                         <div class="feature-item">✅ 300+ブランド対応</div>
                         <div class="feature-item">✅ メールサポート</div>
                     </div>
@@ -889,7 +526,6 @@
                     <div class="plan-features">
                         <div class="feature-item">✅ 300行/回まで検索</div>
                         <div class="feature-item">✅ 検索回数無制限</div>
-                        <div class="feature-item">✅ CSV統合モード</div>
                         <div class="feature-item">✅ 300+ブランド対応</div>
                         <div class="feature-item">✅ 優先メールサポート</div>
                     </div>
@@ -910,7 +546,6 @@
                     <div class="plan-features">
                         <div class="feature-item">✅ 無制限検索</div>
                         <div class="feature-item">✅ 検索回数無制限</div>
-                        <div class="feature-item">✅ CSV統合モード</div>
                         <div class="feature-item">✅ 300+ブランド対応</div>
                         <div class="feature-item">✅ 24時間サポート</div>
                     </div>
@@ -1033,15 +668,6 @@
 
     <!-- SheetJS for Excel support -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-
-    <!-- Brand Dictionary -->
-    <script src="brands.js"></script>
-
-    <!-- Stock Manager -->
-    <script src="stock-manager-v2.js"></script>
-
-    <!-- CSV Fusion Studio -->
-    <script src="fusion-studio.js"></script>
 
     <!-- Main App -->
     <script type="module" src="app.js"></script>
