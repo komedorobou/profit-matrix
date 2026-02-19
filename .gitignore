@@ -15,6 +15,9 @@ Thumbs.db
 .env
 .env.local
 
+# MCP (contains API keys)
+.mcp.json
+
 # IDE
 .vscode/
 .idea/
