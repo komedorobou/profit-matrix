@@ -29,32 +29,6 @@
             opacity: 1;
         }
 
-        /* CSV統合モード時の背景（紫系） */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(180deg, #1a0a1b 0%, #000000 100%);
-            z-index: -3;
-            transition: opacity 0.5s ease, visibility 0s 0.5s;
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        body.fusion-mode::before {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0s 0.5s;
-        }
-
-        body.fusion-mode::after {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.5s ease, visibility 0s 0s;
-        }
 
         @keyframes breathe {
             0%, 100% { transform: scale(1) rotate(0deg); }
@@ -122,14 +96,6 @@
             50% { box-shadow: 0 0 30px rgba(0, 184, 217, 0.5); }
         }
 
-        /* CSV統合モード時のヘッダーバッジ（光なし） */
-        body.fusion-mode .header-badge {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
-            border-color: rgba(139, 92, 246, 0.6);
-            color: #8B5CF6;
-            box-shadow: none;
-            animation: none;
-        }
 
         .header h1 {
             font-family: 'Space Grotesk', sans-serif;
@@ -830,21 +796,6 @@
             font-weight: 900;
         }
 
-        /* CSV統合モード時のチェックボックス紫色 */
-        body.fusion-mode .checkbox-label {
-            border-color: rgba(139, 92, 246, 0.5);
-        }
-
-        body.fusion-mode .checkbox-label:hover {
-            border-color: #8B5CF6;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
-
-        body.fusion-mode .card-checkbox:checked + .checkbox-label {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            border-color: #8B5CF6;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
-        }
 
         /* 見送りボタン */
         .skip-btn {
@@ -1130,17 +1081,6 @@
             box-shadow: 0 5px 20px rgba(0, 255, 163, 0.3);
         }
 
-        /* CSV統合モード時の紫色（光なし） */
-        body.fusion-mode .settings-btn {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.5);
-            color: #8B5CF6;
-        }
-
-        body.fusion-mode .settings-btn:hover {
-            background: rgba(139, 92, 246, 0.2);
-            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.5);
-        }
 
         /* 送信方法選択ラジオボタン */
         .method-radio:hover {
@@ -1155,118 +1095,6 @@
             box-shadow: 0 0 30px rgba(0, 255, 163, 0.5);
         }
 
-        /* モード切替タブ */
-        .mode-tabs {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            padding: 20px 60px 0;
-            margin-bottom: 20px;
-        }
-
-        .mode-tab {
-            flex: 1;
-            max-width: 400px;
-            padding: 15px 30px;
-            background: rgba(0, 255, 163, 0.05);
-            border: 2px solid rgba(0, 255, 163, 0.2);
-            border-radius: 16px;
-            color: rgba(148, 163, 184, 0.9);
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mode-tab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 163, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .mode-tab:hover::before {
-            left: 100%;
-        }
-
-        .mode-tab:hover {
-            background: rgba(0, 255, 163, 0.1);
-            border-color: rgba(0, 255, 163, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .mode-tab.active {
-            background: linear-gradient(135deg, rgba(0, 255, 163, 0.2) 0%, rgba(0, 184, 217, 0.2) 100%);
-            border-color: #00FFA3;
-            color: #00FFA3;
-            box-shadow: 0 10px 30px rgba(0, 255, 163, 0.3), inset 0 0 20px rgba(0, 255, 163, 0.1);
-        }
-
-        .mode-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #00FFA3, #00B8D9);
-            box-shadow: 0 0 15px rgba(0, 255, 163, 0.8);
-        }
-
-        /* CSV統合モード時のタブ紫色（光なし） */
-        body.fusion-mode .mode-tab {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.4);
-            color: rgba(139, 92, 246, 0.9);
-        }
-
-        body.fusion-mode .mode-tab::before {
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
-        }
-
-        body.fusion-mode .mode-tab:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.6);
-        }
-
-        body.fusion-mode .mode-tab.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.25) 100%);
-            border-color: #8B5CF6;
-            color: #8B5CF6;
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3), inset 0 0 20px rgba(139, 92, 246, 0.1);
-        }
-
-        body.fusion-mode .mode-tab.active::after {
-            background: linear-gradient(90deg, #8B5CF6, #7C3AED);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
-        }
-
-        /* モードコンテンツ */
-        .mode-content {
-            display: none;
-        }
-
-        .mode-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
         /* ===============================================
            スーパーレスポンシブ対応
@@ -1318,15 +1146,6 @@
                 padding: 6px 15px;
             }
 
-            .mode-tabs {
-                padding: 15px 20px 0;
-                gap: 10px;
-            }
-
-            .mode-tab {
-                padding: 12px 20px;
-                font-size: 0.95em;
-            }
 
             .upload-section {
                 padding: 0 20px 20px 20px;
@@ -1438,16 +1257,6 @@
                 letter-spacing: 1px;
             }
 
-            .mode-tabs {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .mode-tab {
-                max-width: 100%;
-                padding: 12px 15px;
-                font-size: 0.9em;
-            }
 
             .upload-container {
                 padding: 25px 15px;
@@ -1620,10 +1429,6 @@
                 font-size: 0.8em;
             }
 
-            .mode-tab {
-                font-size: 0.85em;
-                padding: 10px;
-            }
 
             .upload-text {
                 font-size: 1.6em;
@@ -1645,248 +1450,6 @@
             .price-value {
                 font-size: 1.1em;
             }
-        }
-
-        /* ===============================================
-           CSV統合モード - 全ての緑を紫に変換
-           =============================================== */
-
-        /* Yahoo検索モードではこれらのスタイルは表示されません */
-        /* CSV統合モード（body.fusion-mode）時のみ適用 */
-
-        /* ヘッダー装飾ライン */
-        body.fusion-mode .header::before {
-            background: linear-gradient(90deg,
-                transparent 0%,
-                #8B5CF6 25%,
-                #7C3AED 50%,
-                #8B5CF6 75%,
-                transparent 100%);
-        }
-
-        /* アップロードコンテナ */
-        body.fusion-mode .upload-container {
-            background: rgba(139, 92, 246, 0.02);
-            border-color: rgba(139, 92, 246, 0.5);
-        }
-
-        body.fusion-mode .upload-container:hover {
-            background: rgba(139, 92, 246, 0.05);
-            border-color: rgba(124, 58, 237, 0.7);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .upload-container::before {
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-        }
-
-        /* キューブ */
-        body.fusion-mode .cube-face {
-            border-color: rgba(139, 92, 246, 0.8);
-            box-shadow:
-                inset 0 0 20px rgba(139, 92, 246, 0.3),
-                0 0 20px rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .cube-front {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2));
-        }
-
-        body.fusion-mode .cube-core {
-            background: radial-gradient(circle,
-                rgba(255, 255, 255, 1) 0%,
-                rgba(139, 92, 246, 0.8) 30%,
-                rgba(124, 58, 237, 0.4) 60%,
-                transparent 100%);
-            box-shadow:
-                0 0 30px rgba(139, 92, 246, 0.8),
-                0 0 60px rgba(124, 58, 237, 0.4);
-        }
-
-        body.fusion-mode .cube-face:hover {
-            background: linear-gradient(135deg,
-                rgba(139, 92, 246, 0.5) 0%,
-                rgba(124, 58, 237, 0.4) 50%,
-                rgba(123, 97, 255, 0.3) 100%);
-            box-shadow:
-                inset 0 0 30px rgba(139, 92, 246, 0.5),
-                0 0 40px rgba(139, 92, 246, 0.4);
-        }
-
-        /* ファイル名 */
-        body.fusion-mode #fileName {
-            color: #8B5CF6;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-        }
-
-        /* フォーマット情報 */
-        body.fusion-mode .format-info {
-            background: rgba(139, 92, 246, 0.05);
-            border-color: rgba(139, 92, 246, 0.2);
-        }
-
-        /* 開始ボタン */
-        body.fusion-mode .start-button {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
-        }
-
-        body.fusion-mode .start-button:hover:not(:disabled) {
-            box-shadow: 0 15px 50px rgba(124, 58, 237, 0.4);
-            background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
-        }
-
-        /* 統計カード */
-        body.fusion-mode .stat-card {
-            background: rgba(124, 58, 237, 0.05);
-            border-color: rgba(124, 58, 237, 0.25);
-        }
-
-        body.fusion-mode .stat-card:hover {
-            background: rgba(139, 92, 246, 0.05);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .stat-card.searching::before {
-            background: linear-gradient(90deg, #8B5CF6, #7C3AED, #8B5CF6);
-        }
-
-        body.fusion-mode .stat-card.completed::before {
-            background: linear-gradient(90deg, #7C3AED, #8B5CF6, #7C3AED);
-        }
-
-        body.fusion-mode .stat-card.completed {
-            background: rgba(124, 58, 237, 0.2);
-            box-shadow: 0 0 60px rgba(124, 58, 237, 1), 0 0 120px rgba(124, 58, 237, 0.7);
-            border-color: rgba(124, 58, 237, 1);
-        }
-
-        body.fusion-mode .stat-icon {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
-        }
-
-        body.fusion-mode .stat-value {
-            color: #8B5CF6;
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
-
-        /* 結果カード */
-        body.fusion-mode .result-card {
-            border-color: rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .result-card::before {
-            background: linear-gradient(90deg, #8B5CF6, #7C3AED);
-        }
-
-        body.fusion-mode .result-card:hover {
-            background: rgba(139, 92, 246, 0.05);
-            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .result-image {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
-        }
-
-        body.fusion-mode .profit-price {
-            color: #8B5CF6;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-        }
-
-        body.fusion-mode .profit-badge {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.3);
-        }
-
-        body.fusion-mode .buy-link {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-        }
-
-        body.fusion-mode .buy-link:hover {
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-            background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
-        }
-
-        body.fusion-mode .mercari-check-link {
-            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
-        }
-
-        body.fusion-mode .mercari-check-link:hover {
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-        }
-
-        /* ローディング */
-        body.fusion-mode .spinner {
-            border-color: rgba(139, 92, 246, 0.1);
-            border-top-color: #8B5CF6;
-            box-shadow: 0 0 40px rgba(139, 92, 246, 0.5);
-        }
-
-        body.fusion-mode .loading-text {
-            color: #8B5CF6;
-        }
-
-        /* 成功メッセージ */
-        body.fusion-mode .success-message {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.3);
-            color: #8B5CF6;
-        }
-
-        /* スクロールバー */
-        body.fusion-mode ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
-        }
-
-        body.fusion-mode ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-        }
-
-        /* APIモーダル */
-        body.fusion-mode .api-modal-content {
-            border-color: rgba(139, 92, 246, 0.3);
-            box-shadow: 0 30px 100px rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode .api-modal-content h2 {
-            color: #8B5CF6;
-        }
-
-        body.fusion-mode .api-link {
-            color: #7C3AED;
-        }
-
-        body.fusion-mode .api-modal-content input {
-            background: rgba(139, 92, 246, 0.05);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-
-        body.fusion-mode .api-modal-content input:focus {
-            border-color: #8B5CF6;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-        }
-
-        body.fusion-mode .api-save-btn {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-        }
-
-        body.fusion-mode .api-save-btn:hover {
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        /* トグルスイッチ */
-        body.fusion-mode .toggle-slider {
-            border-color: rgba(139, 92, 246, 0.2);
-        }
-
-        body.fusion-mode input:checked + .toggle-slider {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            border-color: #8B5CF6;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
         }
 
 /* ========================================

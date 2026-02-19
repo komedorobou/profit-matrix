@@ -39,6 +39,23 @@
       "args": [
         "mcp-server-fetch"
       ]
+    },
+    "vercel": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "vercel-mcp-server"
+      ],
+      "env": {
+        "VERCEL_API_TOKEN": "YOUR_VERCEL_API_TOKEN"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
     }
   }
 }
