@@ -247,12 +247,6 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
             // オーナー設定を読み込んで適用（選択UIなどの表示制御も含む）
             loadOwnerSettings()
 
-            // 結果復元ボタンを表示
-            const restoreBtn = document.getElementById('restoreResultsBtn')
-            if (restoreBtn) {
-                restoreBtn.style.display = 'inline-block'
-            }
-
             // SIGNED_INイベント（実際のログイン操作）の場合のみオーナー設定モーダルを表示
             // INITIAL_SESSION（ページリロード時）の場合はスキップ
             if (event === 'SIGNED_IN') {
@@ -286,12 +280,6 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                 partnersBtn.style.display = 'none'
             }
 
-            // 結果復元ボタンを非表示
-            const restoreBtn = document.getElementById('restoreResultsBtn')
-            if (restoreBtn) {
-                restoreBtn.style.display = 'none'
-            }
-
             // 選択UIを非表示
             const selectionUI = document.getElementById('selectionUI')
             if (selectionUI) {
@@ -308,6 +296,15 @@ supabaseAuth.auth.onAuthStateChange(async (event, session) => {
                     apiKeyModal.style.display = 'flex'
                 }
             }
+        }
+
+        // プレミアムプラン: 検索結果の保存・読み込みボタン表示
+        const restoreBtn = document.getElementById('restoreResultsBtn')
+        if (currentPlan === 'premium' || isOwner) {
+            if (restoreBtn) restoreBtn.style.display = 'inline-block'
+            console.log('💎 プレミアムプラン: 結果保存・読み込み機能を有効化')
+        } else {
+            if (restoreBtn) restoreBtn.style.display = 'none'
         }
 
         // 処理完了フラグをセット（重複実行防止）
@@ -1509,10 +1506,10 @@ async function startBatchSearch() {
             card.classList.add('completed');
         });
 
-        // 検索結果の保存ボタンを表示（オーナーのみ）
+        // 検索結果の保存ボタンを表示（プレミアムプラン or オーナー）
         if (searchResults.length > 0) {
             const isOwner = currentUser && currentUser.email && currentUser.email.includes('komedorobouinuzini');
-            if (isOwner) {
+            if (currentPlan === 'premium' || isOwner) {
                 const saveBtn = document.getElementById('saveResultsBtn');
                 if (saveBtn) {
                     saveBtn.style.display = 'inline-block';
