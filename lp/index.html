@@ -21,6 +21,88 @@
     <meta name="twitter:description" content="せどりリサーチを30分の1に圧縮する完全自動利益発見ツール。データを資産化し、利益率40%以上の商品を自動検出。">
     <meta name="twitter:image" content="https://profit-matrix.jp/lp/thumbnail.jpg">
 
+    <!-- Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- 構造化データ (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "PROFIT MATRIX - メルカリ仕入れ×Yahoo販売の利益自動発見ツール",
+        "description": "せどりリサーチを30分の1に圧縮する完全自動利益発見ツール。データを資産化し、利益率40%以上の商品を自動検出。",
+        "url": "https://profit-matrix.jp/lp/",
+        "inLanguage": "ja",
+        "publisher": {
+            "@type": "Organization",
+            "name": "PROFIT MATRIX",
+            "url": "https://profit-matrix.jp",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://profit-matrix.jp/lp/thumbnail.jpg"
+            }
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "無料トライアルはありますか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン（¥4,980（税込）/月）に移行します。いつでも解約可能です。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "メルカリのアカウント停止リスクはありますか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "ありません。PROFIT MATRIXはメルカリに一切アクセスしないため、規約違反のリスクはゼロです。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Yahoo Shopping APIキーは自分で取得する必要がありますか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "はい、Yahoo!デベロッパーネットワークで無料取得(1日50,000リクエストまで)してください。購入者限定で取得マニュアル動画を提供しています。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "オークファンは必須ですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "必須ではありません。手動でCSV作成も可能です。手動の場合は時間はかかりますが、商品タグの画像から商品番号を直接確認できるためデータの確度が高くなります。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "対応ブランド数はどのくらいですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "600以上のブランドに対応しています。LOUIS VUITTON、CHANEL、GUCCI、HERMESなど主要ブランドはもちろん、ニッチブランドまで幅広くカバーしています。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "月の途中で解約した場合、日割り返金はありますか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "日割り返金は行っておりません。次回更新日まで全機能をご利用いただけます。"
+                }
+            }
+        ]
+    }
+    </script>
+
     <style>
         /* ====== リセット & 基本設定 ====== */
         * {
@@ -43,10 +125,10 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: var(--dark);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.8;
             overflow-x: hidden;
             position: relative;
         }
@@ -382,6 +464,48 @@
         .footer-bottom p { color: #27272a; font-size: 12px; }
         .footer-bottom a { color: var(--primary); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         
+        /* ====== モバイルスティッキーCTA ====== */
+        .sticky-cta-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(0,255,240,.15);
+            padding: 12px 16px;
+            transform: translateY(100%);
+            transition: transform .4s cubic-bezier(.22,1,.36,1);
+        }
+        .sticky-cta-bar.visible { transform: translateY(0); }
+        .sticky-cta-bar a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            text-decoration: none;
+            box-shadow: 0 0 24px rgba(0,255,240,.4);
+            min-height: 48px;
+        }
+        .sticky-cta-sub {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+        @media (max-width: 768px) {
+            .sticky-cta-bar { display: block; }
+            .footer { padding-bottom: 100px; }
+        }
+
         /* ====== Focus Visible ====== */
         :focus { outline: none; }
         :focus-visible {
@@ -471,10 +595,11 @@
                 <span class="hero-word" style="animation-delay:.55s;font-size:clamp(1.4rem,3.5vw,2rem);display:block;color:#a1a1aa">利益商品だけ、自動で見つかる。</span>
             </h1>
             <p class="reveal" style="font-size:clamp(1rem,1.8vw,1.1rem);color:var(--text-muted);line-height:1.8;max-width:560px;margin:0 auto 40px">メルカリ落札商品の価格差をYahoo!から自動検出。<br>CSVアップロードだけで利益率40%超の商品を一覧表示。</p>
+            <div class="reveal" style="margin-bottom:12px;font-size:14px;font-weight:700;color:var(--primary)">＼ 今なら7日間完全無料 ／</div>
             <div class="hero-cta-group reveal">
                 <a href="https://profit-matrix.jp?mode=signup" class="cta-main">7日間無料で始める <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
             </div>
-            <p class="hero-note reveal">※ 7日間完全無料 ・ ワンクリック解約 ・ クレカ登録のみ</p>
+            <p class="hero-note reveal">※ クレカ登録のみ・1分で完了 ・ いつでも解約OK</p>
             <div class="hero-stats reveal">
                 <div class="hero-stat"><div class="hero-stat-value"><span class="counter" data-target="90" data-suffix="%">0%</span></div><div class="hero-stat-label">リサーチ時間削減</div></div>
                 <div class="hero-stat"><div class="hero-stat-value"><span class="counter" data-target="40" data-suffix="%+">0%+</span></div><div class="hero-stat-label">利益率を自動検出</div></div>
@@ -491,6 +616,30 @@
             <span class="social-proof-item"><span class="sp-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> アクティブユーザー 1,200+</span>
         </div>
     </div>
+
+    <!-- Problem Statement -->
+    <section class="sec" style="background:var(--dark)">
+        <div class="mx">
+            <div class="reveal"><div class="section-label"><span lang="en">Problem</span></div></div>
+            <div class="reveal"><h2 class="section-title">こんなお悩みありませんか？</h2></div>
+            <div class="reveal">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:960px;margin:0 auto">
+                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                        <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x23F0;</span>
+                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">リサーチに毎日3時間以上</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">メルカリとYahoo!を交互に見比べて、1つずつ手動で価格差を確認…</p></div>
+                    </div>
+                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                        <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x1F4B8;</span>
+                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">利益が出る商品が見つからない</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">時間をかけても利益率の高い商品に当たらず、薄利多売になりがち。</p></div>
+                    </div>
+                    <div style="background:#111620;border-radius:16px;padding:28px 24px;border:1px solid rgba(255,255,255,.06);display:flex;gap:16px;align-items:flex-start">
+                        <span style="font-size:24px;flex-shrink:0;margin-top:2px" aria-hidden="true">&#x26A0;&#xFE0F;</span>
+                        <div><div style="font-weight:700;font-size:15px;color:#fafafa;margin-bottom:6px">ツール使用でメルカリBANが怖い</div><p style="color:var(--text-muted);font-size:14px;line-height:1.8">他ツールはメルカリにアクセスするため、アカウント停止リスクが常につきまとう。</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Live Demo -->
     <section class="sec demo-section" style="background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(0,255,240,.04),transparent 60%),#0e0e12">
@@ -566,6 +715,57 @@
         </div>
     </section>
 
+    <!-- Pricing -->
+    <section id="pricing" class="sec">
+        <div class="mx">
+            <div class="reveal"><div class="section-label"><span lang="en">Pricing</span></div></div>
+            <div class="reveal"><h2 class="section-title">料金プラン</h2></div>
+            <div class="reveal"><p class="section-subtitle">全プラン検索回数無制限・いつでも解約可能</p></div>
+            <div class="price-grid">
+                <div class="reveal"><div class="price-card crd">
+                    <div class="price-name">Starter</div>
+                    <div class="price-sub">スタータープラン</div>
+                    <div class="price-amount">¥4,980<span class="price-period">（税込）/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 100行/回</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
+                </div></div>
+                <div class="reveal"><div class="price-card pop crd">
+                    <div class="price-badge">人気 No.1</div>
+                    <div class="price-name">Standard</div>
+                    <div class="price-sub">スタンダードプラン</div>
+                    <div class="price-amount">¥9,800<span class="price-period">（税込）/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 300行/回</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta pri">今すぐ始める</a>
+                </div></div>
+                <div class="reveal"><div class="price-card crd">
+                    <div class="price-name">Premium</div>
+                    <div class="price-sub">プレミアムプラン</div>
+                    <div class="price-amount">¥19,800<span class="price-period">（税込）/月</span></div>
+                    <ul class="price-features">
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
+                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
+                    </ul>
+                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Testimonials -->
     <section class="sec" style="background:#0e0e12">
         <div class="mx">
@@ -587,7 +787,7 @@
                 <div class="reveal"><div class="test-card crd">
                     <span class="test-metric" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.15);color:#fbbf24">初月 5万円</span>
                     <div class="test-stars" role="img" aria-label="5つ星中5つ星"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                    <p class="test-text">月額4,980円で気軽に始められ、初月から5万円稼げました。</p>
+                    <p class="test-text">月額4,980円（税込）で気軽に始められ、初月から5万円稼げました。</p>
                     <div class="test-author"><div class="test-avatar" style="background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.05));color:#fbbf24">山</div><div><div class="test-name">山田 裕子</div><div class="test-role">40代・主婦</div></div></div>
                 </div></div>
                 <div class="reveal"><div class="test-card crd">
@@ -600,66 +800,15 @@
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section id="pricing" class="sec">
-        <div class="mx">
-            <div class="reveal"><div class="section-label"><span lang="en">Pricing</span></div></div>
-            <div class="reveal"><h2 class="section-title">料金プラン</h2></div>
-            <div class="reveal"><p class="section-subtitle">全プラン検索回数無制限・いつでも解約可能</p></div>
-            <div class="price-grid">
-                <div class="reveal"><div class="price-card crd">
-                    <div class="price-name">Starter</div>
-                    <div class="price-sub">スタータープラン</div>
-                    <div class="price-amount">¥4,980<span class="price-period">/月</span></div>
-                    <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 100行/回</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
-                    </ul>
-                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
-                </div></div>
-                <div class="reveal"><div class="price-card pop crd">
-                    <div class="price-badge">人気 No.1</div>
-                    <div class="price-name">Standard</div>
-                    <div class="price-sub">スタンダードプラン</div>
-                    <div class="price-amount">¥9,800<span class="price-period">/月</span></div>
-                    <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 300行/回</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
-                    </ul>
-                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta pri">今すぐ始める</a>
-                </div></div>
-                <div class="reveal"><div class="price-card crd">
-                    <div class="price-name">Premium</div>
-                    <div class="price-sub">プレミアムプラン</div>
-                    <div class="price-amount">¥19,800<span class="price-period">/月</span></div>
-                    <ul class="price-features">
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>CSV読み込み: 無制限</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>検索回数: 無制限</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Yahoo検索モード</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>メールサポート(48時間以内)</li>
-                        <li class="price-feat"><span class="pf-check"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>全機能アップデート無料</li>
-                    </ul>
-                    <a href="https://profit-matrix.jp?mode=signup&trial=false" class="price-cta sec2">今すぐ始める</a>
-                </div></div>
-            </div>
-        </div>
-    </section>
-
     <!-- FAQ -->
-    <section class="sec" style="background:#0e0e12">
+    <section class="sec" style="background:var(--dark)">
         <div class="mx">
             <div class="reveal"><div class="section-label"><span lang="en">FAQ</span></div></div>
             <div class="reveal"><h2 class="section-title">よくある質問</h2></div>
             <div class="faq-list">
                 <div class="reveal"><div class="faq-item">
                     <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">無料トライアルはありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
-                    <div class="faq-answer" id="faq-answer-1" role="region">はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン(¥4,980/月)に移行します。いつでも解約可能です。</div>
+                    <div class="faq-answer" id="faq-answer-1" role="region">はい、7日間無料トライアルをご利用いただけます。トライアル期間終了後、自動的に有料プラン（¥4,980（税込）/月）に移行します。いつでも解約可能です。</div>
                 </div></div>
                 <div class="reveal"><div class="faq-item">
                     <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">メルカリのアカウント停止リスクはありますか？<span class="faq-toggle" aria-hidden="true">+</span></button>
@@ -691,12 +840,19 @@
         <div class="mx" style="position:relative;z-index:1;text-align:center">
             <div class="reveal"><h2 class="section-title" style="font-size:2.2rem">せどりのリサーチ、<br>ラクにしませんか？</h2></div>
             <div class="reveal"><p class="section-subtitle">PROFIT MATRIXで、せどりリサーチを効率化しよう</p></div>
+            <div class="reveal" style="margin-bottom:12px;font-size:14px;font-weight:700;color:var(--primary)">＼ クレカ登録のみ・1分で完了 ／</div>
             <div class="reveal"><a href="https://profit-matrix.jp?mode=signup" class="cta-main" style="font-size:1.1rem;padding:1rem 2.5rem">7日間無料で試す <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
             <div class="reveal" style="margin-top:1rem;color:var(--text-muted);font-size:.85rem">
                 <p>※ 7日後に自動で有料プランに移行 ／ いつでも解約可能</p>
             </div>
         </div>
     </section>
+
+    <!-- モバイルスティッキーCTA -->
+    <div class="sticky-cta-bar" id="stickyCta">
+        <a href="https://profit-matrix.jp?mode=signup">7日間無料で始める <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <div class="sticky-cta-sub">クレカ登録のみ・いつでも解約OK</div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -724,7 +880,7 @@
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom">&copy; 2025 PROFIT MATRIX. All rights reserved.</div>
+            <div class="footer-bottom">&copy; 2026 PROFIT MATRIX. All rights reserved.</div>
         </div>
     </footer>
 
@@ -867,6 +1023,19 @@
                 }
             }
             renderPhase();
+        }
+
+        // モバイルスティッキーCTA（スクロール後に表示）
+        const stickyCta = document.getElementById('stickyCta');
+        if (stickyCta) {
+            let stickyShown = false;
+            window.addEventListener('scroll', () => {
+                const show = window.scrollY > 600;
+                if (show !== stickyShown) {
+                    stickyCta.classList.toggle('visible', show);
+                    stickyShown = show;
+                }
+            }, { passive: true });
         }
 
     </script>
