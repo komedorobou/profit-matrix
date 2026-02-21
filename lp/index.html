@@ -3,23 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROFIT MATRIX - メルカリ×Yahoo!せどり利益計算ツール | リサーチ3時間→15分</title>
-    <meta name="description" content="メルカリ仕入れ×Yahoo!販売の価格差を全自動検出。CSVをアップロードするだけで利益率40%超の商品を瞬時にリストアップ。7日間無料体験。">
-    <meta name="keywords" content="せどり,利益計算,メルカリ,Yahoo!ショッピング,価格差,リサーチツール,PROFIT MATRIX">
-    <link rel="canonical" href="https://profit-matrix.jp/lp/">
-    <!-- OGP -->
-    <meta property="og:title" content="PROFIT MATRIX - リサーチ3時間がたった15分に">
-    <meta property="og:description" content="メルカリ×Yahoo!の価格差を全自動検出。CSVを上げるだけで利益率40%超の商品リストが手に入る。">
-    <meta property="og:image" content="https://profit-matrix.jp/lp/thumbnail.jpg">
-    <meta property="og:url" content="https://profit-matrix.jp/lp/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="PROFIT MATRIX">
-    <meta property="og:locale" content="ja_JP">
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="PROFIT MATRIX - リサーチ3時間がたった15分に">
-    <meta name="twitter:description" content="メルカリ×Yahoo!の価格差を全自動検出。7日間無料体験。">
-    <meta name="twitter:image" content="https://profit-matrix.jp/lp/thumbnail.jpg">
+    <title>PROFIT MATRIX - リサーチ革命</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -35,10 +19,6 @@
             100% { transform: translate(0px, 0px) scale(1); }
         }
         .animation-delay-2000 { animation-delay: 2s; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .faq-answer.open { max-height: 500px; transition: max-height 0.5s ease-in; }
-        .faq-chevron { transition: transform 0.3s ease; }
-        .faq-chevron.open { transform: rotate(180deg); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans">
@@ -54,27 +34,11 @@
                     <a href="#features" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition">特徴</a>
                     <a href="#how-it-works" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition">使い方</a>
                     <a href="#pricing" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition">料金</a>
-                    <a href="#faq" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition">FAQ</a>
                 </div>
-                <div class="flex items-center gap-4">
-                    <a href="https://profit-matrix.jp/?mode=signup" class="hidden sm:flex bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 shadow-lg text-sm items-center transform hover:scale-105">
+                <div>
+                    <a href="https://profit-matrix.jp/?mode=signup" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 shadow-lg text-sm flex items-center transform hover:scale-105">
                         <span>7日間無料で試す</span>
                         <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                    <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-blue-600 focus:outline-none p-2">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 pb-4">
-                <div class="flex flex-col space-y-2 pt-4 px-2">
-                    <a href="#features" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition rounded-lg hover:bg-gray-50">特徴</a>
-                    <a href="#how-it-works" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition rounded-lg hover:bg-gray-50">使い方</a>
-                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition rounded-lg hover:bg-gray-50">料金</a>
-                    <a href="#faq" class="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-bold transition rounded-lg hover:bg-gray-50">FAQ</a>
-                    <a href="https://profit-matrix.jp/?mode=signup" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 shadow-lg text-sm text-center mt-2">
-                        7日間無料で試す
                     </a>
                 </div>
             </div>
@@ -383,20 +347,12 @@
                     </div>
                     <div class="order-1 md:order-2 relative group z-10">
                         <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative shadow-xl rounded-xl overflow-hidden bg-gray-900 border border-gray-700 aspect-video flex items-center justify-center p-8">
-                            <!-- CSV Upload Mockup -->
-                            <div class="w-full max-w-xs text-center">
-                                <div class="border-2 border-dashed border-cyan-500/50 rounded-2xl p-6 bg-gray-800/50 hover:border-cyan-400 transition group/drop">
-                                    <div class="w-16 h-16 mx-auto mb-3 bg-cyan-500/10 rounded-2xl flex items-center justify-center">
-                                        <i class="fas fa-cloud-upload-alt text-3xl text-cyan-400"></i>
-                                    </div>
-                                    <p class="text-white font-bold text-sm mb-1">CSVファイルをドロップ</p>
-                                    <p class="text-gray-500 text-xs">またはクリックして選択</p>
-                                </div>
-                                <div class="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
-                                    <i class="fas fa-check-circle text-green-500"></i>
-                                    <span class="text-gray-400">オークファン・その他CSV対応</span>
-                                </div>
+                        <div class="relative shadow-xl rounded-xl overflow-hidden bg-white border border-gray-100 aspect-video flex items-center justify-center">
+                            <i class="fas fa-file-csv text-6xl text-gray-300 mb-2"></i>
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-100/50">
+                                <span class="bg-white px-4 py-2 rounded shadow text-sm font-bold text-gray-500">
+                                    <i class="fas fa-image mr-2"></i> CSVアップロード画面
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -415,8 +371,13 @@
                     </div>
                     <div class="order-1 md:order-1 relative group z-10">
                         <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative shadow-xl rounded-xl overflow-hidden bg-white border border-gray-100">
-                            <img src="bulk-search.jpg" alt="PROFIT MATRIX 一括検索画面 - Yahoo!ショッピングから自動で価格差を検出" class="w-full h-auto" loading="lazy">
+                        <div class="relative shadow-xl rounded-xl overflow-hidden bg-white border border-gray-100 aspect-video flex items-center justify-center">
+                            <i class="fas fa-search text-6xl text-gray-300 mb-2 animate-pulse"></i>
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-100/50">
+                                <span class="bg-white px-4 py-2 rounded shadow text-sm font-bold text-gray-500">
+                                    <i class="fas fa-image mr-2"></i> 自動検索中の画面 (GIF推奨)
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,8 +398,14 @@
                     </div>
                     <div class="order-1 md:order-2 relative group z-10 transform md:scale-110">
                         <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-                        <div class="relative shadow-2xl rounded-xl overflow-hidden bg-white border border-gray-100">
-                            <img src="high-profit-filter.jpg" alt="PROFIT MATRIX 利益商品リスト - 利益率40%超の商品を自動抽出" class="w-full h-auto" loading="lazy">
+                        <div class="relative shadow-2xl rounded-xl overflow-hidden bg-white border border-gray-100 aspect-video flex items-center justify-center">
+                            <i class="fas fa-list-alt text-6xl text-gray-300 mb-2"></i>
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-100/50">
+                                <span class="bg-white px-4 py-2 rounded shadow text-sm font-bold text-gray-500 text-center">
+                                    <i class="fas fa-image mr-2"></i> 利益商品リスト画面<br>
+                                    <span class="text-xs font-normal text-blue-600">※「仕入れ」と「販売」両方のボタン！</span>
+                                </span>
+                            </div>
                             <!-- Success Badge -->
                             <div class="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-bounce">
                                 45件 ヒット！
@@ -504,79 +471,6 @@
                     </div>
                     <h3 class="font-bold text-xl mb-3 text-gray-900">検索履歴を復元・資産化</h3>
                     <p class="text-gray-600 leading-relaxed">クラウドの容量制限におびえる必要はありません。PC本体に保存するため、何万件でも無制限にデータを蓄積・復元できます。</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Testimonials Section -->
-    <section class="py-24 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-sm font-bold text-green-600 tracking-widest uppercase mb-2">VOICE</h2>
-                <p class="text-3xl lg:text-4xl font-black tracking-tight text-gray-900">
-                    利用者の声
-                </p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Voice 1 -->
-                <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 relative">
-                    <div class="absolute -top-4 left-8">
-                        <div class="bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 leading-relaxed mb-6 mt-2">
-                        「毎日3時間かけていたリサーチが<span class="font-bold text-gray-900">本当に15分</span>で終わるようになりました。利益率40%超の商品がリスト化されるので、仕入れ判断もスピーディです。」
-                    </p>
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-user text-blue-500"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-900 text-sm">T.K さん</p>
-                            <p class="text-gray-500 text-xs">せどり歴2年 / スタンダードプラン</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Voice 2 -->
-                <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 relative">
-                    <div class="absolute -top-4 left-8">
-                        <div class="bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 leading-relaxed mb-6 mt-2">
-                        「ブランド名の表記ゆれを自動で吸収してくれるのが神。<span class="font-bold text-gray-900">ヴィトン、VUITTON、ルイヴィトン</span>全部まとめて検索してくれるから取りこぼしゼロ。」
-                    </p>
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-user text-pink-500"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-900 text-sm">M.S さん</p>
-                            <p class="text-gray-500 text-xs">副業せどらー / プレミアムプラン</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Voice 3 -->
-                <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 relative">
-                    <div class="absolute -top-4 left-8">
-                        <div class="bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 leading-relaxed mb-6 mt-2">
-                        「一番助かるのは<span class="font-bold text-gray-900">メルカリBANのリスクがない</span>こと。以前使ってたツールでBANされた経験があるので、安心して使えるのが大きい。」
-                    </p>
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-user text-green-500"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-900 text-sm">Y.H さん</p>
-                            <p class="text-gray-500 text-xs">専業せどらー / スタンダードプラン</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -670,91 +564,6 @@
             </div>
         </div>
     </section>
-    <!-- FAQ Section -->
-    <section id="faq" class="py-24 bg-white">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-sm font-bold text-blue-600 tracking-widest uppercase mb-2">FAQ</h2>
-                <p class="text-3xl lg:text-4xl font-black tracking-tight text-gray-900">
-                    よくある質問
-                </p>
-            </div>
-            <div class="space-y-4">
-                <!-- FAQ 1 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">無料トライアル期間中に解約できますか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            はい、7日間の無料トライアル期間中にいつでも解約可能です。期間中に解約すれば料金は一切発生しません。解約はマイページからワンクリックで完了します。
-                        </div>
-                    </div>
-                </div>
-                <!-- FAQ 2 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">メルカリのアカウントがBANされる心配はありませんか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            PROFIT MATRIXはメルカリのサーバーに直接アクセスしない安全設計です。Yahoo!ショッピングのAPIを使った価格比較のみを行うため、メルカリアカウントのBAN リスクはゼロです。
-                        </div>
-                    </div>
-                </div>
-                <!-- FAQ 3 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">CSVファイルはどこで取得すればいいですか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            オークファンなどのサービスでメルカリの落札データをCSVエクスポートしてください。エクスポートしたCSVをそのままPROFIT MATRIXにドラッグ＆ドロップするだけです。データの整形は不要です。
-                        </div>
-                    </div>
-                </div>
-                <!-- FAQ 4 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">プランの変更はできますか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            はい、いつでもアップグレード・ダウングレードが可能です。プラン変更は即座に反映され、差額は日割りで計算されます。
-                        </div>
-                    </div>
-                </div>
-                <!-- FAQ 5 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">スマートフォンでも使えますか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            ブラウザベースのツールなので、PCでもスマートフォンでもお使いいただけます。ただし、CSVファイルの取り扱いや結果一覧の確認にはPC環境を推奨しています。
-                        </div>
-                    </div>
-                </div>
-                <!-- FAQ 6 -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
-                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-100 transition">
-                        <span class="font-bold text-gray-900 pr-4">どんなブランドに対応していますか？</span>
-                        <i class="fas fa-chevron-down text-gray-400 faq-chevron flex-shrink-0"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="px-6 pb-6 text-gray-600 leading-relaxed">
-                            600以上のブランドに対応しています。LOUIS VUITTON、GUCCI、PRADA、FENDI、CHANEL、HERMESなど主要ブランドはもちろん、表記ゆれ（カタカナ・英語・略称）も自動で正規化して検索します。
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     <!-- CTA Section -->
     <section class="py-24 bg-blue-600 text-center relative overflow-hidden">
         <div class="absolute inset-0 bg-blue-700 opacity-50 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -782,74 +591,14 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
             <div class="mb-4 md:mb-0">
                 <span class="font-bold text-white text-lg">PROFIT MATRIX</span>
-                <p class="mt-2 text-xs text-gray-500">&copy; 2026 PROFIT MATRIX. All rights reserved.</p>
+                <p class="mt-2 text-xs text-gray-500">&copy; 2024 PROFIT MATRIX. All rights reserved.</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                <a href="/legal/tokushoho.html" class="hover:text-white transition">特定商取引法に基づく表記</a>
-                <a href="/legal/privacy.html" class="hover:text-white transition">プライバシーポリシー</a>
-                <a href="/legal/terms.html" class="hover:text-white transition">利用規約</a>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-white transition">特定商取引法に基づく表記</a>
+                <a href="#" class="hover:text-white transition">プライバシーポリシー</a>
+                <a href="#" class="hover:text-white transition">利用規約</a>
             </div>
         </div>
     </footer>
-    <!-- Scripts -->
-    <script>
-    // Mobile menu toggle
-    const menuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-        const icon = menuBtn.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-times');
-    });
-    // Close mobile menu on link click
-    mobileMenu.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            const icon = menuBtn.querySelector('i');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-        });
-    });
-
-    // FAQ accordion
-    function toggleFaq(btn) {
-        const answer = btn.nextElementSibling;
-        const chevron = btn.querySelector('.faq-chevron');
-        const isOpen = answer.classList.contains('open');
-
-        // Close all others
-        document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-        document.querySelectorAll('.faq-chevron').forEach(c => c.classList.remove('open'));
-
-        if (!isOpen) {
-            answer.classList.add('open');
-            chevron.classList.add('open');
-        }
-    }
-
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-
-    // Navbar scroll effect
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            nav.classList.add('shadow-md');
-            nav.classList.remove('shadow-sm');
-        } else {
-            nav.classList.remove('shadow-md');
-            nav.classList.add('shadow-sm');
-        }
-    });
-    </script>
 </body>
 </html>
