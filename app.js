@@ -1953,14 +1953,6 @@ function startStockStatusEdit(card, stockEl) {
     // 表示更新
     stockEl.textContent = newStock;
 
-    // スタイル更新
-    if (newStock === '在庫あり') {
-        stockEl.style.color = '#00FFA3';
-        stockEl.style.fontWeight = '600';
-    } else {
-        stockEl.style.color = '';
-        stockEl.style.fontWeight = '';
-    }
 }
 
 // 見送り済み商品を取得
