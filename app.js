@@ -1831,7 +1831,7 @@ function appendResultCard(container, item, index) {
                 </div>
             </div>
             <div class="shop-info">
-                📍 ${item.shop} | ${item.stock}
+                📍 ${item.shop} | <span class="stock-status">${item.stock}</span>
             </div>
             <div class="search-query-info">
                 🔍 ${item.searchQuery || ''}
@@ -1853,6 +1853,15 @@ function appendResultCard(container, item, index) {
         if (mercariPriceEl) {
             mercariPriceEl.addEventListener('dblclick', function() {
                 startMercariPriceEdit(card, mercariPriceEl);
+            });
+        }
+
+        // オーナーモード: 在庫状況ダブルクリックで編集可能
+        const stockStatusEl = card.querySelector('.stock-status');
+        if (stockStatusEl) {
+            stockStatusEl.classList.add('editable');
+            stockStatusEl.addEventListener('dblclick', function() {
+                startStockStatusEdit(card, stockStatusEl);
             });
         }
     }
@@ -1927,6 +1936,31 @@ function startMercariPriceEdit(card, priceEl) {
             priceEl.innerHTML = originalHTML;
         }
     });
+}
+
+// オーナーモード: 在庫状況インライン編集（ダブルクリックで切り替え）
+function startStockStatusEdit(card, stockEl) {
+    const productData = JSON.parse(card.dataset.productData);
+    const currentStock = productData.stock || '在庫状況不明';
+
+    // 在庫状況不明 → 在庫あり に切り替え
+    const newStock = currentStock === '在庫あり' ? '在庫状況不明' : '在庫あり';
+
+    // productData更新
+    productData.stock = newStock;
+    card.dataset.productData = JSON.stringify(productData);
+
+    // 表示更新
+    stockEl.textContent = newStock;
+
+    // スタイル更新
+    if (newStock === '在庫あり') {
+        stockEl.style.color = '#00FFA3';
+        stockEl.style.fontWeight = '600';
+    } else {
+        stockEl.style.color = '';
+        stockEl.style.fontWeight = '';
+    }
 }
 
 // 見送り済み商品を取得
