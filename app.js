@@ -1486,14 +1486,7 @@ async function startBatchSearch() {
             // 統計更新
             updateStats(completed, limitedData.length);
 
-            // API制限対策: 2秒待機 (Yahoo API: 30req/min制限)
-            await sleep(2000);
-
-            // 29個目で追加5秒待機（次の1分枠に入るため）
-            if (completed % 29 === 0) {
-                console.log(`29個処理完了。追加5秒待機...`);
-                await sleep(5000);
-            }
+            // レート制限はexecuteYahooSearch内のwaitForRateLimit()で自動管理
         }
 
         // 検索完了：表示を非表示
@@ -1695,11 +1688,11 @@ async function searchYahooShopping(item) {
     const query = `${item.brand} ${item.item || ''}`.trim();
     let results = await executeYahooSearch(query, maxPrice, item);
 
-    // 結果がなく、商品番号がある場合は2秒待機してから商品番号（ハイフンなし）で再検索
+    // 結果がなく、商品番号がある場合は商品番号（ハイフンなし）で再検索
+    // レート制限はexecuteYahooSearch内で自動管理
     if (results.length === 0 && item.productCode) {
         const codeWithoutHyphen = item.productCode.replace(/-/g, '');
-        console.log(`🔄 商品名で結果なし → 2秒待機後に商品番号（ハイフンなし）で再検索: ${codeWithoutHyphen}`);
-        await sleep(2000);
+        console.log(`🔄 商品名で結果なし → 商品番号（ハイフンなし）で再検索: ${codeWithoutHyphen}`);
         const codeQuery = `${item.brand} ${codeWithoutHyphen}`.trim();
         results = await executeYahooSearch(codeQuery, maxPrice, item);
     }
@@ -1720,6 +1713,8 @@ async function executeYahooSearch(query, maxPrice, item) {
     const url = `/api/search?${params}`;
 
     try {
+        // APIコール間隔を自動調整（Yahoo API 30req/min制限対策）
+        await waitForRateLimit();
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -1817,7 +1812,7 @@ function appendResultCard(container, item, index) {
 
     card.innerHTML = `
         ${checkboxHTML}
-        <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjMDBGRkEzIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'}" alt="${item.productName}" class="result-image">
+        <img src="${item.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjMDBGRkEzIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'}" alt="${item.productName}" class="result-image" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjMDBGRkEzIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'">
         <div class="result-content">
             <div class="result-title">${item.productName}</div>
             <div class="profit-badge">利益率 ${item.profitMargin || 0}%</div>
@@ -2904,6 +2899,19 @@ window.rejectPartner = async function(pendingId) {
 // ユーティリティ
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Yahoo API レートリミッター（30req/min = 最低2秒間隔）
+let lastApiCallTime = 0;
+const API_MIN_INTERVAL = 2100; // 2.1秒間隔 = 約28req/min（安全マージン込み）
+
+async function waitForRateLimit() {
+    const now = Date.now();
+    const elapsed = now - lastApiCallTime;
+    if (elapsed < API_MIN_INTERVAL) {
+        await sleep(API_MIN_INTERVAL - elapsed);
+    }
+    lastApiCallTime = Date.now();
 }
 
 // ボタンのクリックイベント
