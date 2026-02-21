@@ -635,12 +635,6 @@
 
         .stock-status.editable {
             cursor: pointer;
-            transition: color 0.2s, text-shadow 0.2s;
-        }
-
-        .stock-status.editable:hover {
-            color: #00FFA3;
-            text-shadow: 0 0 8px rgba(0, 255, 163, 0.4);
         }
 
         .search-query-info {
