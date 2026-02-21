@@ -636,8 +636,6 @@
         .stock-status.editable {
             cursor: pointer;
             transition: color 0.2s, text-shadow 0.2s;
-            border-bottom: 1px dashed rgba(148, 163, 184, 0.4);
-            padding-bottom: 1px;
         }
 
         .stock-status.editable:hover {
