@@ -1,4 +1,4 @@
-const RESEND_API_KEY = 're_2MwkRd2D_7dLjY6xXj8VkLm3JcUGEaEwB';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 export default async function handler(req, res) {
   // CORSヘッダー設定

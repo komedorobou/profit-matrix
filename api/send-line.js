@@ -1,4 +1,4 @@
-const LINE_CHANNEL_ACCESS_TOKEN = 'VNn2C/bFcorW2wlXlSbsNB5FNE6FG+BccUMbrza+ULEPO9JKAYOOEnlJML7u63WzC3TSpehJdBAP3EOyVcTOa/lEf6WgaIffDab3U/HbtKZcFSEvdatPJyiLZDYKGK4YJCs7mzSfQ6HFapr1iqBqFwdB04t89/1O/w1cDnyilFU=';
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 
 export default async function handler(req, res) {
   // CORSヘッダー設定
