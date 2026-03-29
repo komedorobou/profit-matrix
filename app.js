@@ -1121,7 +1121,7 @@ function canUseSearch(rowCount) {
         return {
             allowed: false,
             reason: 'プラン制限',
-            message: `${currentPlan}プランでは最大${maxRows}行まで検索できます。\n\nCSVファイルは${rowCount}行あります。\n上位プランへのアップグレードをご検討ください。`,
+            message: `${currentPlan}プランでは最大${maxRows}行まで検索できます。\n\nExcelファイルは${rowCount}行あります。\n上位プランへのアップグレードをご検討ください。`,
             currentLimit: maxRows,
             requestedRows: rowCount
         }
@@ -1355,7 +1355,7 @@ async function startBatchSearch() {
     }
 
     if (!csvFile) {
-        alert('CSVファイルを選択してください');
+        alert('Excelファイルを選択してください');
         return;
     }
 
@@ -1441,7 +1441,7 @@ async function startBatchSearch() {
             // アップグレード提案
             const shouldUpgrade = confirm(
                 `📊 プラン制限\n\n` +
-                `CSVファイルは${csvData.length}行ありますが、\n` +
+                `Excelファイルは${csvData.length}行ありますが、\n` +
                 `${currentPlan}プランでは最大${planCheck.limit}行まで検索できます。\n\n` +
                 `先頭${planCheck.limit}行のみ検索を実行します。\n\n` +
                 `上位プランにアップグレードしますか？`
