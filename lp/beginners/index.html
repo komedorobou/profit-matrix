@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROFIT MATRIX - 「これ、自分にもできるやん」</title>
+    <meta name="description" content="メルカリの売り切れを3分眺めるだけで相場がわかる。そのデータをPROFIT MATRIXに入れると、利益商品が自動で見つかります。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; font-feature-settings: "palt"; }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Number highlight */
+        .num-highlight {
+            background: linear-gradient(transparent 60%, #fef08a 60%);
+            display: inline;
+        }
+
+        /* Sticky CTA */
+        .sticky-cta {
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+        .sticky-cta.show {
+            transform: translateY(0);
+        }
+
+        /* Pulse for CTA */
+        @keyframes subtle-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); }
+        }
+        .cta-pulse { animation: subtle-pulse 2.5s infinite; }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { transition: none; opacity: 1; transform: none; }
+            .sticky-cta { transition: none; }
+            .cta-pulse { animation: none; }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased">
+
+    <!-- Minimal Header -->
+    <nav class="bg-white/90 backdrop-blur-md fixed w-full z-50 border-b border-gray-100">
+        <div class="max-w-3xl mx-auto px-6 flex justify-between h-14 items-center">
+            <a href="https://profit-matrix.jp/lp" class="flex items-center gap-2">
+                <span class="bg-blue-900 text-white font-bold p-1.5 rounded text-sm">PM</span>
+                <span class="font-bold text-blue-900 text-sm">PROFIT MATRIX</span>
+            </a>
+            <a href="https://profit-matrix.jp/lp" class="text-xs text-gray-400 hover:text-blue-600 transition">経験者の方はこちら →</a>
+        </div>
+    </nav>
+
+    <!-- ===== HERO: 数字のインパクト ===== -->
+    <section class="pt-28 pb-16 md:pt-36 md:pb-24 px-6">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="reveal">
+                <p class="text-gray-400 text-sm mb-8 tracking-widest">PROFIT MATRIX BEGINNERS GUIDE</p>
+
+                <div class="mb-6">
+                    <span class="text-gray-400 text-lg">仕入れ</span>
+                    <span class="text-4xl md:text-5xl font-black text-gray-300 mx-2">¥4,800</span>
+                </div>
+                <div class="text-3xl text-gray-300 mb-6">↓</div>
+                <div class="mb-10">
+                    <span class="text-gray-600 text-lg">売値</span>
+                    <span class="text-5xl md:text-7xl font-black text-gray-900 mx-2">¥12,000</span>
+                </div>
+            </div>
+
+            <div class="reveal reveal-delay-1">
+                <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
+                    この商品を見つけるのに<br>かかった時間は、<span class="num-highlight font-bold text-gray-900">3分</span>です。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ストーリー開始 ===== -->
+    <section class="py-16 md:py-24 px-6 bg-gray-50">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <p class="text-lg md:text-xl leading-loose text-gray-700">
+                    今から、1つだけ質問します。
+                </p>
+            </div>
+
+            <div class="reveal mt-12">
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
+                    あなたの好きなブランド、<br>何ですか？
+                </h2>
+            </div>
+
+            <div class="reveal mt-10">
+                <p class="text-lg leading-loose text-gray-600">
+                    TODAYFUL？ CLANE？ Nike？<br>
+                    なんでもいいです。1つ思い浮かべてください。
+                </p>
+            </div>
+
+            <div class="reveal mt-10">
+                <p class="text-lg leading-loose text-gray-600">
+                    では、スマホでメルカリを開いてください。<br>
+                    そのブランド名を入力して、<br>
+                    <span class="font-bold text-gray-900">「売り切れ」</span>で絞り込む。
+                </p>
+            </div>
+
+            <div class="reveal mt-10">
+                <p class="text-lg leading-loose text-gray-600">
+                    3分だけ、眺めてみてください。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 売り切れ結果の衝撃 ===== -->
+    <section class="py-16 md:py-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <p class="text-lg text-gray-500 mb-8">見ましたか？</p>
+            </div>
+
+            <!-- 商品カード風 -->
+            <div class="space-y-4 mb-12">
+                <div class="reveal bg-gray-50 rounded-xl p-5 flex justify-between items-center border border-gray-100">
+                    <div>
+                        <p class="text-sm text-gray-400">TODAYFUL</p>
+                        <p class="font-bold text-gray-800">Standcollar Trench Coat</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-black text-gray-900">¥12,000</p>
+                        <p class="text-xs text-red-500 font-bold">SOLD</p>
+                    </div>
+                </div>
+                <div class="reveal reveal-delay-1 bg-gray-50 rounded-xl p-5 flex justify-between items-center border border-gray-100">
+                    <div>
+                        <p class="text-sm text-gray-400">TODAYFUL</p>
+                        <p class="font-bold text-gray-800">Boyfriend Denim Jacket</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-black text-gray-900">¥8,500</p>
+                        <p class="text-xs text-red-500 font-bold">SOLD</p>
+                    </div>
+                </div>
+                <div class="reveal reveal-delay-2 bg-gray-50 rounded-xl p-5 flex justify-between items-center border border-gray-100">
+                    <div>
+                        <p class="text-sm text-gray-400">TODAYFUL</p>
+                        <p class="font-bold text-gray-800">Sheer Knit Cardigan</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-black text-gray-900">¥6,500</p>
+                        <p class="text-xs text-red-500 font-bold">SOLD</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <p class="text-lg leading-loose text-gray-600">
+                    全部、実際に誰かがお金を払って買っています。<br>
+                    これが<span class="font-bold text-gray-900">「相場」</span>です。
+                </p>
+            </div>
+
+            <div class="reveal mt-12">
+                <div class="bg-gray-900 text-white rounded-2xl p-8 md:p-10 text-center">
+                    <p class="text-sm text-gray-400 mb-2">所要時間</p>
+                    <p class="text-5xl md:text-6xl font-black mb-2">3<span class="text-2xl">分</span></p>
+                    <p class="text-gray-400">たった3分で、相場がわかりました。</p>
+                </div>
+            </div>
+
+            <div class="reveal mt-12">
+                <p class="text-2xl md:text-3xl font-black text-gray-900 leading-tight">
+                    「え、これだけ？」
+                </p>
+                <p class="text-lg text-gray-500 mt-4">
+                    そうです。これだけです。<br>
+                    でも、ここからが面白いんです。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROFIT MATRIX 登場 ===== -->
+    <section class="py-16 md:py-24 px-6 bg-blue-950 text-white">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-black leading-tight mb-10">
+                    その相場、<br>お金に変わります。
+                </h2>
+            </div>
+
+            <div class="reveal">
+                <p class="text-lg text-blue-200 leading-loose mb-10">
+                    今調べた相場を、Excelに書いてみてください。
+                </p>
+
+                <!-- Excel風テーブル -->
+                <div class="bg-white/10 backdrop-blur rounded-xl overflow-hidden border border-white/20 mb-10">
+                    <div class="bg-white/5 px-4 py-2 text-xs text-blue-300 border-b border-white/10 flex">
+                        <span class="w-1/3">A: ブランド名</span>
+                        <span class="w-1/3">B: 商品名</span>
+                        <span class="w-1/3">C: 相場</span>
+                    </div>
+                    <div class="px-4 py-3 text-sm border-b border-white/5 flex">
+                        <span class="w-1/3 text-blue-100">TODAYFUL</span>
+                        <span class="w-1/3 text-blue-100">Standcollar Trench Coat</span>
+                        <span class="w-1/3 text-yellow-300 font-bold">11,000</span>
+                    </div>
+                    <div class="px-4 py-3 text-sm border-b border-white/5 flex">
+                        <span class="w-1/3 text-blue-100">TODAYFUL</span>
+                        <span class="w-1/3 text-blue-100">Boyfriend Denim Jacket</span>
+                        <span class="w-1/3 text-yellow-300 font-bold">8,500</span>
+                    </div>
+                    <div class="px-4 py-3 text-sm flex">
+                        <span class="w-1/3 text-blue-100">CLANE</span>
+                        <span class="w-1/3 text-blue-100">Reversible Fur Coat</span>
+                        <span class="w-1/3 text-yellow-300 font-bold">15,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <p class="text-lg text-blue-200 leading-loose">
+                    この3行のExcelを、<br>
+                    PROFIT MATRIXにアップロードします。
+                </p>
+                <p class="text-lg text-blue-200 mt-4">
+                    ボタンを1回押す。
+                </p>
+                <p class="text-lg text-blue-200 mt-4">
+                    すると——
+                </p>
+            </div>
+
+            <div class="reveal mt-12">
+                <div class="bg-green-500/20 border border-green-400/30 rounded-2xl p-8 md:p-10">
+                    <p class="text-green-300 text-sm mb-3">PROFIT MATRIX が自動発見</p>
+                    <p class="text-white text-lg mb-6">
+                        Yahoo!ショッピングで<br>
+                        <span class="text-2xl font-black">Standcollar Trench Coat</span>が<br>
+                        <span class="text-4xl md:text-5xl font-black text-green-400">¥4,800</span><span class="text-green-300"> で売られている</span>
+                    </p>
+                    <div class="flex items-center justify-center gap-4 text-sm">
+                        <span class="text-blue-300">相場 ¥11,000</span>
+                        <span class="text-blue-400">→</span>
+                        <span class="text-green-300">仕入れ ¥4,800</span>
+                        <span class="text-blue-400">→</span>
+                        <span class="text-yellow-300 font-bold">利益 約¥5,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal mt-12">
+                <p class="text-blue-200 text-lg leading-loose mb-6">やったことを振り返ると——</p>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4">
+                        <span class="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold shrink-0">1</span>
+                        <span class="text-blue-100">メルカリで「売り切れ」を見た<span class="text-blue-400 text-sm ml-2">3分</span></span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold shrink-0">2</span>
+                        <span class="text-blue-100">Excelに3行書いた<span class="text-blue-400 text-sm ml-2">1分</span></span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center text-sm font-bold shrink-0">3</span>
+                        <span class="text-blue-100">PROFIT MATRIXにアップロード<span class="text-blue-400 text-sm ml-2">1分</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal mt-12 text-center">
+                <p class="text-sm text-blue-400 mb-2">合計</p>
+                <p class="text-6xl md:text-7xl font-black text-white">5<span class="text-3xl">分</span></p>
+                <p class="text-yellow-300 text-xl font-bold mt-3">利益5,000円の商品が見つかった。</p>
+            </div>
+
+            <div class="reveal mt-12">
+                <p class="text-3xl font-black text-white">「……え、マジで？」</p>
+                <p class="text-xl text-blue-200 mt-4">マジです。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 実績 ===== -->
+    <section class="py-16 md:py-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-8">
+                    もっと見せます。
+                </h2>
+                <p class="text-lg text-gray-600 leading-loose mb-12">
+                    実際にTODAYFULというブランドで試した結果です。<br>
+                    2,325件の商品データを収集し、<br>
+                    169商品に絞ってPROFIT MATRIXに入れました。
+                </p>
+            </div>
+
+            <div class="reveal">
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8 text-center border border-gray-100">
+                        <p class="text-sm text-gray-400 mb-2">利益商品</p>
+                        <p class="text-5xl md:text-6xl font-black text-gray-900" data-counter data-target="46">0</p>
+                        <p class="text-sm text-gray-400 mt-1">件</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8 text-center border border-gray-100">
+                        <p class="text-sm text-gray-400 mb-2">合計利益</p>
+                        <p class="text-3xl md:text-4xl font-black text-gray-900">¥<span data-counter data-target="339472">0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <p class="text-lg text-gray-600 leading-loose">
+                    169商品のデータから、46件の利益商品。<br>
+                    合計33万9,472円分。
+                </p>
+                <p class="text-lg text-gray-600 leading-loose mt-6">
+                    5件仕入れるだけでも数万円。<br>
+                    10件なら、もっと。
+                </p>
+            </div>
+
+            <div class="reveal mt-12">
+                <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-8 text-center">
+                    <p class="text-xl md:text-2xl font-black text-gray-900 leading-relaxed">
+                        Excelの行が多いほど、<br>
+                        見つかる利益商品も多い。
+                    </p>
+                    <p class="text-gray-500 mt-4 text-sm">
+                        3行で1件。169行で46件。<br>
+                        500行なら？1,000行なら？
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== もっと速く集める方法 ===== -->
+    <section class="py-16 md:py-24 px-6 bg-gray-50">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-6">
+                    Excelの行を、<br>もっと増やす方法。
+                </h2>
+                <p class="text-lg text-gray-500 mb-16">
+                    メルカリの「売り切れ」が最高のスタート。<br>
+                    でも、もっと速い方法があります。
+                </p>
+            </div>
+
+            <!-- 方法カード -->
+            <div class="space-y-8">
+                <div class="reveal bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-100 text-blue-700 font-bold text-xs px-3 py-1 rounded-full">500行を1クリック</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">オークファン</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        「TODAYFUL」で検索 → CSVダウンロード。<br>
+                        500件分の商品名と価格が一瞬でExcelに。月550円。
+                    </p>
+                </div>
+
+                <div class="reveal bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-purple-100 text-purple-700 font-bold text-xs px-3 py-1 rounded-full">プロの真似をする</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">パワーセラーをカンニング</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        メルカリで何度も売れてるセラーを見つけて、<br>
+                        出品リストをExcelに書き写す。<br>
+                        「すでに売れることが証明された商品」のリスト。
+                    </p>
+                </div>
+
+                <div class="reveal bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-green-100 text-green-700 font-bold text-xs px-3 py-1 rounded-full">10秒で30行</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">AIに聞く</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        ChatGPTに「TODAYFULで需要が高いアイテムを<br>
+                        商品名と推定相場つきで30個教えて」と聞くだけ。<br>
+                        10秒で30行分のデータ。コピペしてExcelに貼る。
+                    </p>
+                    <p class="text-gray-400 text-sm mt-3">
+                        Claudeなら10人のAIエージェントを同時に走らせて、<br>
+                        10ブランド分を一斉リサーチすることも可能。
+                    </p>
+                </div>
+
+                <div class="reveal bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-orange-100 text-orange-700 font-bold text-xs px-3 py-1 rounded-full">先読み</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">SNSでトレンドを掴む</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Instagramでインフルエンサーが着ている服は<br>
+                        1〜2ヶ月後にメルカリで爆売れ。<br>
+                        まだ誰も気づいていない商品を、先にExcelに入れる。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 30日後（Future Pacing）===== -->
+    <section class="py-16 md:py-24 px-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-10">
+                    30日後のあなた。
+                </h2>
+            </div>
+
+            <div class="reveal">
+                <div class="space-y-8 text-lg text-gray-600 leading-loose">
+                    <p>朝、通勤電車の中でメルカリを開く。<br>
+                    「売り切れ」を眺めながら、気になる商品をメモ。<br>
+                    会社に着くまでの15分で、5行のデータが増えている。</p>
+
+                    <p>昼休み、オークファンで検索。CSV。300件。</p>
+
+                    <p>夜、PROFIT MATRIXにExcelをアップロード。<br>
+                    ボタンを押す。</p>
+
+                    <p>翌朝、結果を確認。</p>
+                </div>
+            </div>
+
+            <div class="reveal mt-10">
+                <div class="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
+                    <p class="text-sm text-green-600 mb-2">PROFIT MATRIX からの通知</p>
+                    <p class="text-gray-600 text-lg mb-4">「利益率52%の商品が見つかりました。」</p>
+                    <div class="flex justify-center gap-6 text-sm">
+                        <div>
+                            <p class="text-gray-400">仕入れ</p>
+                            <p class="text-xl font-black text-gray-900">¥3,200</p>
+                        </div>
+                        <div class="text-gray-300 text-2xl">→</div>
+                        <div>
+                            <p class="text-gray-400">売値</p>
+                            <p class="text-xl font-black text-gray-900">¥7,800</p>
+                        </div>
+                        <div class="text-gray-300 text-2xl">→</div>
+                        <div>
+                            <p class="text-gray-400">利益</p>
+                            <p class="text-xl font-black text-green-600">¥3,400</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal mt-10">
+                <p class="text-lg text-gray-600 leading-loose">
+                    これが、毎週繰り返される日常。<br>
+                    Excelの行は毎日増えていく。<br>
+                    100行、200行、500行——
+                </p>
+                <p class="text-xl font-bold text-gray-900 mt-6">
+                    1ヶ月後。<br>
+                    あなたのExcelは「利益を生む資産」になっている。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="py-20 md:py-28 px-6 bg-gray-900 text-white">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-black leading-tight mb-8">
+                    今すぐ、<br>やってみてください。
+                </h2>
+                <p class="text-lg text-gray-300 leading-loose mb-6">
+                    メルカリを開いて、<br>
+                    好きなブランド名で「売り切れ」検索。<br>
+                    <span class="text-white font-bold">3分で終わります。</span>
+                </p>
+                <p class="text-gray-400 mb-12">
+                    何も買わなくていい。登録もいらない。<br>
+                    ただ「売り切れ」を眺めるだけ。
+                </p>
+            </div>
+
+            <div class="reveal">
+                <p class="text-gray-300 leading-loose mb-10">
+                    気になった商品と価格をExcelに書いて。<br>
+                    5行でいい。<br>
+                    その5行が、最初の「資産」になります。
+                </p>
+
+                <p class="text-xl text-gray-200 mb-12 leading-relaxed">
+                    そしてその5行を PROFIT MATRIX に入れた時——<br>
+                    Yahoo!ショッピングで利益商品が見つかった時——
+                </p>
+
+                <p class="text-3xl md:text-4xl font-black text-white mb-16">
+                    「あ、これ自分にもできるやん。」
+                </p>
+            </div>
+
+            <div class="reveal">
+                <a href="https://profit-matrix.jp/?mode=signup"
+                   class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-5 px-12 rounded-xl shadow-2xl transition duration-300 text-xl cta-pulse transform hover:-translate-y-1">
+                    まず7日間、無料で試してみる
+                </a>
+                <p class="text-gray-500 text-sm mt-4">クレカ登録のみ・いつでも解約OK・30秒で完了</p>
+            </div>
+
+            <div class="reveal mt-16">
+                <p class="text-gray-500 text-sm">
+                    あなたの「好き」を、Excelに。<br>
+                    Excelを、利益に。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 text-gray-500 py-8 px-6 text-center text-xs">
+        <p>© 2024 PROFIT MATRIX. All rights reserved.</p>
+        <div class="mt-2 space-x-4">
+            <a href="/terms.html" class="hover:text-gray-300 transition">利用規約</a>
+            <a href="/privacy.html" class="hover:text-gray-300 transition">プライバシーポリシー</a>
+        </div>
+    </footer>
+
+    <!-- Sticky CTA (Mobile) -->
+    <div id="stickyCta" class="sticky-cta fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-3 z-50 md:hidden">
+        <a href="https://profit-matrix.jp/?mode=signup"
+           class="block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl text-center shadow-lg transition text-sm">
+            まず無料で試してみる
+        </a>
+    </div>
+
+    <script>
+        // Scroll reveal animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Counter animation
+        function animateCounter(el) {
+            const target = +el.dataset.target;
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    el.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('[data-counter]').forEach(el => counterObserver.observe(el));
+
+        // Sticky CTA show after scroll
+        const stickyCta = document.getElementById('stickyCta');
+        const stickyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    stickyCta.classList.add('show');
+                } else {
+                    stickyCta.classList.remove('show');
+                }
+            });
+        });
+        // Show sticky after hero section is scrolled past
+        const heroSection = document.querySelector('section');
+        if (heroSection) stickyObserver.observe(heroSection);
+    </script>
+</body>
+</html>
