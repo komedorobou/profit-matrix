@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
+const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || '7d3200011004dd72028f39e3c2dd3446';
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
