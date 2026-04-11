@@ -11,6 +11,28 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // GET: フォロワー一覧取得（一時機能）
+  if (req.method === 'GET' && req.query.action === 'followers') {
+    try {
+      const resp = await fetch('https://api.line.me/v2/bot/followers/ids', {
+        headers: { 'Authorization': `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}` }
+      });
+      const data = await resp.json();
+      const profiles = [];
+      for (const userId of (data.userIds || [])) {
+        try {
+          const pResp = await fetch(`https://api.line.me/v2/bot/profile/${userId}`, {
+            headers: { 'Authorization': `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}` }
+          });
+          if (pResp.ok) profiles.push(await pResp.json());
+        } catch(e) {}
+      }
+      return res.status(200).json({ followers: data, profiles });
+    } catch(e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
   // POSTメソッドのみ許可
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
