@@ -75,11 +75,12 @@ export default async function handler(req, res) {
             })
           });
 
+          if (!global._debugLog) global._debugLog = [];
           if (response.ok) {
-            console.log('承認待ちリストに追加成功:', userId, displayName);
+            global._debugLog.push(`SUCCESS: ${userId} ${displayName}`);
           } else {
-            const error = await response.text();
-            console.error('Supabase保存エラー:', error);
+            const errorText = await response.text();
+            global._debugLog.push(`SUPABASE_ERROR: ${response.status} ${errorText}`);
           }
         } catch (error) {
           console.error('Supabase保存エラー:', error);
@@ -130,7 +131,7 @@ export default async function handler(req, res) {
     }
 
     // デバッグ: 処理結果を返す
-    return res.status(200).json({ success: true, eventsCount: events.length, supabaseUrl: SUPABASE_URL?.substring(0, 20) });
+    return res.status(200).json({ success: true, eventsCount: events.length, debugLog: global._debugLog || [] });
 
   } catch (error) {
     console.error('LINE Webhook Error:', error);
