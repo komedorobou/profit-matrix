@@ -4,6 +4,23 @@ const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
+// Vercelの自動bodyパーサを無効化（LINE署名検証には生ボディが必要）
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+// 生のリクエストボディをBufferで読み取る
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
 export default async function handler(req, res) {
   // CORSヘッダー設定
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,24 +38,45 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 生ボディ取得（署名検証用）
+    const rawBody = await readRawBody(req);
+
     // LINE署名検証
     const signature = req.headers['x-line-signature'];
     if (!signature) {
+      console.error('LINE webhook: x-line-signatureヘッダーがありません');
       return res.status(401).json({ error: 'No signature' });
     }
 
-    const body = JSON.stringify(req.body);
+    if (!CHANNEL_SECRET) {
+      console.error('LINE webhook: LINE_CHANNEL_SECRET未設定');
+      return res.status(500).json({ error: 'Server misconfigured' });
+    }
+
     const hash = crypto
       .createHmac('SHA256', CHANNEL_SECRET)
-      .update(body)
+      .update(rawBody)
       .digest('base64');
 
     if (hash !== signature) {
+      console.error('LINE webhook: 署名不一致', {
+        expected: hash,
+        received: signature,
+      });
       return res.status(401).json({ error: 'Invalid signature' });
     }
 
+    // 署名検証通過後にJSONパース
+    let payload;
+    try {
+      payload = JSON.parse(rawBody.toString('utf8'));
+    } catch (e) {
+      console.error('LINE webhook: JSONパース失敗', e);
+      return res.status(400).json({ error: 'Invalid JSON body' });
+    }
+
     // Webhookイベント処理
-    const events = req.body.events || [];
+    const events = payload.events || [];
 
     for (const event of events) {
       // 友だち追加イベント
