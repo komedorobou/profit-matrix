@@ -129,8 +129,8 @@ export default async function handler(req, res) {
       }
     }
 
-    // LINE側には200を返す（必須）
-    return res.status(200).json({ success: true });
+    // デバッグ: 処理結果を返す
+    return res.status(200).json({ success: true, eventsCount: events.length, supabaseUrl: SUPABASE_URL?.substring(0, 20) });
 
   } catch (error) {
     console.error('LINE Webhook Error:', error);
