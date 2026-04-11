@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 
 const CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || '7d3200011004dd72028f39e3c2dd3446';
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://czwwlrrgtmiagujdjxdr.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6d3dscnJndG1pYWd1amRqeGRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwMDM4NDgsImV4cCI6MjA3NTU3OTg0OH0.hKmaKImJP4ApCHoL4lHk8VjzShoQowyLx_e81wkKGis';
+const LINE_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || 'UtYq17fk+n5urcA1FtL83FmHY2MeTYKhyfUtJQrwdg/8+iGvEp1W31gzpTreTXb7C3TSpehJdBAP3EOyVcTOa/lEf6WgaIffDab3U/HbtKZxSkVLznAP0LlojHDHu5svLr5PWtWdjndBRSghaHiW+QdB04t89/1O/w1cDnyilFU=';
 
 // bodyParserはVercelのデフォルト（有効）のまま使う
 // req.bodyをJSON.stringifyしてBuffer化し、署名検証に使う
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
         try {
           const profileResponse = await fetch(`https://api.line.me/v2/bot/profile/${userId}`, {
             headers: {
-              'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`
+              'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`
             }
           });
 
@@ -97,7 +98,7 @@ export default async function handler(req, res) {
         try {
           const profileResponse = await fetch(`https://api.line.me/v2/bot/profile/${userId}`, {
             headers: {
-              'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`
+              'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`
             }
           });
           if (profileResponse.ok) {
